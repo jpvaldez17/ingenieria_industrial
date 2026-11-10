@@ -1,0 +1,25 @@
+{"_nota":"Unidades según el temario de referencia; ajustables al programa oficial. 'content' contiene SOLO textos de DEMOSTRACIÓN propios (no extraídos de los libros). Clave del contenido: u<unidad>t<tema>.",
+"units":[
+{"n":1,"title":"Fundamentos de Estadística","topics":["Definición y antecedentes","Ramas y método científico","Importancia en Ingeniería Industrial","Población, muestra y variables","Tipos de variables y medidas cualitativas","Notación: sumatorias y productorias","Intervalos y curva normal (introducción)"]},
+{"n":2,"title":"Organización y distribución de datos","topics":["Presentación de datos y series","Distribución de frecuencias","Intervalos y clases","Frecuencias absoluta, relativa y acumulada","Tablas estadísticas","Diagramas y gráficos","Diagrama de tallos y hojas"]},
+{"n":3,"title":"Tendencia central y posición","topics":["Media aritmética","Media para datos agrupados","Mediana","Moda","Media geométrica, armónica y cuadrática","Relaciones entre medidas","Cuartiles, deciles y percentiles"]},
+{"n":4,"title":"Medidas de dispersión","topics":["Rango y desviación media","Varianza","Desviación estándar","Coeficiente de variación","Rango intercuartílico y recorrido estándar","Variabilidad de procesos"]},
+{"n":5,"title":"Medidas de forma","topics":["Momentos estadísticos","Asimetría","Curtosis","Teorema de Chebyshev"]},
+{"n":6,"title":"Análisis bidimensional","topics":["Distribuciones bidimensionales y tablas de doble entrada","Distribuciones marginales y condicionadas","Medidas marginales","Correlación"]},
+{"n":7,"title":"Regresión y correlación","topics":["Conceptos y tipos de regresión","Ajuste de curvas","Regresión lineal simple","Coeficientes de correlación y determinación","Regresión para datos agrupados","Regresión múltiple y no lineal"]},
+{"n":8,"title":"Números índice","topics":["Definición, utilidad y tipos","Índices simples y compuestos","Laspeyres, Paasche y Fisher","Cambio de base, deflación y poder adquisitivo"]},
+{"n":9,"title":"Fundamentos de probabilidad","topics":["Experimentos, espacio muestral y eventos","Enfoques y axiomas","Conteo: permutaciones y combinaciones","Eventos excluyentes, dependientes e independientes","Probabilidad condicional, adición y multiplicación","Teorema de Bayes"]},
+{"n":10,"title":"Distribuciones de probabilidad","topics":["Variables aleatorias y esperanza","Bernoulli y Binomial","Geométrica, hipergeométrica y Poisson","Uniforme y Normal","Normal estándar","Exponencial y Gamma","Chi cuadrado y t de Student"]}],
+"content":{
+"u1t1":{"demo":true,"sections":[
+{"h":"¿Qué es la estadística?","p":"Es la disciplina que recoge, organiza, analiza e interpreta datos para apoyar la toma de decisiones."},
+{"h":"Aplicación industrial","p":"En una planta se registran mediciones cada hora; la estadística permite resumirlas y detectar si el proceso es estable."},
+{"h":"Puntos clave","l":["Convierte datos en información.","Se usa en calidad, producción y logística."]}],
+"resumen":["La estadística transforma datos en información útil.","Se aplica al control de procesos y a la toma de decisiones."]},
+"u3t1":{"demo":true,"sections":[
+{"h":"Idea central","p":"La media aritmética es el promedio: la suma de los datos dividida entre la cantidad de datos. Representa un valor típico del conjunto."},
+{"h":"Aplicación industrial","p":"Sirve para conocer el peso o volumen promedio de un producto y compararlo con su especificación."},
+{"h":"Puntos clave","l":["Usa todos los datos.","Es sensible a valores extremos."]}],
+"resumen":["x̄ = Σxᵢ / n.","Es sensible a valores extremos."],
+"formulas":["media"],
+"ejemplos":[{"t":"Peso de botellas","q":"Cinco botellas pesan 498, 502, 500, 501 y 499 g. ¿Cuál es el peso medio?","s":["Σxᵢ = 498 + 502 + 500 + 501 + 499 = 2500","n = 5","x̄ = 2500 / 5 = 500"],"a":"500 g"}]}}}

@@ -1,0 +1,10 @@
+{"_nota":"Distribución por semestre DE EJEMPLO: ajústala al plan oficial de la UPDS. Para añadir una materia: agrega su entrada en 'subjects' y su clave en 'semesters'.",
+"current":"estadistica",
+"subjects":{
+"estadistica":{"name":"Estadística Descriptiva","short":"Estadística","color":"#1d6fe0","icon":"chart","desc":"Analiza, interpreta y comprende los datos.","status":"desarrollo","data":"estadistica"},
+"fisica":{"name":"Física","short":"Física","color":"#7c3aed","icon":"zap","status":"pendiente"},
+"calculo":{"name":"Cálculo","short":"Cálculo","color":"#0d9488","icon":"sigma","status":"pendiente"},
+"quimica":{"name":"Química","short":"Química","color":"#ea580c","icon":"flask","status":"pendiente"}},
+"semesters":[{"n":1,"items":[]},{"n":2,"items":["estadistica","fisica","calculo","quimica"]},{"n":3,"items":[]},{"n":4,"items":[]},{"n":5,"items":[]},{"n":6,"items":[]},{"n":7,"items":[]},{"n":8,"items":[]},{"n":9,"items":[]},{"n":10,"items":[]}],
+"datos":["Ejemplo: la desviación estándar se expresa en las mismas unidades que los datos.","Ejemplo: la media es sensible a valores extremos; la mediana lo es mucho menos."],
+"desafios":[{"q":"¿Qué medida de tendencia central es el valor que más se repite?","o":["Media","Moda","Mediana"],"a":1},{"q":"Si todos los datos son iguales, ¿cuánto vale la varianza?","o":["0","1","Depende de n"],"a":0}]}
