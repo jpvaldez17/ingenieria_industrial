@@ -18,7 +18,7 @@ off:'<path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M5 12.86a10 10 0 0 1 5.17-2.69M1
 plus:'<path d="M5 12h14M12 5v14"/>',trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
 list:'<path d="M3 12h.01M3 18h.01M3 6h.01M8 12h13M8 18h13M8 6h13"/>',check:'<path d="M20 6 9 17l-5-5"/>',
 book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>'};
-Object.assign(I,{bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>'});
+Object.assign(I,{bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',download:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>'});
 const PAL=['#1d8fe0','#f97316','#16a34a','#e11d48','#7c3aed','#0d9488','#eab308','#db2777','#0ea5e9','#ef4444'];
 const ic=(n,s=20,f='none')=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${f}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -72,17 +72,14 @@ const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subjec
 /* ===== Pantallas ===== */
 function home(){
  const cur=D.career.current,s=SUBJ()[cur],T=topics(cur),d=S.done.filter(x=>x.startsWith(cur+'/')).length,p=T.length?Math.round(d/T.length*100):0;
- const day=new Date().getDate(),dt=D.career.datos[day%D.career.datos.length],ch=D.career.desafios[day%D.career.desafios.length];
+ const dt=D.career.datos[new Date().getDate()%D.career.datos.length],stand=matchMedia('(display-mode: standalone)').matches;
  const favs=S.favs.map(f=>{const[sid,tid]=f.split('/'),t=topics(sid).find(x=>x.id==tid);return t?`<a class="row" href="#/tema/${f}">${ic('bookmark',16)}<span>${esc(t.t)}</span>${ic('chevR',16)}</a>`:''}).join('');
- const tl=(h,c,i,t,sb)=>`<a class="acc" href="${h}" style="--c:${c}"><span class="bd">${ic(i,22)}</span><b>${t}</b><small>${sb}</small></a>`;
- return `<p class="eyebrow">Bienvenido a tu espacio académico</p><h1>Aprende. Practica. Aplica.</h1>
- <a class="search" href="#/buscar">${ic('search')}<span>Buscar materias, temas, fórmulas…</span></a>
- <h2>Mi semestre <span class="pill desarrollo">Segundo semestre</span></h2>
- <a class="card cur" href="#/materia/${cur}" style="--c:${s.color}"><div class="r"><b>${s.name}</b>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${d} de ${T.length} temas estudiados · ${p}%</small></a>
- <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DEL DÍA</b></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div><a class="pillb" href="#/materia/${cur}">Más información ${ic('arrow',16)}</a></div>
- <div class="des"><div class="dh"><span class="bd" style="--c:#1d8fe0">${ic('zap',20)}</span><b>DESAFÍO RÁPIDO DEL DÍA</b><span class="sc"><i class="g">✓ ${S.sc.ok}</i><i class="r">✕ ${S.sc.bad}</i></span></div><p>${ch.q}</p><div class="opts">${ch.o.map((o,i)=>`<button data-act="ans" data-i="${i}" data-a="${ch.a}">${o}</button>`).join('')}</div></div>
+ const tl=(h,c,hz,i,t,sb)=>`<a class="acc" href="${h}" style="--c:${c};--haz:${hz}"><span class="bd">${ic(i,22)}</span><span class="at"><b>${t}</b><small>${sb}</small></span></a>`;
+ return `<div class="search"><a href="#/buscar">${ic('search')}<span>Buscar materia, tema, fórmula…</span></a>${stand?'':`<button data-act="inst">${ic('download',16)} Instalar</button>`}</div>
+ <a class="card cur" href="#/materia/${cur}" style="--c:${s.color}"><div class="r"><span><b>${s.name}</b> <small>· Segundo semestre</small></span>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${d} de ${T.length} temas estudiados · ${p}%</small></a>
+ <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DEL DÍA</b><a class="pillb" href="#/materia/${cur}">Más información ${ic('arrow',14)}</a></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div></div>
  <h2 class="acch">${ic('grid',20)} ACCESOS DIRECTOS</h2>
- <div class="accs">${tl('#/materia/'+cur,'#1d8fe0','chart','Estadística','Unidades y temas')}${tl('#/formulario/'+cur,'#16a34a','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#f97316','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#7c3aed','cap','Mi carrera','Materias por semestre')}</div>
+ <div class="accs">${tl('#/materia/'+cur,'#1686c9','42,160,240','chart','Estadística','Unidades y temas')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
  ${favs?`<h2>Favoritos</h2><div class="card">${favs}</div>`:''}`}
 
 function carrera(){
@@ -164,6 +161,7 @@ document.addEventListener('click',async e=>{
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
  else if(a=='calc')runCalc(d.f);
+ else if(a=='inst'){if(ip){ip.prompt();await ip.userChoice;ip=null}else alert('Para instalar: menú ⋮ de Chrome → "Instalar app" o "Agregar a la pantalla de inicio".')}
  else if(a=='ans'){[...b.parentNode.children].forEach((x,i)=>{x.disabled=true;if(i==+d.a)x.classList.add('ok')});const ok=+d.i==+d.a,hoy=new Date().toDateString();
   if(!ok)b.classList.add('bad');if(S.sc.day!==hoy){S.sc.day=hoy;ok?S.sc.ok++:S.sc.bad++;save();$('.sc').innerHTML=`<i class="g">✓ ${S.sc.ok}</i><i class="r">✕ ${S.sc.bad}</i>`}}
  else if(a=='addf'){const f=$('#fi').files[0];if(!f)return alert('Selecciona un archivo primero.');
@@ -181,9 +179,9 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data)D.sub[k]=await j(`${s.data}.json`);
   S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;net();render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
-if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js'));
+if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
+ addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}))}
 
-/* Botón Instalar (solo aparece cuando el navegador permite instalar la PWA) */
-let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e;$('#inst').hidden=false});
-$('#inst').onclick=async()=>{ip.prompt();await ip.userChoice;$('#inst').hidden=true};
-addEventListener('appinstalled',()=>$('#inst').hidden=true);
+/* Instalación PWA: guarda el evento para el botón Instalar de Inicio */
+let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e});

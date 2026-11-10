@@ -83,3 +83,31 @@ main{padding-top:6px}
 .fc{border:2px solid color-mix(in srgb,var(--c) 45%,#fff);padding:12px;gap:12px}.fc .bd{width:42px;height:42px}
 .ft b{font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:var(--mu)}
 .ft code{font-size:1.3rem;font-weight:700;color:var(--nv);margin-top:2px;line-height:1.25}
+
+/* ===== v3: estilo QuímicApp (título al centro, logos a los lados, buscador negro con Instalar) ===== */
+#top{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;gap:6px;padding:calc(env(safe-area-inset-top) + 10px) 12px 34px}
+.tt{text-align:center;min-width:0}
+#top h1{margin:0;font-size:1.9rem;line-height:1;font-weight:800;letter-spacing:-.02em;color:#fff}#top h1 span{color:#ffb454}
+.tt small{display:block;color:#d6edf1;font-size:.66rem;margin-top:5px;line-height:1.25}
+.tt .pill{display:inline-flex;margin-top:4px}
+.lg{height:58px;width:auto;max-width:64px;object-fit:contain}.lg.u{justify-self:end}
+.search{justify-content:space-between;background:#000;color:#fff;border:2px solid #1f2937;border-radius:99px;padding:8px 8px 8px 16px;margin:0 0 10px}
+.search a{display:flex;align-items:center;gap:10px;flex:1;min-width:0;color:#fff;font-size:.92rem}.search a span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search button{display:flex;gap:6px;align-items:center;background:transparent;color:#ff5a5a;border:2px solid #fff;border-radius:99px;padding:7px 12px;font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer}
+.cur{padding:10px 14px;margin-bottom:10px}.cur .bar{margin:6px 0}
+.dato{background:linear-gradient(135deg,#4a95a1,#336B75);color:#fff;box-shadow:0 6px 16px rgba(51,107,117,.35);padding:12px;margin-bottom:10px}
+.dato .dh{margin-bottom:8px}.dato .dh>b{color:#fff}.dato .bd.w .ic{color:#336B75!important}
+.db{padding:10px 12px}.db strong{color:#2a7d8a;font-size:1.05rem}.db p{font-size:.88rem;color:#334155;margin:2px 0 0}
+.pillb{margin:0 0 0 auto;padding:7px 12px;font-size:.78rem}
+.acch{margin:6px 0 8px}.accs{gap:8px;margin-bottom:8px}
+.acc{flex-direction:row;align-items:center;gap:8px;padding:10px;min-height:76px}
+.acc .bd{width:44px;height:44px}.at{flex:1;min-width:0;display:flex;flex-direction:column}.acc b{font-size:.78rem}.acc small{font-size:.72rem;line-height:1.2}.acc>.ic{color:#aab2c0}
+
+/* ===== v4: accesos directos con el formato de QuímicApp (contorno de luz por color) ===== */
+.search{border:2px solid rgba(170,205,255,.5);box-shadow:inset 0 0 0 1px rgba(170,205,255,.3),0 0 14px rgba(120,175,255,.34)}
+.acch{color:#111;border-bottom:2px solid #111}.acch .ic{color:#111}
+.acc{position:relative;background:#14171a;color:#fff;border:1px solid rgba(var(--haz),.6);border-radius:15px;box-shadow:0 3px 9px rgba(0,0,0,.25);min-height:86px;padding:10px;gap:9px;transition:transform .2s,background .2s}
+.acc:active{transform:translateY(-2px);background:#1c2024}
+.acc:after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 2px rgba(var(--haz),.7),inset 0 1px 14px rgba(var(--haz),.1),0 0 14px rgba(var(--haz),.34)}
+.acc .bd{width:46px;height:46px;background:var(--c)}
+.acc b{font-size:.78rem;color:#fff}.acc small{font-size:.7rem;color:#b7bfc8;line-height:1.25}
