@@ -71,7 +71,7 @@
    "color": "#1d6fe0",
    "icon": "chart",
    "status": "curso",
-   "desc": "Analiza, interpreta y comprende los datos.",
+   "desc": "Resume, organiza e interpreta datos para decidir mejor en planta y en la empresa.",
    "data": "estadistica"
   },
   "etica": {
@@ -495,12 +495,148 @@
  ],
  "datos": [
   {
-   "t": "Desviación estándar",
-   "p": "Se expresa en las mismas unidades que los datos, por eso es fácil de interpretar en planta."
+   "t": "Herramienta de calidad: Hoja de verificación",
+   "p": "Registra datos de forma ordenada"
   },
   {
-   "t": "Media y mediana",
-   "p": "La media es sensible a valores extremos; la mediana lo es mucho menos."
+   "t": "Herramienta de calidad: Histograma",
+   "p": "Muestra la distribución"
+  },
+  {
+   "t": "Herramienta de calidad: Diagrama de Pareto",
+   "p": "Prioriza causas"
+  },
+  {
+   "t": "Herramienta de calidad: Diagrama de causa-efecto (Ishikawa)",
+   "p": "Organiza posibles causas (6M: método, mano de obra, máquina, material, medio, medición)"
+  },
+  {
+   "t": "Herramienta de calidad: Diagrama de dispersión",
+   "p": "Relación entre dos variables"
+  },
+  {
+   "t": "Herramienta de calidad: Estratificación",
+   "p": "Separa datos por grupo (turno, máquina)"
+  },
+  {
+   "t": "Herramienta de calidad: Gráfico de control",
+   "p": "Vigila si el proceso es estable"
+  },
+  {
+   "t": "Amplitud",
+   "p": "Ancho de un intervalo de clase."
+  },
+  {
+   "t": "Asimetría",
+   "p": "Falta de simetría de una distribución."
+  },
+  {
+   "t": "Atípico",
+   "p": "Dato muy alejado del resto."
+  },
+  {
+   "t": "Cuartil",
+   "p": "Valor que divide los datos ordenados en cuatro partes."
+  },
+  {
+   "t": "Desviación estándar",
+   "p": "Raíz de la varianza; dispersión típica alrededor de la media."
+  },
+  {
+   "t": "Distribución de frecuencias",
+   "p": "Tabla que muestra cuántos datos caen en cada categoría o intervalo."
+  },
+  {
+   "t": "Estadístico / Parámetro",
+   "p": "Medida de la muestra / medida de la población."
+  },
+  {
+   "t": "Frecuencia absoluta",
+   "p": "Número de veces que ocurre un valor."
+  },
+  {
+   "t": "Histograma",
+   "p": "Gráfico de barras pegadas para datos agrupados."
+  },
+  {
+   "t": "KPI",
+   "p": "Indicador clave de desempeño."
+  },
+  {
+   "t": "Marca de clase",
+   "p": "Punto medio de un intervalo."
+  },
+  {
+   "t": "Media",
+   "p": "Promedio aritmético."
+  },
+  {
+   "t": "Mediana",
+   "p": "Valor central de los datos ordenados."
+  },
+  {
+   "t": "Moda",
+   "p": "Valor más frecuente."
+  },
+  {
+   "t": "Muestra",
+   "p": "Parte de la población que se observa."
+  },
+  {
+   "t": "Percentil",
+   "p": "Valor bajo el cual está un porcentaje dado de los datos."
+  },
+  {
+   "t": "Rango",
+   "p": "Máximo menos mínimo."
+  },
+  {
+   "t": "Regresión",
+   "p": "Modelo que estima una variable a partir de otra."
+  },
+  {
+   "t": "Serie de tiempo",
+   "p": "Datos ordenados cronológicamente."
+  },
+  {
+   "t": "Variable",
+   "p": "Característica que puede tomar distintos valores."
+  },
+  {
+   "t": "Varianza",
+   "p": "Promedio de los cuadrados de las desviaciones respecto a la media."
+  },
+  {
+   "t": "Error común",
+   "p": "Confundir población y muestra; parámetro y estadístico."
+  },
+  {
+   "t": "Error común",
+   "p": "Usar media con datos ordinales o con atípicos fuertes."
+  },
+  {
+   "t": "Error común",
+   "p": "Olvidar n − 1 en la varianza muestral."
+  },
+  {
+   "t": "Error común",
+   "p": "Interpretar correlación como causa."
+  },
+  {
+   "t": "Error común",
+   "p": "Comparar desviaciones de variables con unidades distintas en lugar de usar el CV."
+  },
+  {
+   "t": "Error común",
+   "p": "Gráficos engañosos (ejes cortados, 3D)."
+  },
+  {
+   "t": "Error común",
+   "p": "Extrapolar una recta de regresión sin cuidado."
+  },
+  {
+   "t": "Error común",
+   "p": "No redondear de forma consistente (se recomienda trabajar con 3 decimales y redondear al final)."
   }
  ],
  "desafios": [

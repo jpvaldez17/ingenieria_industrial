@@ -81,7 +81,7 @@ const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subjec
 /* ===== Pantallas ===== */
 function home(){
  const cur=curId(),s=SUBJ()[cur],T=topics(cur),d=S.done.filter(x=>x.startsWith(cur+'/')).length,p=T.length?Math.round(d/T.length*100):0;
- const dt=D.career.datos[new Date().getDate()%D.career.datos.length],stand=matchMedia('(display-mode: standalone)').matches;
+ const dt=D.career.datos[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5)%D.career.datos.length],stand=matchMedia('(display-mode: standalone)').matches;
  const favs=S.favs.map(f=>{const[sid,tid]=f.split('/'),t=topics(sid).find(x=>x.id==tid);return t?`<a class="row" href="#/tema/${f}">${ic('bookmark',16)}<span>${esc(t.t)}</span>${ic('chevR',16)}</a>`:''}).join('');
  const tl=(h,c,hz,i,t,sb)=>`<a class="acc" href="${h}" style="--c:${c};--haz:${hz}"><span class="bd">${ic(i,22)}</span><span class="at"><b>${t}</b><small>${sb}</small></span></a>`;
  return `<div class="search"><a href="#/buscar">${ic('search')}<span>Buscar materia, tema, fórmula…</span></a>${stand?'':`<button data-act="inst">${ic('download',16)} Instalar</button>`}</div>
@@ -107,13 +107,13 @@ function carrera(){
  const all=Object.keys(SUBJ());
  return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>PROM. GENERAL</i><b class="gpn">${fp(prom(all))}</b></div></div><p class="muted">Marca el estado de cada materia, escribe tu nota y toca «Usar» para elegir tu materia actual.</p>
  <div class="leg"><span><i class="ld aprobada"></i>Aprobada</span><span><i class="ld curso"></i>En curso</span><span><i class="ld pendiente"></i>Pendiente</span></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow" style="--c:${s.color}"><div class="srt"><a class="row" href="#/materia/${k}"><span class="sn">${s.name}</span>${s.data?`<span class="go">${ic('chevR',16)}</span>`:''}</a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="dt ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}" title="${t}" aria-label="${t}"></button>`).join('')}<input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" aria-label="Nota de ${s.name}"></div></div>`}).join('')}</details>`).join('')}
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow" style="--c:${s.color}"><div class="srt"><a class="row" href="#/materia/${k}"><span class="sn">${s.name}</span><span class="go ${on?'r':'g'}">${ic('chevR',16)}</span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="dt ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}" title="${t}" aria-label="${t}"></button>`).join('')}<span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
- if(!d)return `<a class="back" href="#/carrera">${ic('chevL')}Mi carrera</a><div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1></div><div class="empty">Contenido próximamente.<br><small>Se activa subiendo <code>${sid}.json</code> y agregando <code>"data": "${sid}"</code> a esta materia en career.json.</small></div>`;
+ if(!d)return `<a class="back" href="#/carrera">${ic('chevL')}Volver</a><div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1></div><div class="empty">Contenido próximamente.<br><small>Se activa subiendo <code>${sid}.json</code> y agregando <code>"data": "${sid}"</code> a esta materia en career.json.</small></div>`;
  const T=topics(sid),n=S.done.filter(x=>x.startsWith(sid+'/')).length,p=T.length?Math.round(n/T.length*100):0;
- return `<a class="back" href="#/carrera">${ic('chevL')}Mi carrera</a>
+ return `<a class="back" href="#/carrera">${ic('chevL')}Volver</a>
  <div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
  <h2>Unidades temáticas</h2>`+d.units.map(u=>`<details class="card unit" style="--c:${PAL[(u.n-1)%10]}" ${u.n==1?'open':''}><summary><span class="num">${u.n}</span>${u.title}<span class="muted">${u.topics.length}</span></summary>${
   u.topics.map((t,i)=>{const id=`u${u.n}t${i+1}`;return `<a class="row" href="#/tema/${sid}/${id}"><span class="idx">${u.n}.${i+1}</span><span>${t}</span>${S.done.includes(sid+'/'+id)?ic('check',16):''}${ic('chevR',16)}</a>`}).join('')}</details>`).join('')}
@@ -122,16 +122,16 @@ function tema(sid,tid){
  const s=SUBJ()[sid],T=topics(sid),k=T.findIndex(x=>x.id==tid);if(k<0)return nf();
  const t=T[k],c=D.sub[sid].content?.[tid]||{},key=`${sid}/${tid}`,fav=S.favs.includes(key),dn=S.done.includes(key);
  const tabs=[['c','Contenido','book'],['r','Resumen','list'],['f','Fórmulas','sigma'],['e','Ejemplos','clip']];
- const lst=a=>`<ul class="chk">${a.map(i=>`<li>${i}</li>`).join('')}</ul>`,emp=m=>`<div class="empty">${m}</div>`;
+ const lst=a=>`<ul class="chk">${a.map(i=>`<li>${i}</li>`).join('')}</ul>`,emp=m=>`<div class="empty">${m}</div>`,secH=x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.html||''}</section>`;
  let p;
- if(tab=='c')p=c.sections?(c.demo?'<p class="note">Texto de demostración propio; no proviene de los libros.</p>':'')+c.sections.map(x=>`<section class="sec"><h3>${x.h}</h3>${x.p?`<p>${x.p}</p>`:''}${x.l?lst(x.l):''}</section>`).join('')
+ if(tab=='c')p=c.sections?(c.demo?'<p class="note">Texto de demostración propio; no proviene de los libros.</p>':'')+c.sections.map(x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.p?`<p>${x.p}</p>`:''}${x.html||''}${x.l?lst(x.l):''}</section>`).join('')
   :emp(`Plantilla lista. Agrega el contenido en <code>${sid}.json</code> → <code>content.${tid}</code>.`);
  if(tab=='c')p+=`<button class="btn ghost" data-act="done" data-k="${key}">${dn?'Estudiado ✓ (quitar)':'Marcar como estudiado'}</button>`;
  if(tab=='r')p=c.resumen?`<section class="sec">${lst(c.resumen)}</section>`:emp('Sin resumen todavía.');
  if(tab=='f'){const fs=(c.formulas||[]).map(id=>D.formulas.find(f=>f.id==id)).filter(Boolean);
-  p=fs.length?fs.map(f=>`<div class="card"><div class="tex">${f.tex}</div><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning}</li>`).join('')}</ul>${fcard(f)}</div>`).join(''):emp('Este tema no tiene fórmulas asociadas.')}
- if(tab=='e')p=c.ejemplos?c.ejemplos.map(x=>`<div class="card"><b>${x.t}</b><p>${x.q}</p><ol class="steps">${x.s.map(i=>`<li>${i}</li>`).join('')}</ol><p><b>Respuesta: ${x.a}</b></p></div>`).join(''):emp('Sin ejemplos todavía.');
- return `<div class="thead"><div class="r"><a class="icb" href="#/materia/${sid}" aria-label="Índice">${ic('chevL')}</a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
+  const cs=fs.length?`<h3 class="h3c">🧮 Calculadoras</h3>`+fs.map(fcard).join(''):'';p=((c.fsec||[]).map(secH).join('')+cs)||emp('Este tema no tiene fórmulas asociadas.')}
+ if(tab=='e')p=((c.exsec||[]).map(secH).join('')+(c.ejemplos||[]).map(x=>`<div class="card"><b>${x.t}</b><p>${x.q}</p><ol class="steps">${x.s.map(i=>`<li>${i}</li>`).join('')}</ol><p><b>Respuesta: ${x.a}</b></p></div>`).join(''))||emp('Sin ejemplos todavía.');
+ return `<div class="thead"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} Volver</a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
  <p class="eyebrow" style="margin-top:10px">Unidad ${t.u.n} · ${t.u.title}</p><h1>${t.u.n}.${t.i} ${t.t}</h1></div>
  <div class="tabs">${tabs.map(([k,n,i])=>`<button class="tab ${tab==k?'on':''}" data-act="tab" data-t="${k}">${ic(i,14)}${n}</button>`).join('')}</div>${p}
  <div class="nav2">${k>0?`<a href="#/tema/${sid}/${T[k-1].id}">${ic('chevL',16)}Anterior</a>`:'<span>Anterior</span>'}<a href="#/materia/${sid}">${ic('list',16)}Índice</a>${k<T.length-1?`<a class="pri" href="#/tema/${sid}/${T[k+1].id}">Siguiente${ic('chevR',16)}</a>`:'<span>Siguiente</span>'}</div>`}
@@ -181,6 +181,8 @@ document.addEventListener('click',async e=>{
  if(a=='fav'){toggle(S.favs,d.k);save();render()}
  else if(a=='done'){toggle(S.done,d.k);save();render()}
  else if(a=='setst'){S.est[d.k]=d.v;kvSet('est',S.est);[...b.parentNode.querySelectorAll('.dt')].forEach(x=>x.classList.toggle('on',x==b));refreshAvg()}
+ else if(a=='nsave')notaSave(d.k);
+ else if(a=='ncancel')notaCancel(d.k);
  else if(a=='setcur'){S.cur=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
@@ -193,10 +195,14 @@ document.addEventListener('click',async e=>{
  else if(a=='open'){const r=await tx('files','readonly',s=>s.get(+d.id));if(r)window.open(URL.createObjectURL(r.blob),'_blank')}
  else if(a=='del'){if(confirm('¿Eliminar este archivo del dispositivo?')){await tx('files','readwrite',s=>s.delete(+d.id));render()}}});
 
-document.addEventListener('change',e=>{const i=e.target;if(!i.classList||!i.classList.contains('nota'))return;
- let n=i.value.trim()===''?null:parseFloat(i.value.replace(',','.'));if(n!=null&&isNaN(n))n=null;
+const toast=m=>{let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1600)};
+const notaIn=k=>document.querySelector(`input.nota[data-k="${k}"]`),notaAc=k=>document.querySelector(`.nac[data-k="${k}"]`);
+function notaSave(k){const i=notaIn(k);let n=i.value.trim()===''?null:parseFloat(i.value.replace(',','.'));if(n!=null&&isNaN(n))n=null;
  if(n!=null){n=Math.min(100,Math.max(0,n));i.value=n}
- S.notas[i.dataset.k]=n;kvSet('notas',S.notas);refreshAvg()});
+ S.notas[k]=n;kvSet('notas',S.notas);i.dataset.orig=n??'';notaAc(k).hidden=true;refreshAvg();toast(n==null?'Nota borrada':'Nota guardada ✓')}
+function notaCancel(k){const i=notaIn(k);i.value=i.dataset.orig;notaAc(k).hidden=true}
+document.addEventListener('input',e=>{const i=e.target;if(i.classList&&i.classList.contains('nota'))notaAc(i.dataset.k).hidden=(i.value.trim()===i.dataset.orig)});
+document.addEventListener('keydown',e=>{const i=e.target;if(e.key==='Enter'&&i.classList&&i.classList.contains('nota')){e.preventDefault();notaSave(i.dataset.k);i.blur()}});
 document.addEventListener('toggle',e=>{const d=e.target;if(d.matches&&d.matches('details.sem')){const n=+d.dataset.n;d.open?OPEN.add(n):OPEN.delete(n)}},true);
 
 /* ===== Arranque, estado de conexión y PWA ===== */
