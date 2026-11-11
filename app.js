@@ -25,6 +25,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const fmt=n=>typeof n==='number'?(+n.toFixed(4)).toLocaleString('es-BO',{maximumFractionDigits:4}):n;
 const toggle=(a,k)=>{const i=a.indexOf(k);i<0?a.push(k):a.splice(i,1)};
+/* x̄ (x con raya): Winky Sans no trae la raya, así que se dibuja con la letra del sistema para que quede bien pegada */
+const fixM=h=>h.replace(/x\u0304/g,'<span class="xb">x\u0304</span>');
 const nf=()=>'<div class="empty">No encontrado. <a href="#/inicio"><b>Volver al inicio</b></a></div>';
 
 /* ===== Almacenamiento local (IndexedDB): favoritos, progreso y archivos de la biblioteca ===== */
@@ -62,7 +64,7 @@ function runCalc(id){
    if(vals.some(isNaN))throw Error('Completa todos los campos con números.');
    const x=new Function(...ids,'return '+f.expr)(...vals);if(!isFinite(x))throw Error('Resultado no definido (revisa divisiones entre cero).');
    r={r:x,st:[f.tex,`Sustituyendo: ${f.expr.replace(/[A-Za-z]+/g,m=>vals[ids.indexOf(m)]??m)}`,`Resultado = ${fmt(x)} ${f.unit}`]}}
-  out.innerHTML=`<div class="res ok"><small>Resultado</small><strong>${fmt(r.r)} <span>${f.unit||''}</span></strong></div><h3>Procedimiento</h3><ol class="steps">${r.st.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`;
+  out.innerHTML=fixM(`<div class="res ok"><small>Resultado</small><strong>${fmt(r.r)} <span>${f.unit||''}</span></strong></div><h3>Procedimiento</h3><ol class="steps">${r.st.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`);
  }catch(e){out.innerHTML=`<div class="res bad">${esc(e.message)}</div>`}}
 
 /* ===== Componentes ===== */
@@ -76,7 +78,7 @@ function home(){
  const favs=S.favs.map(f=>{const[sid,tid]=f.split('/'),t=topics(sid).find(x=>x.id==tid);return t?`<a class="row" href="#/tema/${f}">${ic('bookmark',16)}<span>${esc(t.t)}</span>${ic('chevR',16)}</a>`:''}).join('');
  const tl=(h,c,hz,i,t,sb)=>`<a class="acc" href="${h}" style="--c:${c};--haz:${hz}"><span class="bd">${ic(i,22)}</span><span class="at"><b>${t}</b><small>${sb}</small></span></a>`;
  return `<div class="search"><a href="#/buscar">${ic('search')}<span>Buscar materia, tema, fórmula…</span></a>${stand?'':`<button data-act="inst">${ic('download',16)} Instalar</button>`}</div>
- <a class="card cur" href="#/materia/${cur}" style="--c:${s.color}"><div class="r"><span><b>${s.name}</b> <small>· Segundo semestre</small></span>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${d} de ${T.length} temas estudiados · ${p}%</small></a>
+ <a class="card cur" href="#/materia/${cur}" style="--c:var(--tq)"><div class="r"><span><b>${s.name}</b> <small>· Segundo semestre</small></span>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${d} de ${T.length} temas estudiados · ${p}%</small></a>
  <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DEL DÍA</b><a class="pillb" href="#/materia/${cur}">Más información ${ic('arrow',14)}</a></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div></div>
  <h2 class="acch">${ic('grid',20)} ACCESOS DIRECTOS</h2>
  <div class="accs">${tl('#/materia/'+cur,'#1686c9','42,160,240','chart','Estadística','Unidades y temas')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
@@ -148,7 +150,7 @@ const buscar=()=>`<div class="searchbox">${ic('search')}<input id="q" placeholde
 async function render(){
  const[r,a,b]=location.hash.slice(2).split('/'),route=r||'inicio';
  const V={inicio:home,carrera,biblioteca,formulario:()=>formulario(a),materia:()=>materia(a),tema:()=>tema(a,b),calc:()=>calc(a),buscar};
- app.innerHTML=await (V[route]||home)();
+ app.innerHTML=fixM(await (V[route]||home)());
  const act={materia:'carrera',tema:'carrera',calc:'formulario',buscar:'inicio'}[route]||route;
  document.querySelectorAll('nav a').forEach(n=>n.classList.toggle('on',n.dataset.r==act));
  if(route=='buscar'){const q=$('#q');q.focus();q.oninput=()=>$('#res').innerHTML=results(q.value)}}
