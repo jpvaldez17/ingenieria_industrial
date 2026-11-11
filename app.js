@@ -32,6 +32,8 @@ const curId=()=>S.cur&&SUBJ()[S.cur]?S.cur:D.career.current;
 const hexRGB=h=>{h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16)).join(',')};
 const ORD=['','Primer','Segundo','Tercer','Cuarto','Quinto','Sexto','Séptimo','Octavo','Noveno','Décimo'];
 const semTxt=k=>{const m=D.career.semesters.find(x=>x.items.includes(k));return m?`${ORD[m.n]||m.n+'.º'} semestre`:''};
+/* Colores de los números de semestre (sin rosado, violeta ni amarillo) */
+const SEMC=['#2f9cf4','#22c55e','#f97316','#ef4444','#14b8a6','#22d3ee','#c58a5a','#84cc16','#38bdf8'];
 const nf=()=>'<div class="empty">No encontrado. <a href="#/inicio"><b>Volver al inicio</b></a></div>';
 
 /* ===== Almacenamiento local (IndexedDB): favoritos, progreso y archivos de la biblioteca ===== */
@@ -91,7 +93,7 @@ function home(){
 
 function carrera(){
  const st={aprobada:'Aprobada',curso:'En curso',disponible:'Disponible',desarrollo:'En desarrollo',pendiente:'Pendiente'};
- return `<h1>Mi carrera</h1><p class="muted">Materias por semestre. Toca «Usar» para elegir tu materia actual: cambia en Inicio y en Formulario.</p>`+D.career.semesters.map(sm=>`<details class="card sem" ${sm.items.includes(curId())?'open':''}><summary><span class="num">${sm.n}</span>Semestre ${sm.n}<span class="muted">${sm.items.length?sm.items.length+' materias':'Sin materias'}</span></summary>${
+ return `<h1>Mi carrera</h1><p class="muted">Materias por semestre. Toca «Usar» para elegir tu materia actual: cambia en Inicio y en Formulario.</p>`+D.career.semesters.map(sm=>`<details class="card sem" ${sm.items.includes(curId())?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="muted">${sm.items.length?sm.items.length+' materias':'Sin materias'}</span><span class="cv">${ic('chevR',20)}</span></summary>${
   sm.items.map(k=>{const s=SUBJ()[k],on=k==curId();return `<div class="srow" style="--c:${s.color}"><a class="row" ${s.data?`href="#/materia/${k}"`:''}><span class="bd">${ic(s.icon,18)}</span><span>${s.name}<br><small class="st ${s.status}">${st[s.status]}</small></span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
@@ -178,14 +180,12 @@ document.addEventListener('click',async e=>{
  else if(a=='del'){if(confirm('¿Eliminar este archivo del dispositivo?')){await tx('files','readwrite',s=>s.delete(+d.id));render()}}});
 
 /* ===== Arranque, estado de conexión y PWA ===== */
-const net=()=>$('#net').hidden=navigator.onLine;
-addEventListener('online',net);addEventListener('offline',net);
 document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.dataset.s||22));
 (async()=>{
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.sub={};
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data)D.sub[k]=await j(`${s.data}.json`);
-  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;net();render()}
+  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
