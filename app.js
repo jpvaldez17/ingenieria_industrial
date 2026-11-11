@@ -90,9 +90,9 @@ function home(){
  ${favs?`<h2>Favoritos</h2><div class="card">${favs}</div>`:''}`}
 
 function carrera(){
- const st={disponible:'Disponible',desarrollo:'En desarrollo',pendiente:'Pendiente'};
- return `<h1>Mi carrera</h1><p class="muted">Materias por semestre. Toca «Usar» para elegir tu materia actual: cambia en Inicio y en Formulario.</p>`+D.career.semesters.map(sm=>`<details class="card sem" ${sm.items.length?'open':''}><summary><span class="num">${sm.n}</span>Semestre ${sm.n}<span class="muted">${sm.items.length?sm.items.length+' materias':'Sin materias'}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId();return `<div class="srow" style="--c:${s.color}"><a class="row" ${s.data?`href="#/materia/${k}"`:''}><span class="bd">${ic(s.icon,18)}</span><span>${s.name}<br><small>${st[s.status]}</small></span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div>`}).join('')}</details>`).join('')}
+ const st={aprobada:'Aprobada',curso:'En curso',disponible:'Disponible',desarrollo:'En desarrollo',pendiente:'Pendiente'};
+ return `<h1>Mi carrera</h1><p class="muted">Materias por semestre. Toca «Usar» para elegir tu materia actual: cambia en Inicio y en Formulario.</p>`+D.career.semesters.map(sm=>`<details class="card sem" ${sm.items.includes(curId())?'open':''}><summary><span class="num">${sm.n}</span>Semestre ${sm.n}<span class="muted">${sm.items.length?sm.items.length+' materias':'Sin materias'}</span></summary>${
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId();return `<div class="srow" style="--c:${s.color}"><a class="row" ${s.data?`href="#/materia/${k}"`:''}><span class="bd">${ic(s.icon,18)}</span><span>${s.name}<br><small class="st ${s.status}">${st[s.status]}</small></span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
@@ -124,7 +124,7 @@ function tema(sid,tid){
 function formulario(a){
  fsub=(a&&SUBJ()[a])?a:curId();const s=SUBJ()[fsub],fs=D.formulas.filter(f=>f.subject==fsub),cats=[...new Set(fs.map(f=>f.cat))];
  return `<h1>Formulario</h1><p class="muted">Fórmulas y calculadoras por materia.</p>
- <div class="chips">${Object.entries(SUBJ()).map(([k,v])=>`<a class="chip ${k==fsub?'on':''}" href="#/formulario/${k}" style="--c:${v.color}">${ic(v.icon,14)}${v.short}</a>`).join('')}</div>
+ <div class="chips">${Object.entries(SUBJ()).filter(([k,v])=>v.data||k==fsub||D.formulas.some(f=>f.subject==k)).map(([k,v])=>`<a class="chip ${k==fsub?'on':''}" href="#/formulario/${k}" style="--c:${v.color}">${ic(v.icon,14)}${v.short}</a>`).join('')}</div>
  ${fs.length?cats.map(c=>`<h3>${c}</h3><div class="grid2">${fs.filter(f=>f.cat==c).map(fcard).join('')}</div>`).join(''):`<div class="empty">${s.name}: fórmulas próximamente.</div>`}`}
 
 function calc(id){
@@ -140,7 +140,7 @@ async function biblioteca(){
  <div class="tabs">${C.map(([k,n,i])=>`<button class="tab ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>
  ${L.length?L.map(x=>`<div class="card"><div class="r2"><div><b>${esc(x.title)}</b><br><small>${esc(SUBJ()[x.subject]?.short||'')}${x.unit?' · '+esc(x.unit):''}</small></div><button class="btn sm" data-act="open" data-id="${x.id}">Abrir</button><button class="btn ghost sm" data-act="del" data-id="${x.id}" aria-label="Eliminar">${ic('trash',16)}</button></div></div>`).join(''):'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
  <div class="card"><h3 style="margin-top:0">Añadir archivo</h3><input type="file" id="fi" accept="${cat=='foto'?'image/*':'application/pdf,image/*'}">
- <label>Materia<select id="fs">${Object.entries(SUBJ()).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('')}</select></label>
+ <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}">${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
  <label>Unidad / tema (opcional)<input id="fu"></label><button class="btn" data-act="addf">${ic('plus',18)} Guardar en el dispositivo</button></div>`}
 
 function results(q){

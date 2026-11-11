@@ -1,83 +1,479 @@
 {
- "_nota": "Distribución por semestre DE EJEMPLO: ajústala al plan oficial de la UPDS. Para añadir una materia: agrega su entrada en 'subjects' y su clave en 'semesters'.",
+ "_nota": "Malla curricular oficial de Ingeniería Industrial, UPDS sede La Paz (9 semestres). Para añadir contenido a una materia: agrega 'data' en su entrada y su clave en estadistica.json (o el archivo de esa materia). Estados: aprobada, curso, desarrollo, pendiente.",
  "current": "estadistica",
  "subjects": {
+  "metodologia": {
+   "name": "Metodología de la Investigación Científica",
+   "short": "Metodología",
+   "color": "#db2777",
+   "icon": "book",
+   "status": "aprobada"
+  },
+  "quimica": {
+   "name": "Química General",
+   "short": "Química Gral.",
+   "color": "#ea580c",
+   "icon": "flask",
+   "status": "aprobada"
+  },
+  "fundmat": {
+   "name": "Fundamentos de Matemáticas",
+   "short": "Fund. Mat.",
+   "color": "#0d9488",
+   "icon": "sigma",
+   "status": "aprobada"
+  },
+  "ingles1": {
+   "name": "Inglés Técnico I",
+   "short": "Inglés I",
+   "color": "#db2777",
+   "icon": "book",
+   "status": "aprobada"
+  },
+  "programacion": {
+   "name": "Programación Básica",
+   "short": "Programación",
+   "color": "#0ea5e9",
+   "icon": "grid",
+   "status": "aprobada"
+  },
+  "fisica": {
+   "name": "Física I",
+   "short": "Física I",
+   "color": "#7c3aed",
+   "icon": "zap",
+   "status": "aprobada"
+  },
+  "algebra": {
+   "name": "Álgebra Lineal",
+   "short": "Álgebra",
+   "color": "#0d9488",
+   "icon": "sigma",
+   "status": "curso"
+  },
+  "calculo": {
+   "name": "Cálculo I",
+   "short": "Cálculo I",
+   "color": "#0d9488",
+   "icon": "sigma",
+   "status": "curso"
+  },
   "estadistica": {
    "name": "Estadística Descriptiva",
    "short": "Estadística",
    "color": "#1d6fe0",
    "icon": "chart",
-   "desc": "Analiza, interpreta y comprende los datos.",
    "status": "desarrollo",
+   "desc": "Analiza, interpreta y comprende los datos.",
    "data": "estadistica"
   },
-  "fisica": {
-   "name": "Física",
-   "short": "Física",
+  "etica": {
+   "name": "Ética y Ciudadanía Global",
+   "short": "Ética",
+   "color": "#db2777",
+   "icon": "book",
+   "status": "curso"
+  },
+  "fisica2": {
+   "name": "Física II",
+   "short": "Física II",
    "color": "#7c3aed",
    "icon": "zap",
+   "status": "curso"
+  },
+  "quimorg": {
+   "name": "Química Orgánica",
+   "short": "Q. Orgánica",
+   "color": "#ea580c",
+   "icon": "flask",
+   "status": "curso"
+  },
+  "prodmanuf1": {
+   "name": "Producción y Manufactura Flexible I",
+   "short": "Prod. Manuf. I",
+   "color": "#16a34a",
+   "icon": "list",
    "status": "pendiente"
   },
-  "calculo": {
-   "name": "Cálculo",
-   "short": "Cálculo",
+  "dibujo": {
+   "name": "Dibujo Computarizado en Ingeniería",
+   "short": "Dibujo Comp.",
+   "color": "#0ea5e9",
+   "icon": "grid",
+   "status": "pendiente"
+  },
+  "contab1": {
+   "name": "Contabilidad Empresarial I",
+   "short": "Contabilidad I",
+   "color": "#15965a",
+   "icon": "calc",
+   "status": "pendiente"
+  },
+  "estinf": {
+   "name": "Estadística Inferencial",
+   "short": "Estad. Inferencial",
+   "color": "#1d6fe0",
+   "icon": "chart",
+   "status": "pendiente"
+  },
+  "calculo2": {
+   "name": "Cálculo II",
+   "short": "Cálculo II",
    "color": "#0d9488",
    "icon": "sigma",
    "status": "pendiente"
   },
-  "quimica": {
-   "name": "Química",
-   "short": "Química",
+  "economia": {
+   "name": "Introducción a la Economía",
+   "short": "Economía",
+   "color": "#15965a",
+   "icon": "calc",
+   "status": "pendiente"
+  },
+  "invop1": {
+   "name": "Investigación Operativa I",
+   "short": "Inv. Operativa I",
+   "color": "#0d9488",
+   "icon": "sigma",
+   "status": "pendiente"
+  },
+  "electrotecnia": {
+   "name": "Electrotecnia Industrial",
+   "short": "Electrotecnia",
+   "color": "#7c3aed",
+   "icon": "zap",
+   "status": "pendiente"
+  },
+  "termo": {
+   "name": "Termodinámica",
+   "short": "Termodinámica",
    "color": "#ea580c",
    "icon": "flask",
+   "status": "pendiente"
+  },
+  "gestdatos": {
+   "name": "Gestión de Datos",
+   "short": "Gestión Datos",
+   "color": "#0ea5e9",
+   "icon": "grid",
+   "status": "pendiente"
+  },
+  "cec": {
+   "name": "Control Estadístico de Calidad",
+   "short": "Control Calidad",
+   "color": "#1d6fe0",
+   "icon": "chart",
+   "status": "pendiente"
+  },
+  "opunit1": {
+   "name": "Operaciones Unitarias I",
+   "short": "Op. Unitarias I",
+   "color": "#ea580c",
+   "icon": "flask",
+   "status": "pendiente"
+  },
+  "invop2": {
+   "name": "Investigación Operativa II",
+   "short": "Inv. Operativa II",
+   "color": "#0d9488",
+   "icon": "sigma",
+   "status": "pendiente"
+  },
+  "metodos": {
+   "name": "Ingeniería de Métodos y Ergonomía",
+   "short": "Métodos",
+   "color": "#16a34a",
+   "icon": "list",
+   "status": "pendiente"
+  },
+  "prodmanuf2": {
+   "name": "Producción y Manufactura Flexible II",
+   "short": "Prod. Manuf. II",
+   "color": "#16a34a",
+   "icon": "list",
+   "status": "pendiente"
+  },
+  "construcciones": {
+   "name": "Construcciones e Instalaciones Industriales",
+   "short": "Construcciones",
+   "color": "#16a34a",
+   "icon": "list",
+   "status": "pendiente"
+  },
+  "costos1": {
+   "name": "Contabilidad de Costos I",
+   "short": "Costos I",
+   "color": "#15965a",
+   "icon": "calc",
+   "status": "pendiente"
+  },
+  "gcalidad": {
+   "name": "Gestión de la Calidad",
+   "short": "Gest. Calidad",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "mercados1": {
+   "name": "Investigación de Mercados I",
+   "short": "Mercados I",
+   "color": "#15965a",
+   "icon": "calc",
+   "status": "pendiente"
+  },
+  "talento1": {
+   "name": "Gestión del Talento Humano I",
+   "short": "Talento Humano",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "opunit2": {
+   "name": "Operaciones Unitarias II",
+   "short": "Op. Unitarias II",
+   "color": "#ea580c",
+   "icon": "flask",
+   "status": "pendiente"
+  },
+  "mantenimiento": {
+   "name": "Gestión del Mantenimiento",
+   "short": "Mantenimiento",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "iainnov": {
+   "name": "Inteligencia Artificial para la Innovación",
+   "short": "IA Innovación",
+   "color": "#0ea5e9",
+   "icon": "grid",
+   "status": "pendiente"
+  },
+  "circuitos": {
+   "name": "Circuitos Eléctricos y Digitales",
+   "short": "Circuitos",
+   "color": "#7c3aed",
+   "icon": "zap",
+   "status": "pendiente"
+  },
+  "procind1": {
+   "name": "Procesos Industriales I",
+   "short": "Procesos Ind. I",
+   "color": "#ea580c",
+   "icon": "flask",
+   "status": "pendiente"
+  },
+  "ingfin": {
+   "name": "Ingeniería Financiera",
+   "short": "Ing. Financiera",
+   "color": "#15965a",
+   "icon": "calc",
+   "status": "pendiente"
+  },
+  "mktdigital": {
+   "name": "Marketing Digital",
+   "short": "Marketing Digital",
+   "color": "#15965a",
+   "icon": "calc",
+   "status": "pendiente"
+  },
+  "electiva1": {
+   "name": "Electiva 1",
+   "short": "Electiva 1",
+   "color": "#64748b",
+   "icon": "plus",
+   "status": "pendiente"
+  },
+  "cadena": {
+   "name": "Gestión de la Cadena de Suministros",
+   "short": "Cadena Suministros",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "proyectos": {
+   "name": "Preparación y Evaluación de Proyectos",
+   "short": "Evaluación Proy.",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "electiva2": {
+   "name": "Electiva 2",
+   "short": "Electiva 2",
+   "color": "#64748b",
+   "icon": "plus",
+   "status": "pendiente"
+  },
+  "emprendedurismo": {
+   "name": "Emprendedurismo e Innovación",
+   "short": "Emprendedurismo",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "seguridad": {
+   "name": "Seguridad e Higiene Ocupacional",
+   "short": "Seguridad",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "procind2": {
+   "name": "Procesos Industriales II",
+   "short": "Procesos Ind. II",
+   "color": "#ea580c",
+   "icon": "flask",
+   "status": "pendiente"
+  },
+  "automatizacion": {
+   "name": "Automatización Industrial",
+   "short": "Automatización",
+   "color": "#7c3aed",
+   "icon": "zap",
+   "status": "pendiente"
+  },
+  "iarobotica": {
+   "name": "Inteligencia Artificial y Robótica",
+   "short": "IA y Robótica",
+   "color": "#0ea5e9",
+   "icon": "grid",
+   "status": "pendiente"
+  },
+  "prodlimpia": {
+   "name": "Producción Limpia",
+   "short": "Prod. Limpia",
+   "color": "#16a34a",
+   "icon": "list",
+   "status": "pendiente"
+  },
+  "neumaticos": {
+   "name": "Sistemas Neumáticos",
+   "short": "Neumáticos",
+   "color": "#7c3aed",
+   "icon": "zap",
+   "status": "pendiente"
+  },
+  "electiva3": {
+   "name": "Electiva 3",
+   "short": "Electiva 3",
+   "color": "#64748b",
+   "icon": "plus",
+   "status": "pendiente"
+  },
+  "gerencia": {
+   "name": "Gerencia Estratégica",
+   "short": "Gerencia Estr.",
+   "color": "#ca8a04",
+   "icon": "clip",
+   "status": "pendiente"
+  },
+  "gerproyectos": {
+   "name": "Gerencia de Proyectos",
+   "short": "Ger. Proyectos",
+   "color": "#ca8a04",
+   "icon": "clip",
    "status": "pendiente"
   }
  },
  "semesters": [
   {
    "n": 1,
-   "items": []
+   "items": [
+    "metodologia",
+    "quimica",
+    "fundmat",
+    "ingles1",
+    "programacion",
+    "fisica"
+   ]
   },
   {
    "n": 2,
    "items": [
-    "estadistica",
-    "fisica",
+    "algebra",
     "calculo",
-    "quimica"
+    "estadistica",
+    "etica",
+    "fisica2",
+    "quimorg"
    ]
   },
   {
    "n": 3,
-   "items": []
+   "items": [
+    "prodmanuf1",
+    "dibujo",
+    "contab1",
+    "estinf",
+    "calculo2"
+   ]
   },
   {
    "n": 4,
-   "items": []
+   "items": [
+    "economia",
+    "invop1",
+    "electrotecnia",
+    "termo",
+    "gestdatos",
+    "cec"
+   ]
   },
   {
    "n": 5,
-   "items": []
+   "items": [
+    "opunit1",
+    "invop2",
+    "metodos",
+    "prodmanuf2",
+    "construcciones",
+    "costos1"
+   ]
   },
   {
    "n": 6,
-   "items": []
+   "items": [
+    "gcalidad",
+    "mercados1",
+    "talento1",
+    "opunit2",
+    "mantenimiento",
+    "iainnov"
+   ]
   },
   {
    "n": 7,
-   "items": []
+   "items": [
+    "circuitos",
+    "procind1",
+    "ingfin",
+    "mktdigital",
+    "electiva1",
+    "cadena"
+   ]
   },
   {
    "n": 8,
-   "items": []
+   "items": [
+    "proyectos",
+    "electiva2",
+    "emprendedurismo",
+    "seguridad",
+    "procind2",
+    "automatizacion"
+   ]
   },
   {
    "n": 9,
-   "items": []
-  },
-  {
-   "n": 10,
-   "items": []
+   "items": [
+    "iarobotica",
+    "prodlimpia",
+    "neumaticos",
+    "electiva3",
+    "gerencia",
+    "gerproyectos"
+   ]
   }
  ],
  "datos": [
