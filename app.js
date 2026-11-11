@@ -26,7 +26,7 @@ const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const fmt=n=>typeof n==='number'?(+n.toFixed(4)).toLocaleString('es-BO',{maximumFractionDigits:4}):n;
 const toggle=(a,k)=>{const i=a.indexOf(k);i<0?a.push(k):a.splice(i,1)};
 /* x̄ (x con raya): Winky Sans no trae la raya, así que se dibuja con la letra del sistema para que quede bien pegada */
-const fixM=h=>h.replace(/x\u0304/g,'<span class="xb">x\u0304</span>');
+const fixM=h=>h.replace(/([xy])\u0304/g,'<span class="xb">$1\u0304</span>');
 /* Materia actual (se elige en Mi carrera) */
 const curId=()=>S.cur&&SUBJ()[S.cur]?S.cur:D.career.current;
 const hexRGB=h=>{h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16)).join(',')};
@@ -57,26 +57,45 @@ media:a=>({r:mean(a),st:[`Σxᵢ = ${a.join(' + ')} = ${fmt(sum(a))}`,`n = ${a.l
 mediana:a=>{const b=[...a].sort((x,y)=>x-y),n=b.length,m=n%2?b[(n-1)/2]:(b[n/2-1]+b[n/2])/2;
  return{r:m,st:[`Datos ordenados: ${b.join(', ')}`,`n = ${n} (${n%2?'impar: dato central':'par: promedio de los dos centrales'})`,`Me = ${fmt(m)}`]}},
 moda:a=>{const c={};a.forEach(v=>c[v]=(c[v]||0)+1);const mx=Math.max(...Object.values(c)),m=Object.keys(c).filter(k=>c[k]==mx);
- return{r:mx==1?'Sin moda':m.join(', '),st:[`Frecuencias: ${Object.entries(c).map(([k,v])=>`${k}→${v}`).join(', ')}`,`Frecuencia máxima = ${mx}`]}},
-varianza:a=>{const q=vr(a);return{r:q.v,st:[`x̄ = ${fmt(q.m)}`,`Σ(xᵢ − x̄)² = ${q.d.map(fmt).join(' + ')} = ${fmt(q.s)}`,`σ² = ${fmt(q.s)} / ${a.length} (varianza poblacional)`]}},
-desv:a=>{const q=vr(a);return{r:Math.sqrt(q.v),st:[`x̄ = ${fmt(q.m)}`,`σ² = ${fmt(q.v)}`,`σ = √${fmt(q.v)}`]}},
-cv:a=>{const q=vr(a),s=Math.sqrt(q.v);if(!q.m)throw Error('La media es 0: el CV no está definido.');
- return{r:s/Math.abs(q.m)*100,st:[`x̄ = ${fmt(q.m)}`,`σ = ${fmt(s)}`,`CV = ${fmt(s)} / ${fmt(Math.abs(q.m))} × 100`]}}};
+ return{r:mx==1?'Sin moda':m.join(', '),st:[`Frecuencias: ${Object.entries(c).map(([k,v])=>`${k}→${v}`).join(', ')}`,`Frecuencia máxima = ${mx}`]}}
+};
+const chkN=(a,m)=>{if(a.length<m)throw Error(`Se necesitan al menos ${m} datos.`)};
+const xyS=(x,y)=>{if(x.length!=y.length)throw Error('X e Y deben tener la misma cantidad de datos.');chkN(x,2);const mx=mean(x),my=mean(y);let sxy=0,sxx=0,syy=0;x.forEach((v,i)=>{sxy+=(v-mx)*(y[i]-my);sxx+=(v-mx)**2;syy+=(y[i]-my)**2});return{mx,my,sxy,sxx,syy}};
+Object.assign(F,{
+varianza:a=>{chkN(a,2);const q=vr(a),v=q.s/(a.length-1);return{r:v,st:[`x̄ = ${fmt(q.m)}`,`Σ(xᵢ − x̄)² = ${q.d.map(fmt).join(' + ')} = ${fmt(q.s)}`,`s² = ${fmt(q.s)} / ${a.length-1} (varianza muestral, n − 1)`]}},
+desv:a=>{chkN(a,2);const q=vr(a),v=q.s/(a.length-1);return{r:Math.sqrt(v),st:[`x̄ = ${fmt(q.m)}`,`s² = ${fmt(q.s)} / ${a.length-1} = ${fmt(v)}`,`s = √${fmt(v)}`]}},
+cv:a=>{chkN(a,2);const q=vr(a),s=Math.sqrt(q.s/(a.length-1));if(!q.m)throw Error('La media es 0: el CV no está definido.');
+ return{r:s/Math.abs(q.m)*100,st:[`x̄ = ${fmt(q.m)}`,`s = ${fmt(s)}`,`CV = ${fmt(s)} / ${fmt(Math.abs(q.m))} × 100`]}},
+mediaAgr:(x,f)=>{if(x.length!=f.length)throw Error('Las dos listas deben tener la misma cantidad de datos.');const n=sum(f);if(!n)throw Error('La suma de frecuencias es 0.');const sx=sum(x.map((v,i)=>v*f[i]));
+ return{r:sx/n,st:[`n = Σfᵢ = ${fmt(n)}`,`Σ fᵢ·xᵢ = ${x.map((v,i)=>`${fmt(f[i])}·${fmt(v)}`).join(' + ')} = ${fmt(sx)}`,`x̄ = ${fmt(sx)} / ${fmt(n)}`]}},
+nProp:(Z,p,e)=>{if(!(p>0&&p<1))throw Error('p debe estar entre 0 y 1 (ej. 0,5).');if(!(e>0))throw Error('El error e debe ser mayor que 0.');const q=1-p,n0=Z*Z*p*q/(e*e);
+ return{r:Math.ceil(n0),st:[`q = 1 − p = ${fmt(q)}`,`n₀ = Z²·p·q / e² = ${fmt(Z*Z)} · ${fmt(p)} · ${fmt(q)} / ${fmt(e*e)} = ${fmt(n0)}`,`Se redondea hacia arriba: n₀ = ${Math.ceil(n0)}`]}},
+nFin:(N,Z,p,e)=>{if(!(p>0&&p<1))throw Error('p debe estar entre 0 y 1 (ej. 0,5).');if(!(e>0)||!(N>1))throw Error('N debe ser mayor que 1 y e mayor que 0.');const q=1-p,t=Z*Z*p*q,n=N*t/(e*e*(N-1)+t);
+ return{r:Math.ceil(n),st:[`q = 1 − p = ${fmt(q)}`,`Z²·p·q = ${fmt(t)}`,`n = N·Z²·p·q / [e²(N − 1) + Z²·p·q] = ${fmt(N*t)} / ${fmt(e*e*(N-1)+t)} = ${fmt(n)}`,`Se redondea hacia arriba: n = ${Math.ceil(n)}`]}},
+sturges:n=>{if(!(n>=1))throw Error('n debe ser al menos 1.');const k=1+3.322*Math.log10(n);return{r:Math.round(k),st:[`k = 1 + 3,322 · log₁₀(${fmt(n)}) = ${fmt(k)}`,`Se redondea: k = ${Math.round(k)}`]}},
+atip:(q1,q3)=>{if(q3<q1)throw Error('Q₃ no puede ser menor que Q₁.');const ric=q3-q1,li=q1-1.5*ric,ls=q3+1.5*ric;
+ return{r:`[${fmt(li)} ; ${fmt(ls)}]`,st:[`RIC = Q₃ − Q₁ = ${fmt(q3)} − ${fmt(q1)} = ${fmt(ric)}`,`Límite inferior = Q₁ − 1,5·RIC = ${fmt(li)}`,`Límite superior = Q₃ + 1,5·RIC = ${fmt(ls)}`,'Los datos fuera de ese intervalo son atípicos.']}},
+pearson:(x,y)=>{const q=xyS(x,y);if(!q.sxx||!q.syy)throw Error('Los datos no varían: r no está definido.');const r=q.sxy/Math.sqrt(q.sxx*q.syy);
+ return{r,st:[`x̄ = ${fmt(q.mx)} ; y\u0304 = ${fmt(q.my)}`,`Σ(xᵢ − x̄)(yᵢ − y\u0304) = ${fmt(q.sxy)}`,`Σ(xᵢ − x̄)² = ${fmt(q.sxx)} ; Σ(yᵢ − y\u0304)² = ${fmt(q.syy)}`,`r = ${fmt(q.sxy)} / √(${fmt(q.sxx)} · ${fmt(q.syy)})`]}},
+pendiente:(x,y)=>{const q=xyS(x,y);if(!q.sxx)throw Error('Todos los valores de X son iguales: la pendiente no está definida.');
+ return{r:q.sxy/q.sxx,st:[`x̄ = ${fmt(q.mx)} ; y\u0304 = ${fmt(q.my)}`,`Sxy = Σ(xᵢ − x̄)(yᵢ − y\u0304) = ${fmt(q.sxy)}`,`Sxx = Σ(xᵢ − x̄)² = ${fmt(q.sxx)}`,`b = ${fmt(q.sxy)} / ${fmt(q.sxx)}`]}}
+});
 function runCalc(id){
  const f=D.formulas.find(x=>x.id==id),out=$('#out'),ins=[...app.querySelectorAll('[data-v]')];
  try{let r;
-  if(f.fn){const a=ins[0].value.split(/[;,\s]+/).filter(Boolean).map(Number);
-   if(!a.length||a.some(isNaN))throw Error('Ingresa números separados por comas (usa punto como decimal).');r=F[f.fn](a)}
-  else{const ids=f.vars.map(v=>v.id),vals=ins.map(i=>parseFloat(i.value.replace(',','.')));
-   if(vals.some(isNaN))throw Error('Completa todos los campos con números.');
-   const x=new Function(...ids,'return '+f.expr)(...vals);if(!isFinite(x))throw Error('Resultado no definido (revisa divisiones entre cero).');
-   r={r:x,st:[f.tex,`Sustituyendo: ${f.expr.replace(/[A-Za-z]+/g,m=>vals[ids.indexOf(m)]??m)}`,`Resultado = ${fmt(x)} ${f.unit}`]}}
+  const vals=f.vars.map((v,i)=>{const s=ins[i].value;
+   if(v.list){const a=s.split(/[;,\s]+/).filter(Boolean).map(Number);if(!a.length||a.some(isNaN))throw Error('Ingresa números separados por comas (usa punto como decimal).');return a}
+   const n=parseFloat(s.replace(',','.'));if(isNaN(n))throw Error('Completa todos los campos con números.');return n});
+  if(f.fn)r=F[f.fn](...vals);
+  else{const ids=f.vars.map(v=>v.id),x=new Function(...ids,'return '+f.expr)(...vals);if(!isFinite(x))throw Error('Resultado no definido (revisa divisiones entre cero).');
+   r={r:x,st:[f.plain||f.tex,`Sustituyendo: ${f.expr.replace(/[A-Za-z_][A-Za-z0-9_]*/g,m=>ids.includes(m)?fmt(vals[ids.indexOf(m)]):m)}`,`Resultado = ${fmt(x)} ${f.unit||''}`]}}
   out.innerHTML=fixM(`<div class="res ok"><small>Resultado</small><strong>${fmt(r.r)} <span>${f.unit||''}</span></strong></div><h3>Procedimiento</h3><ol class="steps">${r.st.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`);
  }catch(e){out.innerHTML=`<div class="res bad">${esc(e.message)}</div>`}}
 
 /* ===== Componentes ===== */
 const row=(h,i,t,s,c)=>`<a class="row card" href="${h}" style="--c:${c}"><span class="bd">${ic(i,18)}</span><span>${esc(t)}<br><small>${s}</small></span>${ic('chevR',16)}</a>`;
-const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subject].color}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}</b><code>${f.tex}</code></span>${ic('chevR',16)}</a>`;
+const mx=f=>`<span class="fm2 fit"><span class="mw">${f.mathml}</span></span>`;
+const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subject].color}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}</b>${f.mathml?mx(f):`<code>${f.tex}</code>`}</span>${ic('chevR',16)}</a>`;
 
 /* ===== Pantallas ===== */
 function home(){
@@ -142,9 +161,10 @@ function formulario(a){
 
 function calc(id){
  const f=D.formulas.find(x=>x.id==id);if(!f)return nf();const s=SUBJ()[f.subject];
- return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${s.color}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1><div class="tex">${f.tex}</div>
- <h3>Variables</h3><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning}</li>`).join('')}</ul><h3>Datos</h3>
- ${f.vars.map(v=>`<label>${v.label}<input data-v ${v.list?'placeholder="Ej.: 12, 15, 18, 20, 25"':'inputmode="decimal" placeholder="0"'}></label>`).join('')}
+ const dd=f.donde?`<ul class="dd">${f.donde.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`:`<h3>Variables</h3><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning}</li>`).join('')}</ul>`;
+ return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${s.color}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}<div class="tex">${f.mathml?mx(f):f.tex}</div>
+ ${dd}<h3>Datos</h3>
+ ${f.vars.map(v=>`<label>${v.label}<input data-v ${v.list?`placeholder="${v.ph||'Ej.: 12, 15, 18, 20, 25'}"`:'inputmode="decimal" placeholder="0"'}></label>`).join('')}
  <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div></div>`}
 
 async function biblioteca(){
@@ -171,7 +191,11 @@ async function render(){
  app.innerHTML=fixM(await (V[route]||home)());
  const act={materia:'carrera',tema:'carrera',calc:'formulario',buscar:'inicio'}[route]||route;
  document.querySelectorAll('nav a').forEach(n=>n.classList.toggle('on',n.dataset.r==act));
- if(route=='buscar'){const q=$('#q');q.focus();q.oninput=()=>$('#res').innerHTML=results(q.value)}}
+ if(route=='buscar'){const q=$('#q');q.focus();q.oninput=()=>$('#res').innerHTML=results(q.value)}
+ fitMath();if(document.fonts)document.fonts.ready.then(fitMath)}
+/* Fórmulas más anchas que su tarjeta: se reducen para que quepan completas */
+function fitMath(){document.querySelectorAll('.fit').forEach(c=>{const w=c.querySelector('.mw'),m=c.querySelector('math');if(!w||!m)return;m.style.fontSize='';const cw=c.clientWidth-6,mw=w.getBoundingClientRect().width;if(cw>0&&mw>cw)m.style.fontSize=Math.max(10,parseFloat(getComputedStyle(m).fontSize)*cw/mw)+'px'})}
+addEventListener('resize',fitMath);
 window.addEventListener('hashchange',()=>{tab='c';scrollTo(0,0);render()});
 
 document.addEventListener('click',async e=>{

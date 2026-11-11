@@ -312,3 +312,14 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .go.r .ic{display:block;margin:0!important;width:16px;height:16px}
 .go.r .ic path{stroke-width:3}
 .fcard2.wide .fh{grid-template-columns:1fr;gap:8px}.fcard2.wide .fn{text-align:left}
+
+
+/* ===== v16: Formulario con fórmulas en notación matemática (MathML) y "Donde" ===== */
+.fm2{display:block;text-align:center;overflow:hidden}
+.fm2 .mw{display:inline-block}
+.fm2 math{font-family:var(--formula);font-size:1.25em;color:var(--nv)}
+.fc .fm2{text-align:left;margin-top:4px}
+.fc .fm2 math{font-size:1.15em}
+.tex .fm2 math{font-size:1.45em}
+.card .dd b{color:var(--c,#8b5e3c)}
+.card .dd{margin-top:12px}

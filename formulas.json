@@ -1,10 +1,1100 @@
 [
-{"id":"media","subject":"estadistica","cat":"Tendencia central","name":"Media aritmética","tex":"x̄ = Σxᵢ / n","short":"Promedio de datos","icon":"chart","fn":"media","unit":"","vars":[{"id":"x","label":"Datos (separados por comas)","list":1,"meaning":"xᵢ: cada observación · n: cantidad de datos"}]},
-{"id":"mediana","subject":"estadistica","cat":"Tendencia central","name":"Mediana","tex":"Me = valor central","short":"Valor central","icon":"list","fn":"mediana","unit":"","vars":[{"id":"x","label":"Datos (separados por comas)","list":1,"meaning":"Datos ordenados de menor a mayor"}]},
-{"id":"moda","subject":"estadistica","cat":"Tendencia central","name":"Moda","tex":"Mo = más frecuente","short":"Valor más frecuente","icon":"chart","fn":"moda","unit":"","vars":[{"id":"x","label":"Datos (separados por comas)","list":1,"meaning":"Observaciones a contar"}]},
-{"id":"varianza","subject":"estadistica","cat":"Dispersión","name":"Varianza","tex":"σ² = Σ(xᵢ − x̄)² / n","short":"Dispersión de datos","icon":"sigma","fn":"varianza","unit":"","vars":[{"id":"x","label":"Datos (separados por comas)","list":1,"meaning":"x̄: media · n: cantidad de datos (varianza poblacional)"}]},
-{"id":"desv","subject":"estadistica","cat":"Dispersión","name":"Desviación estándar","tex":"σ = √σ²","short":"Dispersión promedio","icon":"chart","fn":"desv","unit":"","vars":[{"id":"x","label":"Datos (separados por comas)","list":1,"meaning":"σ²: varianza de los datos"}]},
-{"id":"cv","subject":"estadistica","cat":"Dispersión","name":"Coeficiente de variación","tex":"CV = (σ / x̄) × 100%","short":"Variabilidad relativa","icon":"sigma","fn":"cv","unit":"%","vars":[{"id":"x","label":"Datos (separados por comas)","list":1,"meaning":"σ: desviación estándar · x̄: media"}]},
-{"id":"velocidad","subject":"fisica","cat":"Cinemática","name":"Velocidad media","tex":"v = d / t","short":"Distancia entre tiempo","icon":"zap","expr":"d/t","unit":"m/s","vars":[{"id":"d","label":"Distancia d (m)","meaning":"Distancia recorrida, en metros"},{"id":"t","label":"Tiempo t (s)","meaning":"Tiempo empleado, en segundos"}]},
-{"id":"molaridad","subject":"quimica","cat":"Disoluciones","name":"Molaridad","tex":"M = n / V","short":"Moles por litro","icon":"flask","expr":"n/V","unit":"mol/L","vars":[{"id":"n","label":"Moles de soluto n (mol)","meaning":"Cantidad de soluto"},{"id":"V","label":"Volumen V (L)","meaning":"Volumen de la disolución, en litros"}]}
+{
+"id": "nprop",
+"subject": "estadistica",
+"cat": "Tema 1 · Fundamentos de estadística descriptiva",
+"name": "Tamaño de muestra (proporción)",
+"short": "",
+"icon": "sigma",
+"plain": "n₀ = Z²·p·q / e²",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mi>n</mi><mn>0</mn></msub><mo>=</mo><mfrac><mrow><msup><mi>Z</mi><mn>2</mn></msup><mspace width=\"0.167em\"></mspace><mi>p</mi><mspace width=\"0.167em\"></mspace><mi>q</mi></mrow><msup><mi>e</mi><mn>2</mn></msup></mfrac></mrow></math>",
+"donde": [
+[
+"n₀",
+"tamaño de muestra"
+],
+[
+"Z",
+"valor de la normal según la confianza (1,96 para 95 %)"
+],
+[
+"p",
+"proporción esperada (0,5 si se desconoce)"
+],
+[
+"q",
+"1 − p"
+],
+[
+"e",
+"error máximo admitido"
+]
+],
+"fn": "nProp",
+"unit": "datos",
+"vars": [
+{
+"id": "Z",
+"label": "Valor Z (1,96 para 95 % de confianza)"
+},
+{
+"id": "p",
+"label": "Proporción esperada p (0,5 si no se conoce)"
+},
+{
+"id": "e",
+"label": "Error máximo e (ej. 0,05)"
+}
+]
+},
+{
+"id": "nfin",
+"subject": "estadistica",
+"cat": "Tema 1 · Fundamentos de estadística descriptiva",
+"name": "Tamaño de muestra (población finita)",
+"short": "",
+"icon": "sigma",
+"plain": "n = N·Z²·p·q / [e²(N − 1) + Z²·p·q]",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>n</mi><mo>=</mo><mfrac><mrow><mi>N</mi><mspace width=\"0.167em\"></mspace><msup><mi>Z</mi><mn>2</mn></msup><mspace width=\"0.167em\"></mspace><mi>p</mi><mspace width=\"0.167em\"></mspace><mi>q</mi></mrow><mrow><msup><mi>e</mi><mn>2</mn></msup><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><mi>N</mi><mo>−</mo><mn>1</mn><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow><mo>+</mo><msup><mi>Z</mi><mn>2</mn></msup><mspace width=\"0.167em\"></mspace><mi>p</mi><mspace width=\"0.167em\"></mspace><mi>q</mi></mrow></mfrac></mrow></math>",
+"donde": [
+[
+"N",
+"tamaño de la población"
+],
+[
+"Z, p, q y e",
+"igual que arriba"
+]
+],
+"fn": "nFin",
+"unit": "datos",
+"vars": [
+{
+"id": "N",
+"label": "Tamaño de la población N"
+},
+{
+"id": "Z",
+"label": "Valor Z (1,96 para 95 %)"
+},
+{
+"id": "p",
+"label": "Proporción esperada p (0,5 si no se conoce)"
+},
+{
+"id": "e",
+"label": "Error máximo e (ej. 0,05)"
+}
+]
+},
+{
+"id": "sturges",
+"subject": "estadistica",
+"cat": "Tema 2 · Representación gráfica y análisis de datos",
+"name": "Número de intervalos (Sturges)",
+"short": "k · número de clases",
+"icon": "list",
+"plain": "k = 1 + 3,322·log₁₀(n)",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>k</mi><mo>=</mo><mn>1</mn><mo>+</mo><mn>3</mn><mo>,</mo><mn>322</mn><mspace width=\"0.167em\"></mspace><msub><mo>log</mo><mn>10</mn></msub><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><mi>n</mi><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow></mrow></math>",
+"donde": [
+[
+"k",
+"número de intervalos"
+],
+[
+"n",
+"total de datos (se redondea k)"
+]
+],
+"fn": "sturges",
+"unit": "intervalos",
+"vars": [
+{
+"id": "n",
+"label": "Total de datos n"
+}
+]
+},
+{
+"id": "amplitud",
+"subject": "estadistica",
+"cat": "Tema 2 · Representación gráfica y análisis de datos",
+"name": "Amplitud del intervalo",
+"short": "",
+"icon": "list",
+"plain": "A = R / k",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>A</mi><mo>=</mo><mfrac><mi>R</mi><mi>k</mi></mfrac></mrow></math>",
+"donde": [
+[
+"A",
+"amplitud"
+],
+[
+"R",
+"rango (dato mayor − dato menor)"
+],
+[
+"k",
+"número de intervalos"
+]
+],
+"expr": "R/k",
+"vars": [
+{
+"id": "R",
+"label": "Rango R (dato mayor − dato menor)"
+},
+{
+"id": "k",
+"label": "Número de intervalos k"
+}
+]
+},
+{
+"id": "marca",
+"subject": "estadistica",
+"cat": "Tema 2 · Representación gráfica y análisis de datos",
+"name": "Marca de clase",
+"short": "xᵢ · punto medio del intervalo",
+"icon": "list",
+"plain": "xᵢ = (Lᵢ + Lₛ) / 2",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mi>x</mi><mi>i</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>L</mi><mi>i</mi></msub><mo>+</mo><msub><mi>L</mi><mi>s</mi></msub></mrow><mn>2</mn></mfrac></mrow></math>",
+"donde": [
+[
+"xᵢ",
+"punto medio del intervalo"
+],
+[
+"Lᵢ y Lₛ",
+"límites inferior y superior"
+]
+],
+"expr": "(Li+Ls)/2",
+"vars": [
+{
+"id": "Li",
+"label": "Límite inferior Lᵢ"
+},
+{
+"id": "Ls",
+"label": "Límite superior Lₛ"
+}
+]
+},
+{
+"id": "frel",
+"subject": "estadistica",
+"cat": "Tema 2 · Representación gráfica y análisis de datos",
+"name": "Frecuencia relativa",
+"short": "fr · proporción de datos",
+"icon": "list",
+"plain": "fr = f / n",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>f</mi><mi>r</mi><mo>=</mo><mfrac><mi>f</mi><mi>n</mi></mfrac></mrow></math>",
+"donde": [
+[
+"fr",
+"frecuencia relativa"
+],
+[
+"f",
+"frecuencia absoluta"
+],
+[
+"n",
+"total de datos"
+]
+],
+"expr": "f/n",
+"vars": [
+{
+"id": "f",
+"label": "Frecuencia absoluta f"
+},
+{
+"id": "n",
+"label": "Total de datos n"
+}
+]
+},
+{
+"id": "media",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Media muestral",
+"short": "",
+"icon": "chart",
+"plain": "x̄ = Σxᵢ / n",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>x</mi><mi>i</mi></msub></mrow><mi>n</mi></mfrac></mrow></math>",
+"donde": [
+[
+"x̄",
+"media"
+],
+[
+"xᵢ",
+"cada dato"
+],
+[
+"n",
+"número de datos"
+]
+],
+"fn": "media",
+"vars": [
+{
+"id": "x",
+"label": "Datos (separados por comas)",
+"list": true
+}
+]
+},
+{
+"id": "mediaagr",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Media (datos agrupados)",
+"short": "",
+"icon": "chart",
+"plain": "x̄ = Σ(fᵢ·xᵢ) / n",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>k</mi></munderover><msub><mi>f</mi><mi>i</mi></msub><mspace width=\"0.167em\"></mspace><msub><mi>x</mi><mi>i</mi></msub></mrow><mi>n</mi></mfrac></mrow></math>",
+"donde": [
+[
+"fᵢ",
+"frecuencia de cada intervalo"
+],
+[
+"xᵢ",
+"marca de clase"
+],
+[
+"k",
+"número de intervalos"
+]
+],
+"fn": "mediaAgr",
+"vars": [
+{
+"id": "x",
+"label": "Marcas de clase xᵢ (separadas por comas)",
+"list": true,
+"ph": "Ej.: 12, 17, 22, 27"
+},
+{
+"id": "f",
+"label": "Frecuencias fᵢ (en el mismo orden)",
+"list": true,
+"ph": "Ej.: 4, 9, 6, 3"
+}
+]
+},
+{
+"id": "medianaagr",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Mediana (datos agrupados)",
+"short": "",
+"icon": "chart",
+"plain": "Me = Lᵢ + [(n/2 − F₍ᵢ₋₁₎) / fᵢ]·A",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>M</mi><mi>e</mi><mo>=</mo><msub><mi>L</mi><mi>i</mi></msub><mo>+</mo><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><mfrac><mrow><mfrac><mi>n</mi><mn>2</mn></mfrac><mo>−</mo><msub><mi>F</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><msub><mi>f</mi><mi>i</mi></msub></mfrac><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow><mi>A</mi></mrow></math>",
+"donde": [
+[
+"Lᵢ",
+"límite inferior de la clase mediana"
+],
+[
+"F₍ᵢ₋₁₎",
+"acumulada de la clase anterior"
+],
+[
+"fᵢ",
+"frecuencia de esa clase"
+],
+[
+"A",
+"amplitud"
+]
+],
+"expr": "Li+((n/2-Fa)/fi)*A",
+"vars": [
+{
+"id": "Li",
+"label": "Límite inferior Lᵢ de la clase mediana"
+},
+{
+"id": "n",
+"label": "Total de datos n"
+},
+{
+"id": "Fa",
+"label": "Frecuencia acumulada de la clase anterior F₍ᵢ₋₁₎"
+},
+{
+"id": "fi",
+"label": "Frecuencia de la clase mediana fᵢ"
+},
+{
+"id": "A",
+"label": "Amplitud A"
+}
+]
+},
+{
+"id": "modaagr",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Moda (datos agrupados)",
+"short": "",
+"icon": "chart",
+"plain": "Mo = Lᵢ + [d₁ / (d₁ + d₂)]·A",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>M</mi><mi>o</mi><mo>=</mo><msub><mi>L</mi><mi>i</mi></msub><mo>+</mo><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><mfrac><msub><mi>d</mi><mn>1</mn></msub><mrow><msub><mi>d</mi><mn>1</mn></msub><mo>+</mo><msub><mi>d</mi><mn>2</mn></msub></mrow></mfrac><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow><mi>A</mi></mrow></math>",
+"donde": [
+[
+"Lᵢ",
+"límite inferior de la clase modal"
+],
+[
+"d₁ y d₂",
+"diferencia de frecuencia con la clase anterior y la siguiente"
+],
+[
+"A",
+"amplitud"
+]
+],
+"expr": "Li+(d1/(d1+d2))*A",
+"vars": [
+{
+"id": "Li",
+"label": "Límite inferior Lᵢ de la clase modal"
+},
+{
+"id": "d1",
+"label": "d₁ (diferencia con la clase anterior)"
+},
+{
+"id": "d2",
+"label": "d₂ (diferencia con la clase siguiente)"
+},
+{
+"id": "A",
+"label": "Amplitud A"
+}
+]
+},
+{
+"id": "varianza",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Varianza muestral",
+"short": "",
+"icon": "sigma",
+"plain": "s² = Σ(xᵢ − x̄)² / (n − 1)",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msup><mi>s</mi><mn>2</mn></msup><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></mfrac></mrow></math>",
+"donde": [
+[
+"s²",
+"varianza"
+],
+[
+"xᵢ",
+"cada dato"
+],
+[
+"x̄",
+"media"
+],
+[
+"n",
+"número de datos"
+]
+],
+"fn": "varianza",
+"vars": [
+{
+"id": "x",
+"label": "Datos (separados por comas)",
+"list": true
+}
+]
+},
+{
+"id": "desv",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Desviación estándar",
+"short": "",
+"icon": "sigma",
+"plain": "s = √s²",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>s</mi><mo>=</mo><msqrt><msup><mi>s</mi><mn>2</mn></msup></msqrt></mrow></math>",
+"donde": [
+[
+"s",
+"desviación estándar"
+],
+[
+"s²",
+"varianza"
+]
+],
+"fn": "desv",
+"vars": [
+{
+"id": "x",
+"label": "Datos (separados por comas)",
+"list": true
+}
+]
+},
+{
+"id": "cv",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Coeficiente de variación",
+"short": "CV · variabilidad relativa",
+"icon": "chart",
+"plain": "CV = (s / x̄)·100 %",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>C</mi><mi>V</mi><mo>=</mo><mfrac><mi>s</mi><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover></mfrac><mo>×</mo><mn>100</mn><mspace width=\"0.167em\"></mspace><mi>%</mi></mrow></math>",
+"donde": [
+[
+"CV",
+"variabilidad relativa (en %)"
+],
+[
+"s",
+"desviación estándar"
+],
+[
+"x̄",
+"media"
+]
+],
+"fn": "cv",
+"unit": "%",
+"vars": [
+{
+"id": "x",
+"label": "Datos (separados por comas)",
+"list": true
+}
+]
+},
+{
+"id": "zeta",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Puntuación z",
+"short": "z · desviaciones respecto a la media",
+"icon": "chart",
+"plain": "z = (x − x̄) / s",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>z</mi><mo>=</mo><mfrac><mrow><mi>x</mi><mo>−</mo><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover></mrow><mi>s</mi></mfrac></mrow></math>",
+"donde": [
+[
+"z",
+"cuántas desviaciones se aleja el dato de la media"
+],
+[
+"x",
+"dato"
+],
+[
+"x̄",
+"media"
+],
+[
+"s",
+"desviación estándar"
+]
+],
+"expr": "(x-xb)/s",
+"vars": [
+{
+"id": "x",
+"label": "Dato x"
+},
+{
+"id": "xb",
+"label": "Media x̄"
+},
+{
+"id": "s",
+"label": "Desviación estándar s"
+}
+]
+},
+{
+"id": "atipicos",
+"subject": "estadistica",
+"cat": "Tema 3 · Medidas de tendencia central y dispersión",
+"name": "Límites de valores atípicos",
+"short": "RIC · rango intercuartílico (Q₃ − Q₁)",
+"icon": "list",
+"plain": "[Q₁ − 1,5·RIC ; Q₃ + 1,5·RIC]",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo stretchy=\"true\" form=\"prefix\">[</mo><mspace width=\"0.167em\"></mspace><msub><mi>Q</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>,</mo><mn>5</mn><mspace width=\"0.167em\"></mspace><mi>R</mi><mi>I</mi><mi>C</mi><mspace width=\"0.333em\"></mspace><mo>;</mo><mspace width=\"0.333em\"></mspace><msub><mi>Q</mi><mn>3</mn></msub><mo>+</mo><mn>1</mn><mo>,</mo><mn>5</mn><mspace width=\"0.167em\"></mspace><mi>R</mi><mi>I</mi><mi>C</mi><mspace width=\"0.167em\"></mspace><mo stretchy=\"true\" form=\"postfix\">]</mo></mrow></math>",
+"donde": [
+[
+"Q₁ y Q₃",
+"primer y tercer cuartil"
+],
+[
+"RIC",
+"Q₃ − Q₁. Fuera de estos límites, el dato es atípico"
+]
+],
+"fn": "atip",
+"vars": [
+{
+"id": "q1",
+"label": "Primer cuartil Q₁"
+},
+{
+"id": "q3",
+"label": "Tercer cuartil Q₃"
+}
+]
+},
+{
+"id": "pearson",
+"subject": "estadistica",
+"cat": "Tema 4 · Identificación de patrones y tendencias",
+"name": "Correlación de Pearson",
+"short": "r · de −1 a +1",
+"icon": "chart",
+"plain": "r = Σ(xᵢ − x̄)(yᵢ − ȳ) / √[Σ(xᵢ − x̄)²·Σ(yᵢ − ȳ)²]",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>r</mi><mo>=</mo><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo accent=\"true\">‾</mo></mover><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow></mrow><msqrt><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow><mn>2</mn></msup><mo>⋅</mo><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover><mi>y</mi><mo accent=\"true\">‾</mo></mover><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mfrac></mrow></math>",
+"donde": [
+[
+"r",
+"coeficiente de correlación (−1 a 1)"
+],
+[
+"xᵢ, yᵢ",
+"cada par de datos"
+],
+[
+"x̄, ȳ",
+"medias de X e Y"
+],
+[
+"n",
+"número de pares"
+]
+],
+"fn": "pearson",
+"vars": [
+{
+"id": "x",
+"label": "Datos X (separados por comas)",
+"list": true,
+"ph": "Ej.: 1, 2, 3, 4, 5"
+},
+{
+"id": "y",
+"label": "Datos Y (mismo orden y cantidad)",
+"list": true,
+"ph": "Ej.: 2, 4, 5, 4, 6"
+}
+]
+},
+{
+"id": "pendiente",
+"subject": "estadistica",
+"cat": "Tema 4 · Identificación de patrones y tendencias",
+"name": "Pendiente de la recta",
+"short": "",
+"icon": "chart",
+"plain": "b = Sxy / Sxx",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>b</mi><mo>=</mo><mfrac><msub><mi>S</mi><mrow><mi>x</mi><mi>y</mi></mrow></msub><msub><mi>S</mi><mrow><mi>x</mi><mi>x</mi></mrow></msub></mfrac></mrow></math>",
+"donde": [
+[
+"b",
+"pendiente"
+],
+[
+"Sxy",
+"Σ(xᵢ − x̄)(yᵢ − ȳ)"
+],
+[
+"Sxx",
+"Σ(xᵢ − x̄)²"
+]
+],
+"fn": "pendiente",
+"vars": [
+{
+"id": "x",
+"label": "Datos X (separados por comas)",
+"list": true,
+"ph": "Ej.: 1, 2, 3, 4, 5"
+},
+{
+"id": "y",
+"label": "Datos Y (mismo orden y cantidad)",
+"list": true,
+"ph": "Ej.: 2, 4, 5, 4, 6"
+}
+]
+},
+{
+"id": "intercepto",
+"subject": "estadistica",
+"cat": "Tema 4 · Identificación de patrones y tendencias",
+"name": "Intercepto",
+"short": "",
+"icon": "chart",
+"plain": "a = ȳ − b·x̄",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>a</mi><mo>=</mo><mover><mi>y</mi><mo accent=\"true\">‾</mo></mover><mo>−</mo><mi>b</mi><mspace width=\"0.167em\"></mspace><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover></mrow></math>",
+"donde": [
+[
+"a",
+"valor de Y cuando X = 0"
+],
+[
+"ȳ y x̄",
+"medias"
+],
+[
+"b",
+"pendiente"
+]
+],
+"expr": "yb-b*xb",
+"vars": [
+{
+"id": "yb",
+"label": "Media de Y (ȳ)"
+},
+{
+"id": "b",
+"label": "Pendiente b"
+},
+{
+"id": "xb",
+"label": "Media de X (x̄)"
+}
+]
+},
+{
+"id": "recta",
+"subject": "estadistica",
+"cat": "Tema 4 · Identificación de patrones y tendencias",
+"name": "Recta de regresión",
+"short": "",
+"icon": "chart",
+"plain": "ŷ = a + b·x",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mover><mi>y</mi><mo accent=\"true\">̂</mo></mover><mo>=</mo><mi>a</mi><mo>+</mo><mi>b</mi><mspace width=\"0.167em\"></mspace><mi>x</mi></mrow></math>",
+"donde": [
+[
+"ŷ",
+"valor estimado de Y"
+],
+[
+"x",
+"valor de X para el que se predice"
+]
+],
+"expr": "a+b*x",
+"vars": [
+{
+"id": "a",
+"label": "Intercepto a"
+},
+{
+"id": "b",
+"label": "Pendiente b"
+},
+{
+"id": "x",
+"label": "Valor de X a predecir"
+}
+]
+},
+{
+"id": "r2",
+"subject": "estadistica",
+"cat": "Tema 4 · Identificación de patrones y tendencias",
+"name": "Coeficiente de determinación",
+"short": "r² · parte de la variación explicada por la recta",
+"icon": "chart",
+"plain": "r²",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><msup><mi>r</mi><mn>2</mn></msup></math>",
+"donde": [
+[
+"r²",
+"proporción de la variación de Y explicada por X (0 a 1)"
+],
+[
+"r",
+"coeficiente de correlación"
+]
+],
+"expr": "r*r",
+"vars": [
+{
+"id": "r",
+"label": "Coeficiente de correlación r (−1 a 1)"
+}
+]
+},
+{
+"id": "mmovil",
+"subject": "estadistica",
+"cat": "Tema 4 · Identificación de patrones y tendencias",
+"name": "Media móvil (3 períodos)",
+"short": "MM · media móvil",
+"icon": "list",
+"plain": "MMₜ = (Xₜ₋₁ + Xₜ + Xₜ₊₁) / 3",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>M</mi><msub><mi>M</mi><mi>t</mi></msub><mo>=</mo><mfrac><mrow><msub><mi>X</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>X</mi><mi>t</mi></msub><mo>+</mo><msub><mi>X</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><mn>3</mn></mfrac></mrow></math>",
+"donde": [
+[
+"MMₜ",
+"media móvil en t"
+],
+[
+"Xₜ₋₁, Xₜ, Xₜ₊₁",
+"valores del período anterior, actual y siguiente"
+]
+],
+"expr": "(Xa+Xb+Xc)/3",
+"vars": [
+{
+"id": "Xa",
+"label": "Valor del período anterior Xₜ₋₁"
+},
+{
+"id": "Xb",
+"label": "Valor del período actual Xₜ"
+},
+{
+"id": "Xc",
+"label": "Valor del período siguiente Xₜ₊₁"
+}
+]
+},
+{
+"id": "indice",
+"subject": "estadistica",
+"cat": "Tema 4 · Identificación de patrones y tendencias",
+"name": "Índice simple",
+"short": "I · número índice (período base = 100)",
+"icon": "list",
+"plain": "Iₜ = (Pₜ / P₀)·100",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mi>I</mi><mi>t</mi></msub><mo>=</mo><mfrac><msub><mi>P</mi><mi>t</mi></msub><msub><mi>P</mi><mn>0</mn></msub></mfrac><mo>×</mo><mn>100</mn></mrow></math>",
+"donde": [
+[
+"Iₜ",
+"índice en t"
+],
+[
+"Pₜ",
+"precio actual"
+],
+[
+"P₀",
+"precio del período base"
+]
+],
+"expr": "Pt/P0*100",
+"vars": [
+{
+"id": "Pt",
+"label": "Precio actual Pₜ"
+},
+{
+"id": "P0",
+"label": "Precio del período base P₀"
+}
+]
+},
+{
+"id": "cp",
+"subject": "estadistica",
+"cat": "Tema 5 · Aplicaciones en ingeniería",
+"name": "Capacidad potencial",
+"short": "Cp · índice de capacidad del proceso",
+"icon": "chart",
+"plain": "Cp = (LSE − LIE) / (6σ)",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mi>C</mi><mi>p</mi></msub><mo>=</mo><mfrac><mrow><mi>L</mi><mi>S</mi><mi>E</mi><mo>−</mo><mi>L</mi><mi>I</mi><mi>E</mi></mrow><mrow><mn>6</mn><mi>σ</mi></mrow></mfrac></mrow></math>",
+"donde": [
+[
+"LSE y LIE",
+"límites superior e inferior de especificación"
+],
+[
+"σ",
+"desviación estándar del proceso"
+]
+],
+"expr": "(LSE-LIE)/(6*s)",
+"vars": [
+{
+"id": "LSE",
+"label": "Límite superior de especificación (LSE)"
+},
+{
+"id": "LIE",
+"label": "Límite inferior de especificación (LIE)"
+},
+{
+"id": "s",
+"label": "Desviación estándar del proceso σ"
+}
+]
+},
+{
+"id": "cpk",
+"subject": "estadistica",
+"cat": "Tema 5 · Aplicaciones en ingeniería",
+"name": "Capacidad real",
+"short": "Cpk · capacidad considerando el centrado",
+"icon": "chart",
+"plain": "Cpk = mín[(LSE − μ)/(3σ) ; (μ − LIE)/(3σ)]",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mi>C</mi><mrow><mi>p</mi><mi>k</mi></mrow></msub><mo>=</mo><mo>min</mo><mrow><mo stretchy=\"true\" form=\"prefix\">(</mo><mfrac><mrow><mi>L</mi><mi>S</mi><mi>E</mi><mo>−</mo><mi>μ</mi></mrow><mrow><mn>3</mn><mi>σ</mi></mrow></mfrac><mspace width=\"0.167em\"></mspace><mo>,</mo><mspace width=\"0.167em\"></mspace><mfrac><mrow><mi>μ</mi><mo>−</mo><mi>L</mi><mi>I</mi><mi>E</mi></mrow><mrow><mn>3</mn><mi>σ</mi></mrow></mfrac><mo stretchy=\"true\" form=\"postfix\">)</mo></mrow></mrow></math>",
+"donde": [
+[
+"μ",
+"media del proceso"
+],
+[
+"mín",
+"se toma el menor de los dos valores"
+],
+[
+"LSE, LIE y σ",
+"igual que arriba"
+]
+],
+"expr": "Math.min((LSE-mu)/(3*s),(mu-LIE)/(3*s))",
+"vars": [
+{
+"id": "LSE",
+"label": "Límite superior de especificación (LSE)"
+},
+{
+"id": "LIE",
+"label": "Límite inferior de especificación (LIE)"
+},
+{
+"id": "mu",
+"label": "Media del proceso μ"
+},
+{
+"id": "s",
+"label": "Desviación estándar del proceso σ"
+}
+]
+},
+{
+"id": "oee",
+"subject": "estadistica",
+"cat": "Tema 5 · Aplicaciones en ingeniería",
+"name": "OEE",
+"short": "Eficiencia global del equipo (Overall Equipment Effectiveness)",
+"icon": "chart",
+"plain": "OEE = Disponibilidad × Rendimiento × Calidad",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>O</mi><mi>E</mi><mi>E</mi><mo>=</mo><mtext mathvariant=\"normal\">Disponibilidad</mtext><mo>×</mo><mtext mathvariant=\"normal\">Rendimiento</mtext><mo>×</mo><mtext mathvariant=\"normal\">Calidad</mtext></mrow></math>",
+"donde": [
+[
+"Disponibilidad",
+"tiempo operativo / tiempo planificado"
+],
+[
+"Rendimiento",
+"producción real / ideal"
+],
+[
+"Calidad",
+"unidades buenas / producidas"
+]
+],
+"expr": "(tOp/tPl)*(pRe/pId)*(uBu/uPr)*100",
+"unit": "%",
+"vars": [
+{
+"id": "tOp",
+"label": "Tiempo operativo"
+},
+{
+"id": "tPl",
+"label": "Tiempo planificado"
+},
+{
+"id": "pRe",
+"label": "Producción real"
+},
+{
+"id": "pId",
+"label": "Producción ideal"
+},
+{
+"id": "uBu",
+"label": "Unidades buenas"
+},
+{
+"id": "uPr",
+"label": "Unidades producidas"
+}
+]
+},
+{
+"id": "disponibilidad",
+"subject": "estadistica",
+"cat": "Tema 5 · Aplicaciones en ingeniería",
+"name": "Disponibilidad de un equipo",
+"short": "MTBF · tiempo medio entre fallas  MTTR · tiempo medio de reparación",
+"icon": "chart",
+"plain": "D = MTBF / (MTBF + MTTR)",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>D</mi><mo>=</mo><mfrac><mrow><mi>M</mi><mi>T</mi><mi>B</mi><mi>F</mi></mrow><mrow><mi>M</mi><mi>T</mi><mi>B</mi><mi>F</mi><mo>+</mo><mi>M</mi><mi>T</mi><mi>T</mi><mi>R</mi></mrow></mfrac></mrow></math>",
+"donde": [
+[
+"MTBF",
+"tiempo medio entre fallas"
+],
+[
+"MTTR",
+"tiempo medio de reparación"
+]
+],
+"expr": "MTBF/(MTBF+MTTR)*100",
+"unit": "%",
+"vars": [
+{
+"id": "MTBF",
+"label": "MTBF · tiempo medio entre fallas"
+},
+{
+"id": "MTTR",
+"label": "MTTR · tiempo medio de reparación"
+}
+]
+},
+{
+"id": "dpmo",
+"subject": "estadistica",
+"cat": "Tema 5 · Aplicaciones en ingeniería",
+"name": "DPMO",
+"short": "Defectos por millón de oportunidades",
+"icon": "chart",
+"plain": "DPMO = [defectos / (unidades × oportunidades)] × 10⁶",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mi>D</mi><mi>P</mi><mi>M</mi><mi>O</mi><mo>=</mo><mfrac><mtext mathvariant=\"normal\">defectos</mtext><mrow><mtext mathvariant=\"normal\">unidades</mtext><mo>×</mo><mtext mathvariant=\"normal\">oportunidades</mtext></mrow></mfrac><mo>×</mo><msup><mn>10</mn><mn>6</mn></msup></mrow></math>",
+"donde": [
+[
+"defectos",
+"total encontrados"
+],
+[
+"unidades",
+"inspeccionadas"
+],
+[
+"oportunidades",
+"oportunidades de error por unidad"
+]
+],
+"expr": "d/(u*o)*1e6",
+"unit": "defectos por millón",
+"vars": [
+{
+"id": "d",
+"label": "Defectos encontrados"
+},
+{
+"id": "u",
+"label": "Unidades inspeccionadas"
+},
+{
+"id": "o",
+"label": "Oportunidades de error por unidad"
+}
+]
+},
+{
+"id": "equilibrio",
+"subject": "estadistica",
+"cat": "Tema 5 · Aplicaciones en ingeniería",
+"name": "Punto de equilibrio",
+"short": "Q* · unidades donde ingresos = costos",
+"icon": "calc",
+"plain": "Q* = CF / (P − CVᵤ)",
+"mathml": "<math display=\"block\" xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msup><mi>Q</mi><mo>*</mo></msup><mo>=</mo><mfrac><mrow><mi>C</mi><mi>F</mi></mrow><mrow><mi>P</mi><mo>−</mo><mi>C</mi><msub><mi>V</mi><mi>u</mi></msub></mrow></mfrac></mrow></math>",
+"donde": [
+[
+"Q*",
+"unidades de equilibrio"
+],
+[
+"CF",
+"costos fijos"
+],
+[
+"P",
+"precio unitario"
+],
+[
+"CVᵤ",
+"costo variable unitario"
+]
+],
+"expr": "CF/(P-CVu)",
+"unit": "unidades",
+"vars": [
+{
+"id": "CF",
+"label": "Costos fijos CF"
+},
+{
+"id": "P",
+"label": "Precio unitario P"
+},
+{
+"id": "CVu",
+"label": "Costo variable unitario CVᵤ"
+}
+]
+},
+{
+"id": "velocidad",
+"subject": "fisica",
+"cat": "Cinemática",
+"name": "Velocidad media",
+"tex": "v = d / t",
+"short": "Distancia entre tiempo",
+"icon": "zap",
+"expr": "d/t",
+"unit": "m/s",
+"vars": [
+{
+"id": "d",
+"label": "Distancia d (m)",
+"meaning": "Distancia recorrida, en metros"
+},
+{
+"id": "t",
+"label": "Tiempo t (s)",
+"meaning": "Tiempo empleado, en segundos"
+}
+]
+},
+{
+"id": "molaridad",
+"subject": "quimica",
+"cat": "Disoluciones",
+"name": "Molaridad",
+"tex": "M = n / V",
+"short": "Moles por litro",
+"icon": "flask",
+"expr": "n/V",
+"unit": "mol/L",
+"vars": [
+{
+"id": "n",
+"label": "Moles de soluto n (mol)",
+"meaning": "Cantidad de soluto"
+},
+{
+"id": "V",
+"label": "Volumen V (L)",
+"meaning": "Volumen de la disolución, en litros"
+}
+]
+}
 ]
