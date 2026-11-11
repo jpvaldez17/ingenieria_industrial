@@ -236,3 +236,20 @@ nav a.on:after{content:"";position:absolute;bottom:0;left:20%;width:60%;height:4
 .stp.on.pendiente{background:#111;border-color:#111;color:#fff}
 .srm .nota{width:72px;margin:0 0 0 auto;padding:6px 8px;border:1.5px solid var(--ln);border-radius:10px;background:#fff;text-align:center;font-family:var(--formula);font-weight:700;font-size:.95rem;color:#111}
 .srm .nota:focus{outline:0;border-color:var(--tq)}
+
+
+/* ===== v12: Mi carrera más limpia (promedio a la derecha, estados con puntos) ===== */
+.chead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 8px}
+.chead h1{margin:0;font-size:1.45rem;line-height:1.15}
+.gpm{flex:none;display:flex;flex-direction:column;align-items:center;min-width:74px;padding:4px 10px;border:2px solid var(--tq);border-radius:14px;background:#fff;line-height:1.1}
+.gpm i{font-style:normal;font-size:.5rem;letter-spacing:.08em;color:var(--mu);font-weight:700}
+.gpm b{font-family:var(--formula);font-size:1.15rem;color:#111}
+.leg{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 12px;font-size:.8rem;color:var(--mu)}.leg span{display:flex;align-items:center;gap:6px}
+.ld{width:11px;height:11px;border-radius:50%;display:inline-block}
+.ld.aprobada{background:#16a34a}.ld.curso{background:#1d6fe0}.ld.pendiente{background:#111}
+.srm{gap:2px;padding:0 0 10px 4px}
+.dt{width:36px;height:36px;border:0;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer;border-radius:50%}
+.dt:before{content:"";width:15px;height:15px;border-radius:50%;border:2px solid color-mix(in srgb,var(--k) 55%,transparent);background:transparent;transition:all .15s}
+.dt.aprobada{--k:#16a34a}.dt.curso{--k:#1d6fe0}.dt.pendiente{--k:#111}
+.dt.on:before{background:var(--k);border-color:var(--k);width:20px;height:20px;box-shadow:0 0 0 3px color-mix(in srgb,var(--k) 22%,transparent)}
+.srow .row .ic:last-child{opacity:.4}

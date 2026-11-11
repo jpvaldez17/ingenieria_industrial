@@ -1,0 +1,12 @@
+{"_ayuda":"PLANTILLA (no se carga sola). 1) Copia este archivo con el id de la materia, ej. calculo.json. 2) En career.json, dentro de esa materia, agrega: \"desc\": \"Descripción breve\", \"data\": \"calculo\". 3) Sube ambos archivos. Los temas se numeran solos por su orden: u1t1, u1t2, u2t1... El contenido de cada tema va en 'content' con esa clave. Todo es opcional: si un tema no tiene 'resumen', 'formulas' o 'ejemplos', esa pestaña muestra 'Sin ... todavía'.",
+"units":[
+ {"n":1,"title":"Nombre de la unidad 1","topics":["Tema 1.1","Tema 1.2"]},
+ {"n":2,"title":"Nombre de la unidad 2","topics":["Tema 2.1"]}],
+"content":{
+ "u1t1":{
+  "sections":[
+   {"h":"Introducción","p":"Texto explicativo del tema."},
+   {"h":"Puntos clave","l":["Punto 1","Punto 2"]}],
+  "resumen":["Idea principal 1","Idea principal 2"],
+  "formulas":["id-de-una-formula-en-formulas.json"],
+  "ejemplos":[{"t":"Título del ejemplo","q":"Enunciado del ejercicio.","s":["Paso 1","Paso 2"],"a":"Respuesta final"}]}}}

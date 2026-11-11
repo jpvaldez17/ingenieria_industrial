@@ -101,17 +101,17 @@ const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=
 const OPEN=new Set();let openInit=false;
 /* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
 const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
- const all=Object.keys(SUBJ()),g=$('.gpb');if(g){g.textContent=fp(prom(all));$('.gps').textContent=gpText(all)}};
+ const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
 function carrera(){
  if(!openInit){openInit=true;const m=D.career.semesters.find(x=>x.items.includes(curId()));if(m)OPEN.add(m.n)}
  const all=Object.keys(SUBJ());
- return `<h1>Mi carrera</h1><p class="muted">Marca el estado de cada materia, escribe tu nota y toca «Usar» para elegir tu materia actual.</p>
- <div class="card gp"><span class="gpb">${fp(prom(all))}</span><div><b>Promedio general</b><br><small class="gps">${gpText(all)}</small></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow" style="--c:${s.color}"><div class="srt"><a class="row" ${s.data?`href="#/materia/${k}"`:''}><span class="bd">${ic(s.icon,18)}</span><span>${s.name}</span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="stp ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}">${t}</button>`).join('')}<input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" aria-label="Nota de ${s.name}"></div></div>`}).join('')}</details>`).join('')}
+ return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>PROM. GENERAL</i><b class="gpn">${fp(prom(all))}</b></div></div><p class="muted">Marca el estado de cada materia, escribe tu nota y toca «Usar» para elegir tu materia actual.</p>
+ <div class="leg"><span><i class="ld aprobada"></i>Aprobada</span><span><i class="ld curso"></i>En curso</span><span><i class="ld pendiente"></i>Pendiente</span></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow" style="--c:${s.color}"><div class="srt"><a class="row" href="#/materia/${k}"><span class="bd">${ic(s.icon,18)}</span><span>${s.name}</span>${s.data?ic('chevR',14):''}</a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="dt ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}" title="${t}" aria-label="${t}"></button>`).join('')}<input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" aria-label="Nota de ${s.name}"></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
- if(!d)return `<a class="back" href="#/carrera">${ic('chevL')}Mi carrera</a><div class="empty">${s.name}: aún sin contenido.</div>`;
+ if(!d)return `<a class="back" href="#/carrera">${ic('chevL')}Mi carrera</a><div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1></div><div class="empty">Contenido próximamente.<br><small>Se activa subiendo <code>${sid}.json</code> y agregando <code>"data": "${sid}"</code> a esta materia en career.json.</small></div>`;
  const T=topics(sid),n=S.done.filter(x=>x.startsWith(sid+'/')).length,p=T.length?Math.round(n/T.length*100):0;
  return `<a class="back" href="#/carrera">${ic('chevL')}Mi carrera</a>
  <div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
@@ -160,7 +160,7 @@ async function biblioteca(){
 
 function results(q){
  q=norm(q.trim());if(q.length<2)return'<p class="muted">Escribe al menos 2 letras.</p>';const o=[];
- for(const[k,s]of Object.entries(SUBJ()))if(norm(s.name).includes(q))o.push(row(s.data?`#/materia/${k}`:'#/carrera',s.icon,s.name,'Materia',s.color));
+ for(const[k,s]of Object.entries(SUBJ()))if(norm(s.name).includes(q))o.push(row(`#/materia/${k}`,s.icon,s.name,'Materia',s.color));
  for(const k in D.sub)for(const t of topics(k))if(norm(t.t).includes(q))o.push(row(`#/tema/${k}/${t.id}`,'book',t.t,`Tema ${t.u.n}.${t.i}`,SUBJ()[k].color));
  D.formulas.forEach(f=>{if(norm(f.name+' '+f.cat+' '+f.short).includes(q))o.push(row(`#/calc/${f.id}`,'calc',f.name,'Fórmula',SUBJ()[f.subject].color))});
  return o.join('')||'<p class="muted">Sin resultados.</p>'}
@@ -180,7 +180,7 @@ document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
  if(a=='fav'){toggle(S.favs,d.k);save();render()}
  else if(a=='done'){toggle(S.done,d.k);save();render()}
- else if(a=='setst'){S.est[d.k]=d.v;kvSet('est',S.est);[...b.parentNode.querySelectorAll('.stp')].forEach(x=>x.classList.toggle('on',x==b));refreshAvg()}
+ else if(a=='setst'){S.est[d.k]=d.v;kvSet('est',S.est);[...b.parentNode.querySelectorAll('.dt')].forEach(x=>x.classList.toggle('on',x==b));refreshAvg()}
  else if(a=='setcur'){S.cur=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
@@ -204,7 +204,7 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
 (async()=>{
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.sub={};
-  for(const[k,s]of Object.entries(D.career.subjects))if(s.data)D.sub[k]=await j(`${s.data}.json`);
+  for(const[k,s]of Object.entries(D.career.subjects))if(s.data){try{D.sub[k]=await j(`${s.data}.json`)}catch(e){}}
   S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
