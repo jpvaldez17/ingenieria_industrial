@@ -171,3 +171,27 @@ nav a.on:after{content:"";position:absolute;bottom:0;left:20%;width:60%;height:4
 .vars b{font-weight:700}
 .steps li{font-size:.92rem}
 .res strong{font-weight:700}
+
+
+/* ===== v7: logo sin UPDS en gris, título con borde, ola más arriba, Instalar gris, materia actual ===== */
+:root{--or:#dc5f0a;--ti:#c9d0d3}
+/* Encabezado más bajo: la ola sube y ocupa menos espacio */
+#top{padding:calc(env(safe-area-inset-top) + 10px) 12px 18px}
+.lg.u{height:58px;width:auto;max-width:64px}
+#top:after{height:22px;bottom:-1px;
+ -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 22' preserveAspectRatio='none'%3E%3Cpath d='M0 22V12C60 2 120 2 180 10S300 18 360 8V22Z'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;
+ mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 22' preserveAspectRatio='none'%3E%3Cpath d='M0 22V12C60 2 120 2 180 10S300 18 360 8V22Z'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat}
+/* IndustriApp: letras gris claro / naranja con borde negro delgado */
+#top h1,#top h1 span{text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000,0 -1px 0 #000,0 1px 0 #000,-1px 0 0 #000,1px 0 0 #000}
+#top h1{color:var(--ti)}
+#top h1 span{color:var(--or)}
+/* Botón Instalar: fondo gris oscuro y letras turquesa */
+.search button{background:#3a4047;color:#4cc3cf;border:2px solid #fff}
+/* Mi carrera: elegir materia actual */
+.srow{display:flex;align-items:center;gap:8px;border-top:1px solid var(--ln)}
+.srow .row{flex:1;min-width:0;border-top:0}
+.srow .row small{color:var(--mu);font-size:.74rem}
+.cbtn{border:2px solid var(--tq);background:#fff;color:var(--tq);border-radius:99px;padding:6px 12px;font-family:inherit;font-weight:700;font-size:.78rem;cursor:pointer;white-space:nowrap}
+.cbtn.on{background:var(--tq);color:#fff}
+/* Los círculos de icono no se estiran dentro de las filas */
+.row>.bd{flex:none;width:38px;height:38px}

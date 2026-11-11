@@ -27,6 +27,11 @@ const fmt=n=>typeof n==='number'?(+n.toFixed(4)).toLocaleString('es-BO',{maximum
 const toggle=(a,k)=>{const i=a.indexOf(k);i<0?a.push(k):a.splice(i,1)};
 /* x̄ (x con raya): Winky Sans no trae la raya, así que se dibuja con la letra del sistema para que quede bien pegada */
 const fixM=h=>h.replace(/x\u0304/g,'<span class="xb">x\u0304</span>');
+/* Materia actual (se elige en Mi carrera) */
+const curId=()=>S.cur&&SUBJ()[S.cur]?S.cur:D.career.current;
+const hexRGB=h=>{h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16)).join(',')};
+const ORD=['','Primer','Segundo','Tercer','Cuarto','Quinto','Sexto','Séptimo','Octavo','Noveno','Décimo'];
+const semTxt=k=>{const m=D.career.semesters.find(x=>x.items.includes(k));return m?`${ORD[m.n]||m.n+'.º'} semestre`:''};
 const nf=()=>'<div class="empty">No encontrado. <a href="#/inicio"><b>Volver al inicio</b></a></div>';
 
 /* ===== Almacenamiento local (IndexedDB): favoritos, progreso y archivos de la biblioteca ===== */
@@ -37,7 +42,7 @@ const tx=async(s,m,f)=>{const d=await db;return new Promise((ok,ko)=>{const t=d.
 const kvGet=k=>tx('kv','readonly',s=>s.get(k)),kvSet=(k,v)=>tx('kv','readwrite',s=>s.put(v,k));
 
 /* ===== Estado y datos (los contenidos viven en /data/*.json) ===== */
-let D={},S={favs:[],done:[],sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
+let D={},S={favs:[],done:[],cur:null,sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
 const save=()=>{kvSet('favs',S.favs);kvSet('done',S.done);kvSet('sc',S.sc)};
 const topics=sid=>(D.sub[sid]?.units||[]).flatMap(u=>u.topics.map((t,i)=>({id:`u${u.n}t${i+1}`,t,u,i:i+1,sid})));
 const SUBJ=()=>D.career.subjects;
@@ -73,28 +78,28 @@ const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subjec
 
 /* ===== Pantallas ===== */
 function home(){
- const cur=D.career.current,s=SUBJ()[cur],T=topics(cur),d=S.done.filter(x=>x.startsWith(cur+'/')).length,p=T.length?Math.round(d/T.length*100):0;
+ const cur=curId(),s=SUBJ()[cur],T=topics(cur),d=S.done.filter(x=>x.startsWith(cur+'/')).length,p=T.length?Math.round(d/T.length*100):0;
  const dt=D.career.datos[new Date().getDate()%D.career.datos.length],stand=matchMedia('(display-mode: standalone)').matches;
  const favs=S.favs.map(f=>{const[sid,tid]=f.split('/'),t=topics(sid).find(x=>x.id==tid);return t?`<a class="row" href="#/tema/${f}">${ic('bookmark',16)}<span>${esc(t.t)}</span>${ic('chevR',16)}</a>`:''}).join('');
  const tl=(h,c,hz,i,t,sb)=>`<a class="acc" href="${h}" style="--c:${c};--haz:${hz}"><span class="bd">${ic(i,22)}</span><span class="at"><b>${t}</b><small>${sb}</small></span></a>`;
  return `<div class="search"><a href="#/buscar">${ic('search')}<span>Buscar materia, tema, fórmula…</span></a>${stand?'':`<button data-act="inst">${ic('download',16)} Instalar</button>`}</div>
- <a class="card cur" href="#/materia/${cur}" style="--c:var(--tq)"><div class="r"><span><b>${s.name}</b> <small>· Segundo semestre</small></span>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${d} de ${T.length} temas estudiados · ${p}%</small></a>
+ <a class="card cur" href="#/materia/${cur}" style="--c:var(--tq)"><div class="r"><span><b>${s.name}</b> <small>· ${semTxt(cur)}</small></span>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${T.length?`${d} de ${T.length} temas estudiados · ${p}%`:'Contenido próximamente'}</small></a>
  <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DEL DÍA</b><a class="pillb" href="#/materia/${cur}">Más información ${ic('arrow',14)}</a></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div></div>
  <h2 class="acch">${ic('grid',20)} ACCESOS DIRECTOS</h2>
- <div class="accs">${tl('#/materia/'+cur,'#1686c9','42,160,240','chart','Estadística','Unidades y temas')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
+ <div class="accs">${tl('#/materia/'+cur,s.color,hexRGB(s.color),s.icon,s.short,D.sub[cur]?'Unidades y temas':'Próximamente')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
  ${favs?`<h2>Favoritos</h2><div class="card">${favs}</div>`:''}`}
 
 function carrera(){
  const st={disponible:'Disponible',desarrollo:'En desarrollo',pendiente:'Pendiente'};
- return `<h1>Mi carrera</h1><p class="muted">Materias por semestre.</p>`+D.career.semesters.map(sm=>`<details class="card sem" ${sm.items.length?'open':''}><summary><span class="num">${sm.n}</span>Semestre ${sm.n}<span class="muted">${sm.items.length?sm.items.length+' materias':'Sin materias'}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k];return `<a class="row" ${s.data?`href="#/materia/${k}"`:''} style="--c:${s.color}"><span class="bd">${ic(s.icon,18)}</span><span>${s.name}</span><em class="pill ${s.status}">${st[s.status]}</em></a>`}).join('')}</details>`).join('')}
+ return `<h1>Mi carrera</h1><p class="muted">Materias por semestre. Toca «Usar» para elegir tu materia actual: cambia en Inicio y en Formulario.</p>`+D.career.semesters.map(sm=>`<details class="card sem" ${sm.items.length?'open':''}><summary><span class="num">${sm.n}</span>Semestre ${sm.n}<span class="muted">${sm.items.length?sm.items.length+' materias':'Sin materias'}</span></summary>${
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId();return `<div class="srow" style="--c:${s.color}"><a class="row" ${s.data?`href="#/materia/${k}"`:''}><span class="bd">${ic(s.icon,18)}</span><span>${s.name}<br><small>${st[s.status]}</small></span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
  if(!d)return `<a class="back" href="#/carrera">${ic('chevL')}Mi carrera</a><div class="empty">${s.name}: aún sin contenido.</div>`;
  const T=topics(sid),n=S.done.filter(x=>x.startsWith(sid+'/')).length,p=T.length?Math.round(n/T.length*100):0;
  return `<a class="back" href="#/carrera">${ic('chevL')}Mi carrera</a>
- <div class="thead" style="--c:${s.color}"><p class="eyebrow">Segundo semestre</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
+ <div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
  <h2>Unidades temáticas</h2>`+d.units.map(u=>`<details class="card unit" style="--c:${PAL[(u.n-1)%10]}" ${u.n==1?'open':''}><summary><span class="num">${u.n}</span>${u.title}<span class="muted">${u.topics.length}</span></summary>${
   u.topics.map((t,i)=>{const id=`u${u.n}t${i+1}`;return `<a class="row" href="#/tema/${sid}/${id}"><span class="idx">${u.n}.${i+1}</span><span>${t}</span>${S.done.includes(sid+'/'+id)?ic('check',16):''}${ic('chevR',16)}</a>`}).join('')}</details>`).join('')}
 
@@ -117,7 +122,7 @@ function tema(sid,tid){
  <div class="nav2">${k>0?`<a href="#/tema/${sid}/${T[k-1].id}">${ic('chevL',16)}Anterior</a>`:'<span>Anterior</span>'}<a href="#/materia/${sid}">${ic('list',16)}Índice</a>${k<T.length-1?`<a class="pri" href="#/tema/${sid}/${T[k+1].id}">Siguiente${ic('chevR',16)}</a>`:'<span>Siguiente</span>'}</div>`}
 
 function formulario(a){
- if(a&&SUBJ()[a])fsub=a;const s=SUBJ()[fsub],fs=D.formulas.filter(f=>f.subject==fsub),cats=[...new Set(fs.map(f=>f.cat))];
+ fsub=(a&&SUBJ()[a])?a:curId();const s=SUBJ()[fsub],fs=D.formulas.filter(f=>f.subject==fsub),cats=[...new Set(fs.map(f=>f.cat))];
  return `<h1>Formulario</h1><p class="muted">Fórmulas y calculadoras por materia.</p>
  <div class="chips">${Object.entries(SUBJ()).map(([k,v])=>`<a class="chip ${k==fsub?'on':''}" href="#/formulario/${k}" style="--c:${v.color}">${ic(v.icon,14)}${v.short}</a>`).join('')}</div>
  ${fs.length?cats.map(c=>`<h3>${c}</h3><div class="grid2">${fs.filter(f=>f.cat==c).map(fcard).join('')}</div>`).join(''):`<div class="empty">${s.name}: fórmulas próximamente.</div>`}`}
@@ -160,6 +165,7 @@ document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
  if(a=='fav'){toggle(S.favs,d.k);save();render()}
  else if(a=='done'){toggle(S.done,d.k);save();render()}
+ else if(a=='setcur'){S.cur=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
  else if(a=='calc')runCalc(d.f);
@@ -179,7 +185,7 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.sub={};
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data)D.sub[k]=await j(`${s.data}.json`);
-  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;net();render()}
+  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;net();render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
