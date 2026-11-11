@@ -107,7 +107,7 @@ function carrera(){
  const all=Object.keys(SUBJ());
  return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>PROM. GENERAL</i><b class="gpn">${fp(prom(all))}</b></div></div><p class="muted">Marca el estado de cada materia, escribe tu nota y toca «Usar» para elegir tu materia actual.</p>
  <div class="leg"><span><i class="ld aprobada"></i>Aprobada</span><span><i class="ld curso"></i>En curso</span><span><i class="ld pendiente"></i>Pendiente</span></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow" style="--c:${s.color}"><div class="srt"><a class="row" href="#/materia/${k}"><span class="sn">${s.name}</span><span class="go ${on?'r':'g'}">${ic('chevR',16)}</span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="dt ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}" title="${t}" aria-label="${t}"></button>`).join('')}<span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow ${on?'act':''}" style="--c:${s.color}"><div class="srt"><a class="row" href="#/materia/${k}"><span class="sn">${s.name}</span><span class="go ${on?'r':'g'}">${ic('chevR',16)}</span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="dt ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}" title="${t}" aria-label="${t}"></button>`).join('')}<span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
@@ -121,19 +121,17 @@ function materia(sid){
 function tema(sid,tid){
  const s=SUBJ()[sid],T=topics(sid),k=T.findIndex(x=>x.id==tid);if(k<0)return nf();
  const t=T[k],c=D.sub[sid].content?.[tid]||{},key=`${sid}/${tid}`,fav=S.favs.includes(key),dn=S.done.includes(key);
- const tabs=[['c','Contenido','book'],['r','Resumen','list'],['f','Fórmulas','sigma'],['e','Ejemplos','clip']];
- const lst=a=>`<ul class="chk">${a.map(i=>`<li>${i}</li>`).join('')}</ul>`,emp=m=>`<div class="empty">${m}</div>`,secH=x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.html||''}</section>`;
+ const tabs=[['c','Contenido','book'],['f','Fórmulas','sigma'],['g','Glosario','list']],TC={c:'#336B75',f:'#8b5e3c',g:'#9b1c2e'};
+ const lst=a=>`<ul class="chk">${a.map(i=>`<li>${i}</li>`).join('')}</ul>`,emp=m=>`<div class="empty">${m}</div>`;
  let p;
- if(tab=='c')p=c.sections?(c.demo?'<p class="note">Texto de demostración propio; no proviene de los libros.</p>':'')+c.sections.map(x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.p?`<p>${x.p}</p>`:''}${x.html||''}${x.l?lst(x.l):''}</section>`).join('')
+ if(tab=='c'){p=c.sections?c.sections.map(x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.p?`<p>${x.p}</p>`:''}${x.html||''}${x.l?lst(x.l):''}</section>`).join('')
   :emp(`Plantilla lista. Agrega el contenido en <code>${sid}.json</code> → <code>content.${tid}</code>.`);
- if(tab=='c')p+=`<button class="btn ghost" data-act="done" data-k="${key}">${dn?'Estudiado ✓ (quitar)':'Marcar como estudiado'}</button>`;
- if(tab=='r')p=c.resumen?`<section class="sec">${lst(c.resumen)}</section>`:emp('Sin resumen todavía.');
- if(tab=='f'){const fs=(c.formulas||[]).map(id=>D.formulas.find(f=>f.id==id)).filter(Boolean);
-  const cs=fs.length?`<h3 class="h3c">🧮 Calculadoras</h3>`+fs.map(fcard).join(''):'';p=((c.fsec||[]).map(secH).join('')+cs)||emp('Este tema no tiene fórmulas asociadas.')}
- if(tab=='e')p=((c.exsec||[]).map(secH).join('')+(c.ejemplos||[]).map(x=>`<div class="card"><b>${x.t}</b><p>${x.q}</p><ol class="steps">${x.s.map(i=>`<li>${i}</li>`).join('')}</ol><p><b>Respuesta: ${x.a}</b></p></div>`).join(''))||emp('Sin ejemplos todavía.');
- return `<div class="thead"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} Volver</a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
+  p+=`<button class="btn ghost" data-act="done" data-k="${key}">${dn?'Estudiado ✓ (quitar)':'Marcar como estudiado'}</button>`}
+ if(tab=='f')p=c.frm?`<p class="tabnote">Para leer y repasar. Para calcular usa la pestaña <b>Formulario</b>.</p><div class="fhd"><span>Nombre</span><span>Fórmula</span></div>${c.frm.join('')}`:emp('Este tema es conceptual: no tiene fórmulas esenciales.');
+ if(tab=='g')p=c.glos?`<p class="tabnote">📚 Vocabulario del tema · ${c.glos.length} términos</p>`+c.glos.map(g=>`<div class="gl"><b>${g.t}</b><p>${g.p}</p>${g.e?`<small>${g.e}</small>`:''}</div>`).join(''):emp('Este apartado no tiene glosario.');
+ return `<div class="thead" style="--tc:${TC[tab]}"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} Volver</a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
  <p class="eyebrow" style="margin-top:10px">Unidad ${t.u.n} · ${t.u.title}</p><h1>${t.u.n}.${t.i} ${t.t}</h1></div>
- <div class="tabs">${tabs.map(([k,n,i])=>`<button class="tab ${tab==k?'on':''}" data-act="tab" data-t="${k}">${ic(i,14)}${n}</button>`).join('')}</div>${p}
+ <div class="tabs">${tabs.map(([k,n,i])=>`<button class="tab ${tab==k?'on':''}" data-act="tab" data-t="${k}" style="--tc:${TC[k]}">${ic(i,14)}${n}</button>`).join('')}</div>${p}
  <div class="nav2">${k>0?`<a href="#/tema/${sid}/${T[k-1].id}">${ic('chevL',16)}Anterior</a>`:'<span>Anterior</span>'}<a href="#/materia/${sid}">${ic('list',16)}Índice</a>${k<T.length-1?`<a class="pri" href="#/tema/${sid}/${T[k+1].id}">Siguiente${ic('chevR',16)}</a>`:'<span>Siguiente</span>'}</div>`}
 
 function formulario(a){
