@@ -1,5 +1,5 @@
 {
- "_nota": "Malla curricular oficial de Ingeniería Industrial, UPDS sede La Paz (9 semestres). Para añadir contenido a una materia: agrega 'data' en su entrada y su clave en estadistica.json (o el archivo de esa materia). Estados: aprobada, curso, desarrollo, pendiente.",
+ "_nota": "Malla oficial de Ingeniería Industrial, UPDS sede La Paz (9 semestres). 'status': aprobada, curso o pendiente. 'nota' es la nota inicial; las que cambies en la app se guardan en tu celular y tienen prioridad.",
  "current": "estadistica",
  "subjects": {
   "metodologia": {
@@ -7,63 +7,70 @@
    "short": "Metodología",
    "color": "#db2777",
    "icon": "book",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 97
   },
   "quimica": {
    "name": "Química General",
    "short": "Química Gral.",
    "color": "#ea580c",
    "icon": "flask",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 83
   },
   "fundmat": {
    "name": "Fundamentos de Matemáticas",
    "short": "Fund. Mat.",
    "color": "#0d9488",
    "icon": "sigma",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 90
   },
   "ingles1": {
    "name": "Inglés Técnico I",
    "short": "Inglés I",
    "color": "#db2777",
    "icon": "book",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 95
   },
   "programacion": {
    "name": "Programación Básica",
    "short": "Programación",
    "color": "#0ea5e9",
    "icon": "grid",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 87
   },
   "fisica": {
    "name": "Física I",
    "short": "Física I",
    "color": "#7c3aed",
    "icon": "zap",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 99
   },
   "algebra": {
    "name": "Álgebra Lineal",
    "short": "Álgebra",
    "color": "#0d9488",
    "icon": "sigma",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 89
   },
   "calculo": {
    "name": "Cálculo I",
    "short": "Cálculo I",
    "color": "#0d9488",
    "icon": "sigma",
-   "status": "curso"
+   "status": "pendiente"
   },
   "estadistica": {
    "name": "Estadística Descriptiva",
    "short": "Estadística",
    "color": "#1d6fe0",
    "icon": "chart",
-   "status": "desarrollo",
+   "status": "curso",
    "desc": "Analiza, interpreta y comprende los datos.",
    "data": "estadistica"
   },
@@ -72,21 +79,23 @@
    "short": "Ética",
    "color": "#db2777",
    "icon": "book",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 100
   },
   "fisica2": {
    "name": "Física II",
    "short": "Física II",
    "color": "#7c3aed",
    "icon": "zap",
-   "status": "curso"
+   "status": "pendiente"
   },
   "quimorg": {
    "name": "Química Orgánica",
    "short": "Q. Orgánica",
    "color": "#ea580c",
    "icon": "flask",
-   "status": "aprobada"
+   "status": "aprobada",
+   "nota": 87
   },
   "prodmanuf1": {
    "name": "Producción y Manufactura Flexible I",

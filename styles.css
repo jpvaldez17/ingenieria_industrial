@@ -217,3 +217,22 @@ nav a.on:after{content:"";position:absolute;bottom:0;left:20%;width:60%;height:4
 .sem>summary .num{background:#000;font-weight:800}
 .sem>summary .cv{display:grid;place-items:center;margin-left:4px;color:#111;transform:rotate(90deg);transition:transform .2s}
 .sem[open]>summary .cv{transform:rotate(-90deg)}
+
+
+/* ===== v11: notas, estados y promedios en Mi carrera ===== */
+.gp{display:flex;align-items:center;gap:14px;padding:12px 14px;margin-bottom:12px}
+.gpb{display:grid;place-items:center;min-width:68px;height:68px;border-radius:50%;border:4px solid var(--tq);background:#fff;font-family:var(--formula);font-weight:700;font-size:1.25rem;color:#111;flex:none}
+.gp small{color:var(--mu)}
+.sem>summary .avg{margin-left:auto;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:56px;padding:3px 8px;border:2px solid var(--tq);border-radius:12px;background:#fff;line-height:1.1}
+.sem>summary .avg i{font-style:normal;font-size:.5rem;letter-spacing:.08em;color:var(--mu);font-weight:700}
+.sem>summary .avg b{font-family:var(--formula);font-size:.95rem;color:#111}
+.srow{display:block}
+.srt{display:flex;align-items:center;gap:8px}
+.srt .row{flex:1;min-width:0;border-top:0}
+.srm{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:0 0 12px}
+.stp{border:1.5px solid #cbd5e1;background:#fff;color:#64748b;border-radius:99px;padding:5px 10px;font-family:inherit;font-size:.72rem;font-weight:700;white-space:nowrap;cursor:pointer}
+.stp.on.aprobada{background:#16a34a;border-color:#16a34a;color:#fff}
+.stp.on.curso{background:#1d6fe0;border-color:#1d6fe0;color:#fff}
+.stp.on.pendiente{background:#111;border-color:#111;color:#fff}
+.srm .nota{width:72px;margin:0 0 0 auto;padding:6px 8px;border:1.5px solid var(--ln);border-radius:10px;background:#fff;text-align:center;font-family:var(--formula);font-weight:700;font-size:.95rem;color:#111}
+.srm .nota:focus{outline:0;border-color:var(--tq)}

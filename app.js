@@ -44,7 +44,7 @@ const tx=async(s,m,f)=>{const d=await db;return new Promise((ok,ko)=>{const t=d.
 const kvGet=k=>tx('kv','readonly',s=>s.get(k)),kvSet=(k,v)=>tx('kv','readwrite',s=>s.put(v,k));
 
 /* ===== Estado y datos (los contenidos viven en /data/*.json) ===== */
-let D={},S={favs:[],done:[],cur:null,sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
+let D={},S={favs:[],done:[],cur:null,notas:{},est:{},sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
 const save=()=>{kvSet('favs',S.favs);kvSet('done',S.done);kvSet('sc',S.sc)};
 const topics=sid=>(D.sub[sid]?.units||[]).flatMap(u=>u.topics.map((t,i)=>({id:`u${u.n}t${i+1}`,t,u,i:i+1,sid})));
 const SUBJ=()=>D.career.subjects;
@@ -91,10 +91,23 @@ function home(){
  <div class="accs">${tl('#/materia/'+cur,'#1686c9','42,160,240',s.icon,s.short,D.sub[cur]?'Unidades y temas':'Próximamente')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
  ${favs?`<h2>Favoritos</h2><div class="card">${favs}</div>`:''}`}
 
+/* Estado y nota de cada materia: lo que marques o escribas se guarda en este dispositivo */
+const ESTS=[['aprobada','Aprobada'],['curso','En curso'],['pendiente','Pendiente']];
+const estOf=k=>{const v=S.est[k]||SUBJ()[k].status;return ESTS.some(x=>x[0]==v)?v:'pendiente'};
+const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:(SUBJ()[k].nota??null);
+const prom=ks=>{const v=ks.map(notaOf).filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+const fp=n=>n==null?'---':(+n.toFixed(1)).toLocaleString('es',{maximumFractionDigits:1});
+const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=>estOf(k)=='aprobada').length;return `${n} ${n==1?'materia':'materias'} con nota · ${a} ${a==1?'aprobada':'aprobadas'}`};
+const OPEN=new Set();let openInit=false;
+/* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
+const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
+ const all=Object.keys(SUBJ()),g=$('.gpb');if(g){g.textContent=fp(prom(all));$('.gps').textContent=gpText(all)}};
 function carrera(){
- const st={aprobada:'Aprobada',curso:'En curso',disponible:'Disponible',desarrollo:'En desarrollo',pendiente:'Pendiente'};
- return `<h1>Mi carrera</h1><p class="muted">Materias por semestre. Toca «Usar» para elegir tu materia actual: cambia en Inicio y en Formulario.</p>`+D.career.semesters.map(sm=>`<details class="card sem" ${sm.items.includes(curId())?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="muted">${sm.items.length?sm.items.length+' materias':'Sin materias'}</span><span class="cv">${ic('chevR',20)}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId();return `<div class="srow" style="--c:${s.color}"><a class="row" ${s.data?`href="#/materia/${k}"`:''}><span class="bd">${ic(s.icon,18)}</span><span>${s.name}<br><small class="st ${s.status}">${st[s.status]}</small></span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div>`}).join('')}</details>`).join('')}
+ if(!openInit){openInit=true;const m=D.career.semesters.find(x=>x.items.includes(curId()));if(m)OPEN.add(m.n)}
+ const all=Object.keys(SUBJ());
+ return `<h1>Mi carrera</h1><p class="muted">Marca el estado de cada materia, escribe tu nota y toca «Usar» para elegir tu materia actual.</p>
+ <div class="card gp"><span class="gpb">${fp(prom(all))}</span><div><b>Promedio general</b><br><small class="gps">${gpText(all)}</small></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow" style="--c:${s.color}"><div class="srt"><a class="row" ${s.data?`href="#/materia/${k}"`:''}><span class="bd">${ic(s.icon,18)}</span><span>${s.name}</span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="stp ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}">${t}</button>`).join('')}<input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" aria-label="Nota de ${s.name}"></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
@@ -167,6 +180,7 @@ document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
  if(a=='fav'){toggle(S.favs,d.k);save();render()}
  else if(a=='done'){toggle(S.done,d.k);save();render()}
+ else if(a=='setst'){S.est[d.k]=d.v;kvSet('est',S.est);[...b.parentNode.querySelectorAll('.stp')].forEach(x=>x.classList.toggle('on',x==b));refreshAvg()}
  else if(a=='setcur'){S.cur=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
@@ -179,13 +193,19 @@ document.addEventListener('click',async e=>{
  else if(a=='open'){const r=await tx('files','readonly',s=>s.get(+d.id));if(r)window.open(URL.createObjectURL(r.blob),'_blank')}
  else if(a=='del'){if(confirm('¿Eliminar este archivo del dispositivo?')){await tx('files','readwrite',s=>s.delete(+d.id));render()}}});
 
+document.addEventListener('change',e=>{const i=e.target;if(!i.classList||!i.classList.contains('nota'))return;
+ let n=i.value.trim()===''?null:parseFloat(i.value.replace(',','.'));if(n!=null&&isNaN(n))n=null;
+ if(n!=null){n=Math.min(100,Math.max(0,n));i.value=n}
+ S.notas[i.dataset.k]=n;kvSet('notas',S.notas);refreshAvg()});
+document.addEventListener('toggle',e=>{const d=e.target;if(d.matches&&d.matches('details.sem')){const n=+d.dataset.n;d.open?OPEN.add(n):OPEN.delete(n)}},true);
+
 /* ===== Arranque, estado de conexión y PWA ===== */
 document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.dataset.s||22));
 (async()=>{
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.sub={};
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data)D.sub[k]=await j(`${s.data}.json`);
-  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;render()}
+  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
