@@ -34,6 +34,8 @@ const ORD=['','Primer','Segundo','Tercer','Cuarto','Quinto','Sexto','Séptimo','
 const semTxt=k=>{const m=D.career.semesters.find(x=>x.items.includes(k));return m?`${ORD[m.n]||m.n+'.º'} semestre`:''};
 /* Colores de los números de semestre (sin rosado, violeta ni amarillo) */
 const SEMC=['#2f9cf4','#22c55e','#f97316','#ef4444','#14b8a6','#22d3ee','#c58a5a','#84cc16','#38bdf8'];
+/* Colores de las pastillas de materias (sin rosado ni amarillo) */
+const PIL=['#1d6fe0','#16a34a','#ea580c','#dc2626','#0d9488','#8b5e3c'];
 const nf=()=>'<div class="empty">No encontrado. <a href="#/inicio"><b>Volver al inicio</b></a></div>';
 
 /* ===== Almacenamiento local (IndexedDB): favoritos, progreso y archivos de la biblioteca ===== */
@@ -44,7 +46,7 @@ const tx=async(s,m,f)=>{const d=await db;return new Promise((ok,ko)=>{const t=d.
 const kvGet=k=>tx('kv','readonly',s=>s.get(k)),kvSet=(k,v)=>tx('kv','readwrite',s=>s.put(v,k));
 
 /* ===== Estado y datos (los contenidos viven en /data/*.json) ===== */
-let D={},S={favs:[],done:[],cur:null,notas:{},est:{},sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
+let D={},S={favs:[],done:[],misf:[],cur:null,notas:{},est:{},sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
 const save=()=>{kvSet('favs',S.favs);kvSet('done',S.done);kvSet('sc',S.sc)};
 const topics=sid=>(D.sub[sid]?.units||[]).flatMap(u=>u.topics.map((t,i)=>({id:`u${u.n}t${i+1}`,t,u,i:i+1,sid})));
 const SUBJ=()=>D.career.subjects;
@@ -86,7 +88,9 @@ function runCalc(id){
   const vals=f.vars.map((v,i)=>{const s=ins[i].value;
    if(v.list){const a=s.split(/[;,\s]+/).filter(Boolean).map(Number);if(!a.length||a.some(isNaN))throw Error('Ingresa números separados por comas (usa punto como decimal).');return a}
    const n=parseFloat(s.replace(',','.'));if(isNaN(n))throw Error('Completa todos los campos con números.');return n});
-  if(f.fn)r=F[f.fn](...vals);
+  if(f.custom){const vv={};f.vars.forEach((v,i)=>vv[v.id]=vals[i]);const x=sciEval(f.expr,f.deg!==false,0,vv);
+   r={r:x,st:[f.plain,`Sustituyendo: ${f.expr.replace(IDRE,m=>m in vv?fmt(vv[m]):m)}`,`Resultado = ${fmt(x)} ${f.unit||''}`]}}
+  else if(f.fn)r=F[f.fn](...vals);
   else{const ids=f.vars.map(v=>v.id),x=new Function(...ids,'return '+f.expr)(...vals);if(!isFinite(x))throw Error('Resultado no definido (revisa divisiones entre cero).');
    r={r:x,st:[f.plain||f.tex,`Sustituyendo: ${f.expr.replace(/[A-Za-z_][A-Za-z0-9_]*/g,m=>ids.includes(m)?fmt(vals[ids.indexOf(m)]):m)}`,`Resultado = ${fmt(x)} ${f.unit||''}`]}}
   out.innerHTML=fixM(`<div class="res ok"><small>Resultado</small><strong>${fmt(r.r)} <span>${f.unit||''}</span></strong></div><h3>Procedimiento</h3><ol class="steps">${r.st.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`);
@@ -95,7 +99,7 @@ function runCalc(id){
 /* ===== Componentes ===== */
 const row=(h,i,t,s,c)=>`<a class="row card" href="${h}" style="--c:${c}"><span class="bd">${ic(i,18)}</span><span>${esc(t)}<br><small>${s}</small></span>${ic('chevR',16)}</a>`;
 const mx=f=>`<span class="fm2 fit"><span class="mw">${f.mathml}</span></span>`;
-const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subject].color}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}</b>${f.mathml?mx(f):`<code>${f.tex}</code>`}</span>${ic('chevR',16)}</a>`;
+const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subject].color}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}${f.custom?' <i class="mine">propia</i>':''}</b>${f.mathml?mx(f):`<code>${f.tex}</code>`}</span>${ic('chevR',16)}</a>`;
 
 /* ===== Pantallas ===== */
 function home(){
@@ -155,17 +159,19 @@ function tema(sid,tid){
 
 function formulario(a){
  fsub=(a&&SUBJ()[a])?a:curId();const s=SUBJ()[fsub],fs=D.formulas.filter(f=>f.subject==fsub),cats=[...new Set(fs.map(f=>f.cat))];
- return `<h1>Formulario</h1><p class="muted">Fórmulas y calculadoras por materia.</p>
- <div class="chips">${Object.entries(SUBJ()).filter(([k,v])=>v.data||k==fsub||D.formulas.some(f=>f.subject==k)).map(([k,v])=>`<a class="chip ${k==fsub?'on':''}" href="#/formulario/${k}" style="--c:${v.color}">${ic(v.icon,14)}${v.short}</a>`).join('')}</div>
+ const sm=D.career.semesters.find(x=>x.items.includes(fsub))||D.career.semesters[0],pick=x=>x.n==sm.n?fsub:(x.items.find(k=>D.formulas.some(f=>f.subject==k))||x.items[0]);
+ return `<div class="fhead"><h1>Formulario</h1><div class="fh-r"><button class="abk" data-act="addf" aria-label="Agregar fórmula">${ic('plus',26)}</button><button class="cbk" data-act="sci" aria-label="Calculadora científica">${ic('calc',26)}</button></div></div><p class="muted">Elige el semestre y la materia.</p>
+ <div class="fl">Semestre</div><div class="sems">${D.career.semesters.map(x=>`<a class="sbtn ${x.n==sm.n?'on':''}" href="#/formulario/${pick(x)}" style="--sc:${SEMC[(x.n-1)%SEMC.length]}">${x.n}</a>`).join('')}</div>
+ <div class="fl">${ORD[sm.n]||sm.n+'.º'} Semestre</div><div class="pills">${sm.items.map((k,i)=>`<a class="pl ${k==fsub?'on':''}" href="#/formulario/${k}" style="--c:${PIL[i%PIL.length]}">${SUBJ()[k].short}</a>`).join('')}</div>
  ${fs.length?cats.map(c=>`<h3>${c}</h3><div class="grid2">${fs.filter(f=>f.cat==c).map(fcard).join('')}</div>`).join(''):`<div class="empty">${s.name}: fórmulas próximamente.</div>`}`}
 
 function calc(id){
  const f=D.formulas.find(x=>x.id==id);if(!f)return nf();const s=SUBJ()[f.subject];
- const dd=f.donde?`<ul class="dd">${f.donde.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`:`<h3>Variables</h3><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning}</li>`).join('')}</ul>`;
+ const dd=f.donde?(f.donde.length?`<ul class="dd">${f.donde.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`:''):`<h3>Variables</h3><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning}</li>`).join('')}</ul>`;
  return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${s.color}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}<div class="tex">${f.mathml?mx(f):f.tex}</div>
  ${dd}<h3>Datos</h3>
  ${f.vars.map(v=>`<label>${v.label}<input data-v ${v.list?`placeholder="${v.ph||'Ej.: 12, 15, 18, 20, 25'}"`:'inputmode="decimal" placeholder="0"'}></label>`).join('')}
- <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div></div>`}
+ <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div>${f.custom?`<div class="rowb"><button class="btn2" data-act="editf" data-f="${f.id}">Editar</button><button class="btn2 del" data-act="delf" data-f="${f.id}">Eliminar</button></div>`:''}</div>`}
 
 async function biblioteca(){
  const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','PDF','file'],['foto','Apuntes','image'],['eval','Evaluaciones','clip']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
@@ -192,7 +198,7 @@ async function render(){
  const act={materia:'carrera',tema:'carrera',calc:'formulario',buscar:'inicio'}[route]||route;
  document.querySelectorAll('nav a').forEach(n=>n.classList.toggle('on',n.dataset.r==act));
  if(route=='buscar'){const q=$('#q');q.focus();q.oninput=()=>$('#res').innerHTML=results(q.value)}
- fitMath();if(document.fonts)document.fonts.ready.then(fitMath)}
+ fitMath();document.querySelectorAll('.sbtn.on,.pl.on').forEach(e=>e.scrollIntoView({block:'nearest',inline:'center'}));if(document.fonts)document.fonts.ready.then(fitMath)}
 /* Fórmulas más anchas que su tarjeta: se reducen para que quepan completas */
 function fitMath(){document.querySelectorAll('.fit').forEach(c=>{const w=c.querySelector('.mw'),m=c.querySelector('math');if(!w||!m)return;m.style.fontSize='';const cw=c.clientWidth-6,mw=w.getBoundingClientRect().width;if(cw>0&&mw>cw)m.style.fontSize=Math.max(10,parseFloat(getComputedStyle(m).fontSize)*cw/mw)+'px'})}
 addEventListener('resize',fitMath);
@@ -209,6 +215,10 @@ document.addEventListener('click',async e=>{
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
  else if(a=='calc')runCalc(d.f);
+ else if(a=='sci')sciOpen();
+ else if(a=='addf')afOpen();
+ else if(a=='editf')afOpen(d.f);
+ else if(a=='delf'){const f=S.misf.find(x=>x.id==d.f);if(f&&confirm('¿Eliminar esta fórmula?')){S.misf=S.misf.filter(x=>x.id!=d.f);kvSet('misf',S.misf);mergeF();location.hash='#/formulario/'+f.subject}}
  else if(a=='inst'){if(ip){ip.prompt();await ip.userChoice;ip=null}else alert('Para instalar: menú ⋮ de Chrome → "Instalar app" o "Agregar a la pantalla de inicio".')}
  else if(a=='ans'){[...b.parentNode.children].forEach((x,i)=>{x.disabled=true;if(i==+d.a)x.classList.add('ok')});const ok=+d.i==+d.a,hoy=new Date().toDateString();
   if(!ok)b.classList.add('bad');if(S.sc.day!==hoy){S.sc.day=hoy;ok?S.sc.ok++:S.sc.bad++;save();$('.sc').innerHTML=`<i class="g">✓ ${S.sc.ok}</i><i class="r">✕ ${S.sc.bad}</i>`}}
@@ -227,13 +237,175 @@ document.addEventListener('input',e=>{const i=e.target;if(i.classList&&i.classLi
 document.addEventListener('keydown',e=>{const i=e.target;if(e.key==='Enter'&&i.classList&&i.classList.contains('nota')){e.preventDefault();notaSave(i.dataset.k);i.blur()}});
 document.addEventListener('toggle',e=>{const d=e.target;if(d.matches&&d.matches('details.sem')){const n=+d.dataset.n;d.open?OPEN.add(n):OPEN.delete(n)}},true);
 
+/* ===== Fórmulas propias (botón +) ===== */
+const FNS=['asin','acos','atan','sin','cos','tan','log','ln','abs'];
+const GREEK={alpha:'α',beta:'β',gamma:'γ',delta:'δ',epsilon:'ε',eta:'η',theta:'θ',lambda:'λ',mu:'μ',nu:'ν',rho:'ρ',sigma:'σ',tau:'τ',phi:'φ',chi:'χ',omega:'ω',Delta:'Δ',Sigma:'Σ',Omega:'Ω'};
+const IDRE=/[A-Za-zα-ωΑ-Ω][A-Za-z0-9_]*/g;
+const mergeF=()=>{D.formulas=[...D.fbase,...S.misf]};
+const normE=t=>t.replace(/\s+/g,'').replace(/\^\{([^}]*)\}/g,'^($1)').replace(/[{}]/g,'').replace(/\*|·/g,'×').replace(/²/g,'^2').replace(/³/g,'^3').replace(/sqrt\(/g,'√(').replace(/(^|[^A-Za-z0-9_])pi(?![A-Za-z0-9_])/g,'$1π');
+const varsOf=t=>[...new Set((t.match(IDRE)||[]).filter(n=>n!='π'&&!FNS.includes(n)))];
+const symHTML=v=>{v=GREEK[v]||v;const m=v.match(/^(.+?)_(.+)$/);return m?`${GREEK[m[1]]||m[1]}<sub>${GREEK[m[2]]||m[2]}</sub>`:v};
+/* Texto escrito (F = m*a) → MathML apilado */
+function mlExpr(src){
+ const s=src.replace(/\s+/g,'').replace(/\*|·/g,'×').replace(/²/g,'^2').replace(/³/g,'^3').replace(/(^|[^A-Za-z0-9_])pi(?![A-Za-z0-9_])/g,'$1π');
+ let i=0;const G=new Map(),bad=m=>{throw Error(m)};
+ const mi=x=>`<mi>${x}</mi>`,mo=x=>`<mo>${x}</mo>`,mn=x=>`<mn>${x}</mn>`,un=x=>G.has(x)?G.get(x):x;
+ const idm=n=>GREEK[n]?mi(GREEK[n]):n.length==1?mi(n):`<mi mathvariant="normal">${n}</mi>`;
+ const atomStart=()=>{const c=s[i];return c!==undefined&&/[A-Za-z0-9α-ωΑ-Ω(√,.]/.test(c)};
+ const close=()=>{if(s[i]!=')')bad('Falta cerrar un paréntesis');i++};
+ function pAtom(){const c=s[i];if(c===undefined)bad('La fórmula está incompleta');
+  if(c=='('){i++;const e=pExpr();close();const ml=`<mrow>${mo('(')}${e}${mo(')')}</mrow>`;G.set(ml,e);return ml}
+  if(c=='√'){i++;if(s[i]!='(')bad('Después de sqrt va un paréntesis');i++;const e=pExpr();close();return `<msqrt>${e}</msqrt>`}
+  const n=s.slice(i).match(/^(\d+(?:[.,]\d+)?|[.,]\d+)/);if(n){i+=n[0].length;return mn(n[0])}
+  const f=s.slice(i).match(/^(asin|acos|atan|sin|cos|tan|log|ln|abs)\(/);
+  if(f){i+=f[1].length+1;const e=pExpr();close();return f[1]=='abs'?`<mrow>${mo('|')}${e}${mo('|')}</mrow>`:`<mrow>${mi(f[1])}${mo('⁡')}<mrow>${mo('(')}${e}${mo(')')}</mrow></mrow>`}
+  if(/[A-Za-zα-ωΑ-Ω]/.test(c)){const m=s.slice(i).match(/^[A-Za-zα-ωΑ-Ω][A-Za-z0-9]*/)[0];i+=m.length;const d=m.match(/^([A-Za-z])(\d+)$/);return d?`<msub>${mi(d[1])}${mn(d[2])}</msub>`:idm(m)}
+  bad('No entiendo el símbolo «'+c+'»')}
+ function pScript(){if(s[i]=='{'){i++;const e=pExpr();if(s[i]!='}')bad('Falta cerrar una llave');i++;return e}
+  if(s[i]=='(')return un(pAtom());
+  const m=s.slice(i).match(/^(\d+|[A-Za-zα-ωΑ-Ω]+)/);if(!m)bad('Falta el valor del exponente o del subíndice');i+=m[0].length;return/^\d/.test(m[0])?mn(m[0]):idm(m[0])}
+ function pPow(){const b=pAtom();let sub=null,sup=null;
+  while(s[i]=='_'||s[i]=='^'){const t=s[i++];let sg='';if(s[i]=='-'||s[i]=='−'){i++;sg=mo('−')}const v=pScript(),w=sg?`<mrow>${sg}${v}</mrow>`:v;t=='_'?sub=w:sup=w}
+  return sub&&sup?`<msubsup>${b}${sub}${sup}</msubsup>`:sup?`<msup>${b}${sup}</msup>`:sub?`<msub>${b}${sub}</msub>`:b}
+ function pTerm(){let acc=[pPow()];for(;;){const c=s[i];
+  if(c=='×'){i++;acc.push(mo('·'));acc.push(pPow())}
+  else if(c=='/'||c=='÷'){i++;const d=pPow();acc=[`<mfrac><mrow>${acc.length==1?un(acc[0]):acc.join('')}</mrow><mrow>${un(d)}</mrow></mfrac>`]}
+  else if(atomStart())acc.push(pPow());else return acc.join('')}}
+ function pExpr(){const p=[];if(s[i]=='-'||s[i]=='−'){i++;p.push(mo('−'))}p.push(pTerm());
+  while(s[i]=='+'||s[i]=='-'||s[i]=='−'){p.push(mo(s[i]=='+'?'+':'−'));i++;p.push(pTerm())}return p.join('')}
+ const e=pExpr();if(i<s.length)bad('No entiendo «'+s.slice(i,i+6)+'»');return e}
+function buildF(text,deg=true){
+ const t=text.trim();if(!t)throw Error('Escribe la fórmula.');const p=t.split('=');if(p.length>2)throw Error('Usa un solo signo =.');
+ const rhs=p.length==2?p[1]:p[0],lhs=p.length==2?p[0]:'';
+ if(!rhs.trim())throw Error('Falta la parte derecha de la fórmula.');if(p.length==2&&!lhs.trim())throw Error('Falta el nombre del resultado (a la izquierda del =).');
+ const mathml=`<math display="block"><mrow>${lhs?mlExpr(lhs)+'<mo>=</mo>':''}${mlExpr(rhs)}</mrow></math>`;
+ const expr=normE(rhs),vars=varsOf(expr);if(!vars.length)throw Error('La fórmula necesita al menos una variable (una letra).');
+ const test={};vars.forEach(v=>test[v]=0.5);
+ try{sciEval(expr,deg,0,test)}catch(e){if(/^(Expresión|Símbolo)/.test(e.message))throw Error('La fórmula no es válida: '+e.message.charAt(0).toLowerCase()+e.message.slice(1))}
+ return{mathml,expr,vars,lhs:lhs.trim()}}
+let AF=null,AFV='';
+function afCats(sub){return[...new Set(D.formulas.filter(f=>f.subject==sub).map(f=>f.cat))]}
+function afOpen(id){AF=id?S.misf.find(x=>x.id==id):null;AFV='';let p=$('#af');
+ if(!p){p=document.createElement('div');p.id='af';p.className='af';document.body.appendChild(p);
+  p.addEventListener('click',e=>{const b=e.target.closest('[data-af]');if(!b)return;b.dataset.af=='close'?afClose():afSave()});
+  p.addEventListener('input',e=>afSync(e.target.id=='afS'));p.addEventListener('change',e=>afSync(e.target.id=='afS'))}
+ const sub=AF?AF.subject:fsub;
+ p.innerHTML=`<div class="af-bk" data-af="close"></div><div class="af-p"><div class="af-h"><b>${AF?'Editar fórmula':'Nueva fórmula'}</b><button data-af="close" aria-label="Cerrar">✕</button></div>
+ <label>Materia<select id="afS">${D.career.semesters.map(sm=>`<optgroup label="${ORD[sm.n]||sm.n+'.º'} Semestre">${sm.items.map(k=>`<option value="${k}" ${k==sub?'selected':''}>${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
+ <label>Sección (tema)<select id="afC"></select></label>
+ <label id="afCnW" hidden>Nombre de la nueva sección<input id="afCn" placeholder="Ej.: Tema 6 · Mis fórmulas" autocomplete="off"></label>
+ <label>Nombre de la fórmula<input id="afN" placeholder="Ej.: Segunda ley de Newton" autocomplete="off" value="${AF?esc(AF.name):''}"></label>
+ <label>Fórmula<input id="afF" placeholder="F = m * a" autocomplete="off" autocapitalize="off" spellcheck="false" value="${AF?esc(AF.plain):''}"></label>
+ <div class="af-pv" id="afPv"></div>
+ <p class="af-hint">Usa <b>*</b> para multiplicar, <b>/</b> para dividir (se dibuja como fracción), <b>^</b> para potencias, <b>_</b> para subíndices (<b>x_i</b>), <b>sqrt( )</b>, <b>sin( )</b>, <b>cos( )</b>, <b>tan( )</b>, <b>log( )</b>, <b>ln( )</b> y <b>pi</b>. Cada letra o nombre distinto se pedirá como dato.</p>
+ <div id="afV"></div>
+ <label>Unidad del resultado (opcional)<input id="afU" placeholder="Ej.: N, m/s, %" autocomplete="off" value="${AF?esc(AF.unit||''):''}"></label>
+ <label>Ángulos (si usas sin, cos o tan)<select id="afD"><option value="1" ${AF&&AF.deg===false?'':'selected'}>Grados</option><option value="0" ${AF&&AF.deg===false?'selected':''}>Radianes</option></select></label>
+ <div class="af-err" id="afE"></div><button class="btn" data-af="save">Guardar fórmula</button></div>`;
+ afSync(true);p.hidden=false;document.body.style.overflow='hidden'}
+function afClose(){const p=$('#af');if(p)p.hidden=true;document.body.style.overflow=''}
+addEventListener('hashchange',afClose);
+/* Mantiene al día secciones, vista previa y lista de variables */
+function afSync(subChanged){
+ const sub=$('#afS').value,C=$('#afC');
+ if(subChanged||!C.options.length){const prev=C.value||(AF&&AF.cat)||'',cs=afCats(sub);
+  C.innerHTML=cs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')+`<option value="__new">＋ Nueva sección…</option>`;
+  C.value=cs.includes(prev)?prev:(cs[0]||'__new')}
+ $('#afCnW').hidden=C.value!='__new';
+ const pv=$('#afPv'),V=$('#afV');
+ try{const b=buildF($('#afF').value,$('#afD').value=='1');pv.innerHTML=`<span class="fm2 fit"><span class="mw">${b.mathml}</span></span>`;
+  const names=[...(b.lhs&&/^[A-Za-zα-ωΑ-Ω][A-Za-z0-9_]*$/.test(b.lhs)?[b.lhs]:[]),...b.vars],sig=names.join('|');
+  if(sig!=AFV){const old={};V.querySelectorAll('[data-var]').forEach(x=>old[x.dataset.var]=x.value);const ex={};if(AF)(AF.donde||[]).forEach(([a,m])=>ex[a]=m);
+   V.innerHTML=names.length?`<div class="fl">Qué significa cada letra (opcional)</div>`+names.map((n,k)=>`<label>${symHTML(n)}${k==0&&b.lhs==n?' (resultado)':''}<input data-var="${esc(n)}" placeholder="Ej.: fuerza, masa…" autocomplete="off" value="${esc(old[n]??ex[n]??'')}"></label>`).join(''):'';AFV=sig}
+  $('#afE').textContent='';fitMath()}
+ catch(e){pv.innerHTML=$('#afF').value.trim()?`<span class="af-bad">${esc(e.message)}</span>`:'<span class="af-ph">Aquí verás cómo se dibuja tu fórmula</span>';V.innerHTML='';AFV=''}}
+function afSave(){
+ const E=$('#afE'),name=$('#afN').value.trim(),sub=$('#afS').value,deg=$('#afD').value=='1';let cat=$('#afC').value;
+ try{if(cat=='__new')cat=$('#afCn').value.trim();if(!cat)throw Error('Escribe el nombre de la nueva sección.');if(!name)throw Error('Escribe el nombre de la fórmula.');
+  const text=$('#afF').value.trim(),b=buildF(text,deg),desc={};document.querySelectorAll('#afV [data-var]').forEach(x=>desc[x.dataset.var]=x.value.trim());
+  const donde=[];if(b.lhs&&desc[b.lhs])donde.push([symHTML(b.lhs),desc[b.lhs]]);b.vars.forEach(v=>{if(desc[v])donde.push([symHTML(v),desc[v]])});
+  const o={id:AF?AF.id:'u'+Date.now(),custom:true,subject:sub,cat,name,short:'',icon:'sigma',plain:text,mathml:b.mathml,expr:b.expr,deg,unit:$('#afU').value.trim(),donde,
+   vars:b.vars.map(v=>({id:v,label:desc[v]?`${symHTML(v)} · ${esc(desc[v])}`:`Valor de ${symHTML(v)}`}))};
+  S.misf=AF?S.misf.map(x=>x.id==AF.id?o:x):[...S.misf,o];kvSet('misf',S.misf);mergeF();afClose();
+  const h='#/formulario/'+sub;if(location.hash==h)render();else location.hash=h}
+ catch(e){E.textContent=e.message}}
+
+/* ===== Calculadora científica (sin eval: analizador propio) ===== */
+function sciEval(src,deg=true,ans=0,vars=null){
+ const s=src.replace(/\s+/g,''),err=m=>{throw Error(m)},names=vars?Object.keys(vars).sort((a,b)=>b.length-a.length):[];let i=0;
+ const rad=x=>deg?x*Math.PI/180:x,back=x=>deg?x*180/Math.PI:x,clean=x=>Math.abs(x)<1e-12?0:x;
+ const starts=()=>{const c=s[i];return c!==undefined&&(/[0-9,(πe√]/.test(c)||s.startsWith('Ans',i)||names.some(n=>s.startsWith(n,i))||/^(asin|acos|atan|sin|cos|tan|log|ln|abs)/.test(s.slice(i,i+4)))};
+ function fact(n){if(n<0||n!=Math.floor(n))err('n! requiere un entero mayor o igual a 0');if(n>170)err('n! demasiado grande');let r=1;for(let k=2;k<=n;k++)r*=k;return r}
+ function fn(n,a){switch(n){
+  case'sin':return clean(Math.sin(rad(a)));case'cos':return clean(Math.cos(rad(a)));
+  case'tan':if(deg&&Math.abs(((a%180)+180)%180-90)<1e-9)err('tan no está definida en ese ángulo');return clean(Math.tan(rad(a)));
+  case'asin':if(Math.abs(a)>1)err('sin⁻¹ solo admite valores entre −1 y 1');return back(Math.asin(a));
+  case'acos':if(Math.abs(a)>1)err('cos⁻¹ solo admite valores entre −1 y 1');return back(Math.acos(a));
+  case'atan':return back(Math.atan(a));
+  case'log':if(a<=0)err('log: el valor debe ser positivo');return Math.log10(a);
+  case'ln':if(a<=0)err('ln: el valor debe ser positivo');return Math.log(a);
+  default:return Math.abs(a)}}
+ function arg(){if(s[i]=='('){i++;const v=expr();if(s[i]==')')i++;return v}return power()}
+ function prim(){const c=s[i];if(c===undefined)err('Expresión incompleta');
+  if(c=='('){i++;const v=expr();if(s[i]==')')i++;return v}
+  const m=s.slice(i).match(/^(\d+(?:,\d*)?|,\d+)(E[+−-]?\d+)?/);
+  if(m){i+=m[0].length;return parseFloat(m[1].replace(',','.')+(m[2]?'e'+m[2].slice(1).replace('−','-'):''))}
+  if(names.length){const f0=s.slice(i).match(/^(asin|acos|atan|sin|cos|tan|log|ln|abs)(?=\()/);if(f0){i+=f0[0].length;return fn(f0[0],arg())}
+   for(const n of names)if(s.startsWith(n,i)){i+=n.length;return vars[n]}}
+  if(s.startsWith('Ans',i)){i+=3;return ans}
+  if(c=='π'){i++;return Math.PI}
+  if(c=='e'){i++;return Math.E}
+  if(c=='√'){i++;const a=arg();if(a<0)err('Raíz de un número negativo');return Math.sqrt(a)}
+  const f=s.slice(i).match(/^(asin|acos|atan|sin|cos|tan|log|ln|abs)/);
+  if(f){i+=f[0].length;return fn(f[0],arg())}
+  err('Símbolo no válido: '+c)}
+ function post(){let v=prim();for(;;){if(s[i]=='!'){i++;v=fact(v)}else if(s[i]=='%'){i++;v/=100}else return v}}
+ function power(){const b=post();if(s[i]=='^'){i++;const e=unary(),r=Math.pow(b,e);if(isNaN(r))err('Resultado no definido');return r}return b}
+ function unary(){if(s[i]=='−'||s[i]=='-'){i++;return -unary()}if(s[i]=='+'){i++;return unary()}return power()}
+ function term(){let v=unary();for(;;){const c=s[i];
+  if(c=='×'||c=='*'){i++;v*=unary()}
+  else if(c=='÷'||c=='/'){i++;const d=unary();if(d==0)err('No se puede dividir entre cero');v/=d}
+  else if(starts())v*=unary();else return v}}
+ function expr(){let v=term();while(s[i]=='+'||s[i]=='−'||s[i]=='-'){const o=s[i++],r=term();v=o=='+'?v+r:v-r}return v}
+ const v=expr();if(i<s.length)err('Expresión no válida');if(!isFinite(v))err('Resultado no definido');return v}
+const sciFmt=x=>{if(!isFinite(x))return 'Error';const a=Math.abs(x);let t;
+ if(a!=0&&(a>=1e12||a<1e-9)){const[m,e]=x.toExponential(9).split('e');t=`${+m}E${+e}`}else t=String(+x.toPrecision(12));
+ return t.replace('.',',').replace('-','−')};
+const SCI={tk:[],deg:true,ans:0,last:'',eq:false,err:''};
+const SCI_KEYS={f:[['DEG','DEG'],['sin','sin'],['cos','cos'],['tan','tan'],['π','π'],['x²','x²'],['asin','sin⁻¹'],['acos','cos⁻¹'],['atan','tan⁻¹'],['e','e'],['xʸ','xʸ'],['log','log'],['ln','ln'],['10ˣ','10ˣ'],['eˣ','eˣ'],['√','√'],['1/x','1/x'],['n!','n!'],['abs','|x|'],['Ans','Ans']],
+ n:[['AC','AC','c'],['⌫','⌫','c'],['(','(','f'],[')',')','f'],['7','7'],['8','8'],['9','9'],['÷','÷','o'],['4','4'],['5','5'],['6','6'],['×','×','o'],['1','1'],['2','2'],['3','3'],['−','−','o'],['0','0'],[',',','],['EXP','EXP','f'],['+','+','o'],['=','=','eq']]};
+function sciOpen(){let p=$('#sci');
+ if(!p){p=document.createElement('div');p.id='sci';p.className='sci';
+  p.innerHTML=`<div class="sci-bk" data-sk="close"></div><div class="sci-p"><div class="sci-h"><b>Calculadora científica</b><button data-sk="close" aria-label="Cerrar">✕</button></div>
+  <div class="sci-d"><small id="sciL"></small><div id="sciE"></div><div id="sciR"></div></div>
+  <div class="sci-f">${SCI_KEYS.f.map(([k,l])=>`<button class="k f" data-sk="${k}" ${k=='DEG'?'id="sciDeg"':''}>${l}</button>`).join('')}</div>
+  <div class="sci-n">${SCI_KEYS.n.map(([k,l,c])=>`<button class="k ${c||''}" data-sk="${k}">${l}</button>`).join('')}</div></div>`;
+  p.addEventListener('click',e=>{const b=e.target.closest('[data-sk]');if(!b)return;b.dataset.sk=='close'?sciClose():sciKey(b.dataset.sk)});
+  document.body.appendChild(p);kvGet('deg').then(v=>{if(typeof v=='boolean'){SCI.deg=v;sciDraw()}}).catch(()=>{})}
+ p.hidden=false;document.body.style.overflow='hidden';sciDraw()}
+function sciClose(){const p=$('#sci');if(p)p.hidden=true;document.body.style.overflow=''}
+addEventListener('hashchange',sciClose);
+function sciDraw(){if(!$('#sciE'))return;const t=SCI.tk.join('');$('#sciL').textContent=SCI.last;$('#sciE').textContent=SCI.eq?'':(t||'0');
+ const d=$('#sciDeg');if(d)d.textContent=SCI.deg?'DEG':'RAD';
+ let r='';if(SCI.err)r=SCI.err;else if(SCI.eq)r=sciFmt(SCI.ans);else if(t){try{r='= '+sciFmt(sciEval(t,SCI.deg,SCI.ans))}catch(e){r=''}}
+ const R=$('#sciR');R.textContent=r;R.classList.toggle('bad',!!SCI.err)}
+function sciKey(k){const S_=SCI,ops=['+','−','×','÷','^','!','%','x²','1/x','xʸ','n!'];
+ if(k=='AC'){S_.tk=[];S_.eq=false;S_.last='';S_.err='';return sciDraw()}
+ if(k=='DEG'){S_.deg=!S_.deg;kvSet('deg',S_.deg);return sciDraw()}
+ S_.err='';
+ if(k=='⌫'){if(S_.eq){S_.tk=[];S_.eq=false}else S_.tk.pop();return sciDraw()}
+ if(k=='='){const t=S_.tk.join('');if(!t)return;try{const v=sciEval(t,S_.deg,S_.ans);S_.last=t+' =';S_.ans=v;S_.tk=[sciFmt(v)];S_.eq=true}catch(e){S_.err=e.message}return sciDraw()}
+ if(S_.eq){S_.eq=false;if(!ops.includes(k))S_.tk=[]}
+ const M={'x²':['^','2'],'1/x':['^','(','−','1',')'],'xʸ':['^'],'n!':['!'],'10ˣ':['10','^','('],'eˣ':['e','^','('],'EXP':['E'],'asin':['asin('],'acos':['acos('],'atan':['atan('],'√':['√('],'abs':['abs('],'sin':['sin('],'cos':['cos('],'tan':['tan('],'log':['log('],'ln':['ln(']};
+ S_.tk.push(...(M[k]||[k]));sciDraw()}
+
 /* ===== Arranque, estado de conexión y PWA ===== */
 document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.dataset.s||22));
 (async()=>{
  const j=async u=>(await fetch(u)).json();
- try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.sub={};
+ try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.fbase=D.formulas;D.sub={};
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data){try{D.sub[k]=await j(`${s.data}.json`)}catch(e){}}
-  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};render()}
+  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];mergeF();render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
