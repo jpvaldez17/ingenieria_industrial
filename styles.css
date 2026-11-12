@@ -412,3 +412,20 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .sci-n .k.kr{background:#8f1d2c;border-color:#b3202f;color:#fff}
 .sci-n .k.kg{grid-column:span 2;background:#15965a;border-color:#1fbf76;color:#fff;font-size:1.3rem}
 @media(max-height:740px){.k{height:36px}.sci-n .k{height:40px}#sciE{min-height:2.8em}}
+
+/* ===== Mi carrera: estilo más limpio (v20) ===== */
+.srm{padding:0 0 8px 2px;gap:0;min-height:34px}
+.stb{border:0;background:none;padding:6px 12px 6px 0;font-family:inherit;font-size:.66rem;font-weight:600;color:#9aa3ad;cursor:pointer;letter-spacing:.2px}
+.stb.on{font-weight:800}
+.stb.on.aprobada{color:#15803d}.stb.on.curso{color:#1d6fe0}.stb.on.pendiente{color:#374151}
+.ok{display:none;font-style:normal;color:#16a34a;font-weight:900;margin-left:6px}
+.srow[data-e="aprobada"] .ok{display:inline}
+.srow:not([data-e="aprobada"]) .nw{display:none!important}
+/* materia seleccionada: fondo negro, nombre en verde */
+.srow.act{background:#111;color:#fff}
+.srow.act .sn{color:#4ade80}
+.srow.act .stb{color:#8b95a1}
+.srow.act .stb.on.aprobada{color:#4ade80}.srow.act .stb.on.curso{color:#60a5fa}.srow.act .stb.on.pendiente{color:#e5e7eb}
+/* flechita de las demás materias: círculo gris oscuro */
+.go.g{width:28px!important;height:28px!important;border-radius:50%;background:#374151;display:grid;place-items:center}
+.go.g .ic{color:#fff!important}
