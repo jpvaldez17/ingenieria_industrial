@@ -123,7 +123,7 @@ const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:(SUBJ()[k].nota??null);
 const prom=ks=>{const v=ks.map(notaOf).filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
 const fp=n=>n==null?'---':(+n.toFixed(1)).toLocaleString('es',{maximumFractionDigits:1});
 const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=>estOf(k)=='aprobada').length;return `${n} ${n==1?'materia':'materias'} con nota · ${a} ${a==1?'aprobada':'aprobadas'}`};
-const OPEN=new Set();let openInit=false;
+let SEL=null;const OPEN=new Set();let openInit=false;
 /* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
 const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
  const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
@@ -131,7 +131,7 @@ function carrera(){
  if(!openInit){openInit=true;const m=D.career.semesters.find(x=>x.items.includes(curId()));if(m)OPEN.add(m.n)}
  const all=Object.keys(SUBJ());
  return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>PROM. GENERAL</i><b class="gpn">${fp(prom(all))}</b></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow ${on?'act':''}" data-e="${e}" style="--c:${s.color}"><div class="srt"><span class="row"><span class="sn" data-act="setcur" data-k="${k}"><i class="ok" aria-label="Aprobada">✓</i><i class="sd" aria-hidden="true"></i><span class="nm">${s.name}</span></span><a class="go ${on?'r':'g'}" href="#/materia/${k}" aria-label="Abrir temario de ${s.name}">${ic('chevR',16)}</a></span><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm"><span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="---" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),sel=k==(SEL??curId()),e=estOf(k),n=notaOf(k);return `<div class="srow ${sel?'act':''}" data-e="${e}" style="--c:${s.color}"><div class="srt"><span class="row"><span class="sn" data-act="setsel" data-k="${k}"><i class="ok" aria-label="Aprobada">✓</i><i class="sd" aria-hidden="true"></i><span class="nm">${s.name}</span></span><a class="go ${on?'r':'g'}" href="#/materia/${k}" aria-label="Abrir temario de ${s.name}">${ic('chevR',16)}</a></span><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm"><span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="---" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
@@ -217,7 +217,8 @@ document.addEventListener('click',async e=>{
  else if(a=='setst'){S.est[d.k]=d.v;kvSet('est',S.est);[...b.parentNode.querySelectorAll('.stb')].forEach(x=>x.classList.toggle('on',x==b));b.closest('.srow').dataset.e=d.v;refreshAvg()}
  else if(a=='nsave')notaSave(d.k);
  else if(a=='ncancel')notaCancel(d.k);
- else if(a=='setcur'){S.cur=d.k;kvSet('cur',S.cur);render()}
+ else if(a=='setsel'){SEL=d.k;render()}
+ else if(a=='setcur'){S.cur=d.k;SEL=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
  else if(a=='calc')runCalc(d.f);

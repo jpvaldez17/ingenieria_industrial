@@ -482,3 +482,8 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .srow .go.g .ic path{stroke-width:3}
 /* brillo del promedio general: hacia abajo y a los lados, sin llegar a la curva del encabezado */
 .gpm{box-shadow:0 3px 9px -1px rgba(51,107,117,.5)}
+
+/* ===== Mi carrera v27 ===== */
+/* flechita de temario (no actual): negro liso, flecha roja, sin borde ni brillo */
+.srow .go.g{background:#111;border:0;box-shadow:none}
+.srow.act .go.g{background:#2a2d31}
