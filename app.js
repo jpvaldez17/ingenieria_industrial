@@ -123,7 +123,7 @@ const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:(SUBJ()[k].nota??null);
 const prom=ks=>{const v=ks.map(notaOf).filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
 const fp=n=>n==null?'---':(+n.toFixed(1)).toLocaleString('es',{maximumFractionDigits:1});
 const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=>estOf(k)=='aprobada').length;return `${n} ${n==1?'materia':'materias'} con nota · ${a} ${a==1?'aprobada':'aprobadas'}`};
-let SEL=null;const OPEN=new Set();let openInit=false;
+let SEL=null,addMode='dev';const OPEN=new Set();let openInit=false;
 /* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
 const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
  const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
@@ -180,13 +180,14 @@ function calc(id){
  <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div>${f.custom?`<div class="rowb"><button class="btn2" data-act="editf" data-f="${f.id}">Editar</button><button class="btn2 del" data-act="delf" data-f="${f.id}">Eliminar</button></div>`:''}</div>`}
 
 async function biblioteca(){
- const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','PDF','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
- return `<h1 class="up">Biblioteca</h1><p class="muted">Tus archivos se guardan en este dispositivo y se abren sin conexión.</p>
+ const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
+ return `<h1 class="up">Biblioteca</h1><p class="muted">Abre tus archivos desde este dispositivo (sin conexión) o desde un enlace de Drive.</p>
  <div class="tabs">${C.map(([k,n,i,c])=>`<button class="tab ${c} ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>
- ${L.length?L.map(x=>`<div class="card"><div class="r2"><div><b>${esc(x.title)}</b><br><small>${esc(SUBJ()[x.subject]?.short||'')}${x.unit?' · '+esc(x.unit):''}</small></div><button class="btn sm" data-act="open" data-id="${x.id}">Abrir</button><button class="btn ghost sm" data-act="del" data-id="${x.id}" aria-label="Eliminar">${ic('trash',16)}</button></div></div>`).join(''):'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
- <div class="card"><h3 style="margin-top:0">Añadir archivo</h3><div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" style="display:none" accept="${cat=='foto'?'image/*':'application/pdf,image/*'}">
+ ${L.length?L.map(x=>`<div class="card"><div class="r2"><div><b>${esc(x.title)}</b><br><small>${esc(SUBJ()[x.subject]?.short||'')}${x.unit?' · '+esc(x.unit):''} · ${x.blob?'Dispositivo':'Drive'}</small></div><button class="btn sm" data-act="open" data-id="${x.id}">Abrir</button><button class="btn ghost sm" data-act="del" data-id="${x.id}" aria-label="Eliminar">${ic('trash',16)}</button></div></div>`).join(''):'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
+ <div class="card"><h3 style="margin-top:0">Añadir archivo</h3><div class="modes"><button class="md ${addMode=='dev'?'on':''}" data-act="mode" data-m="dev">Desde el dispositivo</button><button class="md ${addMode=='drive'?'on':''}" data-act="mode" data-m="drive">Enlace de Drive</button></div>
+${addMode=='dev'?`<div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" style="display:none" ${cat=='foto'?'accept="image/*"':''}>`:`<label>Nombre del archivo<input id="ft" placeholder="Ej. Resumen unidad 2"></label><label>Enlace de Drive<input id="fl" type="url" inputmode="url" placeholder="https://drive.google.com/..."></label>`}
  <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}">${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
- <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu"></label><button class="btn" data-act="addf">${ic('plus',18)} Guardar en el dispositivo</button></div>`}
+ <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu"></label><button class="btn gbtn" data-act="savef">${ic('plus',18)}<span>${addMode=='dev'?'Guardar archivo':'Guardar enlace'}</span></button></div>`}
 
 function results(q){
  q=norm(q.trim());if(q.length<2)return'<p class="muted">Escribe al menos 2 letras.</p>';const o=[];
@@ -231,9 +232,13 @@ document.addEventListener('click',async e=>{
  else if(a=='inst'){if(ip){ip.prompt();await ip.userChoice;ip=null}else alert('Para instalar: menú ⋮ de Chrome → "Instalar app" o "Agregar a la pantalla de inicio".')}
  else if(a=='ans'){[...b.parentNode.children].forEach((x,i)=>{x.disabled=true;if(i==+d.a)x.classList.add('ok')});const ok=+d.i==+d.a,hoy=new Date().toDateString();
   if(!ok)b.classList.add('bad');if(S.sc.day!==hoy){S.sc.day=hoy;ok?S.sc.ok++:S.sc.bad++;save();$('.sc').innerHTML=`<i class="g">✓ ${S.sc.ok}</i><i class="r">✕ ${S.sc.bad}</i>`}}
- else if(a=='addf'){const f=$('#fi').files[0];if(!f)return alert('Selecciona un archivo primero.');
-  await tx('files','readwrite',s=>s.add({cat,subject:$('#fs').value,unit:$('#fu').value.trim(),title:f.name,blob:f,date:Date.now()}));render()}
- else if(a=='open'){const r=await tx('files','readonly',s=>s.get(+d.id));if(r)window.open(URL.createObjectURL(r.blob),'_blank')}
+ else if(a=='mode'){addMode=d.m;render()}
+ else if(a=='savef'){const base={cat,subject:$('#fs').value,unit:$('#fu').value.trim(),date:Date.now()};
+  if(addMode=='drive'){const t=$('#ft').value.trim(),u=$('#fl').value.trim();if(!t)return alert('Escribe el nombre del archivo.');if(!/^https?:\/\//i.test(u))return alert('Pega el enlace completo de Drive (empieza con https://).');
+   await tx('files','readwrite',s=>s.add({...base,title:t,url:u}))}
+  else{const f=$('#fi').files[0];if(!f)return alert('Selecciona un archivo primero.');await tx('files','readwrite',s=>s.add({...base,title:f.name,blob:f}))}
+  render()}
+ else if(a=='open'){const r=await tx('files','readonly',s=>s.get(+d.id));if(r){if(r.blob)window.open(URL.createObjectURL(r.blob),'_blank');else if(r.url)window.open(r.url,'_blank','noopener')}}
  else if(a=='del'){if(confirm('¿Eliminar este archivo del dispositivo?')){await tx('files','readwrite',s=>s.delete(+d.id));render()}}});
 
 const toast=m=>{let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1600)};
