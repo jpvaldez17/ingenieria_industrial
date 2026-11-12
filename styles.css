@@ -429,3 +429,13 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 /* flechita de las demás materias: círculo gris oscuro */
 .go.g{width:28px!important;height:28px!important;border-radius:50%;background:#374151;display:grid;place-items:center}
 .go.g .ic{color:#fff!important}
+
+/* ===== Mi carrera v21: estado automático ===== */
+.chead h1{text-transform:uppercase}
+.ok{font-size:1.35em;line-height:1;vertical-align:-1px}
+.sd{display:none;width:10px;height:10px;border-radius:50%;margin-left:8px;vertical-align:middle}
+.srow[data-e="curso"] .sd{display:inline-block;background:#f97316}
+.srow[data-e="pendiente"] .sd{display:inline-block;background:#111}
+/* sin nota y sin ser la actual: sin segunda línea, botones centrados */
+.srow:not([data-e="aprobada"]):not(.act) .srm{display:none}
+.srow:not([data-e="aprobada"]):not(.act) .srt{padding:8px 0}

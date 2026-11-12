@@ -118,7 +118,7 @@ function home(){
 
 /* Estado y nota de cada materia: lo que marques o escribas se guarda en este dispositivo */
 const ESTS=[['aprobada','Aprobada'],['curso','En curso'],['pendiente','Pendiente']];
-const estOf=k=>{const v=S.est[k]||SUBJ()[k].status;return ESTS.some(x=>x[0]==v)?v:'pendiente'};
+const estOf=k=>notaOf(k)!=null?'aprobada':(k==curId()?'curso':'pendiente');
 const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:(SUBJ()[k].nota??null);
 const prom=ks=>{const v=ks.map(notaOf).filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
 const fp=n=>n==null?'---':(+n.toFixed(1)).toLocaleString('es',{maximumFractionDigits:1});
@@ -130,8 +130,8 @@ const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySel
 function carrera(){
  if(!openInit){openInit=true;const m=D.career.semesters.find(x=>x.items.includes(curId()));if(m)OPEN.add(m.n)}
  const all=Object.keys(SUBJ());
- return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>PROM. GENERAL</i><b class="gpn">${fp(prom(all))}</b></div></div><p class="muted">Marca el estado de cada materia, escribe tu nota y toca «Usar» para elegir tu materia actual.</p>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
-  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow ${on?'act':''}" data-e="${e}" style="--c:${s.color}"><div class="srt"><a class="row" href="#/materia/${k}"><span class="sn">${s.name}<i class="ok" aria-label="Aprobada">✓</i></span><span class="go ${on?'r':'g'}">${ic('chevR',16)}</span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm">${ESTS.map(([v,t])=>`<button class="stb ${v} ${e==v?'on':''}" data-act="setst" data-k="${k}" data-v="${v}">${t}</button>`).join('')}<span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
+ return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>PROM. GENERAL</i><b class="gpn">${fp(prom(all))}</b></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
+  sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),e=estOf(k),n=notaOf(k);return `<div class="srow ${on?'act':''}" data-e="${e}" style="--c:${s.color}"><div class="srt"><a class="row" href="#/materia/${k}"><span class="sn">${s.name}<i class="ok" aria-label="Aprobada">✓</i><i class="sd" aria-hidden="true"></i></span><span class="go ${on?'r':'g'}">${ic('chevR',16)}</span></a><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm"><span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="Nota" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
@@ -239,7 +239,7 @@ const toast=m=>{let t=$('#toast');if(!t){t=document.createElement('div');t.id='t
 const notaIn=k=>document.querySelector(`input.nota[data-k="${k}"]`),notaAc=k=>document.querySelector(`.nac[data-k="${k}"]`);
 function notaSave(k){const i=notaIn(k);let n=i.value.trim()===''?null:parseFloat(i.value.replace(',','.'));if(n!=null&&isNaN(n))n=null;
  if(n!=null){n=Math.min(100,Math.max(0,n));i.value=n}
- S.notas[k]=n;kvSet('notas',S.notas);i.dataset.orig=n??'';notaAc(k).hidden=true;refreshAvg();toast(n==null?'Nota borrada':'Nota guardada ✓')}
+ S.notas[k]=n;kvSet('notas',S.notas);i.dataset.orig=n??'';notaAc(k).hidden=true;i.closest('.srow').dataset.e=estOf(k);refreshAvg();toast(n==null?'Nota borrada':'Nota guardada ✓')}
 function notaCancel(k){const i=notaIn(k);i.value=i.dataset.orig;notaAc(k).hidden=true}
 document.addEventListener('input',e=>{const i=e.target;if(i.classList&&i.classList.contains('nota'))notaAc(i.dataset.k).hidden=(i.value.trim()===i.dataset.orig)});
 document.addEventListener('keydown',e=>{const i=e.target;if(e.key==='Enter'&&i.classList&&i.classList.contains('nota')){e.preventDefault();notaSave(i.dataset.k);i.blur()}});
