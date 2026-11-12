@@ -420,10 +420,9 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .stb.on.aprobada{color:#15803d}.stb.on.curso{color:#1d6fe0}.stb.on.pendiente{color:#374151}
 .ok{display:none;font-style:normal;color:#16a34a;font-weight:900;margin-left:6px}
 .srow[data-e="aprobada"] .ok{display:inline}
-.srow:not([data-e="aprobada"]) .nw{display:none!important}
 /* materia seleccionada: fondo negro, nombre en verde */
 .srow.act{background:#111;color:#fff}
-.srow.act .sn{color:#4ade80}
+.srow.act .sn{color:var(--tq)}
 .srow.act .stb{color:#8b95a1}
 .srow.act .stb.on.aprobada{color:#4ade80}.srow.act .stb.on.curso{color:#60a5fa}.srow.act .stb.on.pendiente{color:#e5e7eb}
 /* flechita de las demás materias: círculo gris oscuro */
@@ -434,8 +433,17 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .chead h1{text-transform:uppercase}
 .ok{font-size:1.35em;line-height:1;vertical-align:-1px}
 .sd{display:none;width:10px;height:10px;border-radius:50%;margin-left:8px;vertical-align:middle}
-.srow[data-e="curso"] .sd{display:inline-block;background:#f97316}
+.srow[data-e="curso"] .sd{display:inline-block;background:#d1303c}
 .srow[data-e="pendiente"] .sd{display:inline-block;background:#111}
 /* sin nota y sin ser la actual: sin segunda línea, botones centrados */
 .srow:not([data-e="aprobada"]):not(.act) .srm{display:none}
 .srow:not([data-e="aprobada"]):not(.act) .srt{padding:8px 0}
+
+/* ===== Mi carrera v22: nombre centrado entre botones y nota ===== */
+.srow{display:grid;grid-template-columns:1fr auto auto;column-gap:8px;align-items:center;padding-block:8px}
+.srow .srt,.srow .row,.srow .srm{display:contents}
+.srow .sn{grid-column:1;grid-row:1 / span 2;align-self:center;min-width:0}
+.srow:not([data-e="aprobada"]):not(.act) .sn{grid-row:1}
+.srow .go{grid-column:2;grid-row:1}
+.srow .cbtn{grid-column:3;grid-row:1}
+.srow .nw{grid-column:2 / 4;grid-row:2;justify-self:end;margin:6px 0 0}
