@@ -474,3 +474,11 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .sem>summary .avg{border-color:#8b5e3c}
 /* separación entre el promedio del semestre y la primera materia */
 .sem>.srow:first-of-type{margin-top:10px}
+
+/* ===== Mi carrera v26 ===== */
+/* flechita de materias no seleccionadas: negro con flecha roja y brillo rojo */
+.srow .go.g{background:#111;border:1.5px solid rgba(217,43,58,.75);box-shadow:0 0 8px rgba(217,43,58,.55)}
+.srow .go.g .ic{color:#d92b3a!important}
+.srow .go.g .ic path{stroke-width:3}
+/* brillo del promedio general: hacia abajo y a los lados, sin llegar a la curva del encabezado */
+.gpm{box-shadow:0 3px 9px -1px rgba(51,107,117,.5)}
