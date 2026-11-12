@@ -339,21 +339,7 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .pills{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity;scrollbar-width:none}
 .pl{flex:none;scroll-snap-align:start;padding:8px 14px;border-radius:99px;border:2px solid var(--c);color:var(--c);background:#fff;font-weight:700;font-size:.88rem;white-space:nowrap;text-decoration:none}
 .pl.on{background:var(--c);color:#fff}
-/* calculadora */
-.sci{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center}.sci[hidden]{display:none}
-.sci-bk{position:absolute;inset:0;background:rgba(0,0,0,.6)}
-.sci-p{position:relative;width:100%;max-width:480px;background:#0b0b0c;border-top:3px solid #8f1d2c;border-radius:22px 22px 0 0;padding:10px 12px calc(12px + env(safe-area-inset-bottom));color:#fff;box-shadow:0 -10px 30px rgba(0,0,0,.5)}
-.sci-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.sci-h b{font-size:.85rem;color:#e7a3ab;letter-spacing:.04em}
-.sci-h button{background:#1c1e22;color:#fff;border:0;width:32px;height:32px;border-radius:50%;font-size:.95rem;cursor:pointer}
-.sci-d{background:#000;border:1px solid #3a1017;border-radius:14px;padding:8px 12px;margin-bottom:10px;text-align:right;min-height:92px;font-family:var(--formula)}
-.sci-d small{display:block;min-height:1.1em;color:#7d7d84;font-size:.78rem;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-#sciE{font-size:1.15rem;min-height:1.5em;word-break:break-all;color:#fff}
-#sciR{font-size:1.75rem;font-weight:700;color:#ff8f9c;min-height:1.3em}#sciR.bad{font-size:.95rem;color:#ff6b7a;font-weight:600}
-.sci-f{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}.sci-n{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.k{height:44px;border:0;border-radius:12px;font:700 .95rem var(--formula);color:#fff;background:#1c1e22;cursor:pointer;padding:0}
-.k:active{filter:brightness(1.4)}
-.k.f{background:#2a0f14;color:#f3b5bd;font-size:.85rem}.k.o{background:#6b1424;font-size:1.15rem}.k.c{background:#3a1017;color:#ff9aa6}.k.eq{background:#a3202f;grid-column:1/-1;font-size:1.3rem}
-@media(max-height:740px){.k{height:38px}.sci-d{min-height:80px}}
+
 
 
 /* ===== v18: botón + para agregar fórmulas propias ===== */
@@ -384,3 +370,57 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .fm{align-items:flex-start}.fm math{margin:0 auto}
 .fcard2.wide .fm math{font-size:1.15em}
 .fh,.fhd{grid-template-columns:31% 1fr}.fcard2.wide .fh{grid-template-columns:1fr}
+/* ===== v19: fórmula tenue con cuadritos ===== */
+.mx{font-family:var(--formula);font-size:1.2rem;line-height:1.3;white-space:nowrap;display:inline-block;text-align:left}
+.mx .v{font-style:italic}.mx .op{margin:0 .24em}.mx .ts{display:inline-block;width:.18em}.mx .tx{font-family:'Winky Sans',var(--formula);font-size:.9em}
+.mx sub,.mx sup{font-size:.68em;line-height:0}.mx sub{vertical-align:-.28em}.mx sup{vertical-align:.55em}
+.mx .ssp{display:inline-flex;flex-direction:column;vertical-align:middle}.mx .ssp sup,.mx .ssp sub{vertical-align:0;line-height:1.1}
+.mx .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .12em}
+.mx .fr>.nu{padding:.04em .25em .14em;border-bottom:.07em solid currentColor;text-align:center}
+.mx .fr>.de{padding:.22em .25em .04em;text-align:center}
+.mx .sm{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .1em;line-height:1}
+.mx .sm .sg{font-size:1.6em;line-height:1}.mx .sm .up2,.mx .sm .lo{font-size:.62em;white-space:nowrap;line-height:1.1}
+.mx .sq{display:inline-flex;vertical-align:middle;margin:0 .06em}
+.mx .sq>svg{width:.8em;align-self:stretch;flex:none;overflow:visible}
+.mx .sq>.ra{border-top:.07em solid currentColor;padding:.12em .12em 0 .08em;margin-left:-.02em}
+.mx .ba{display:inline-block;line-height:.82;border-top:.07em solid currentColor;padding-top:.1em;margin-top:.12em}
+.mx .ht{position:relative;display:inline-block}.mx .ht:before{content:"^";position:absolute;left:50%;top:-.62em;transform:translateX(-50%) scaleX(1.2);font-size:.9em}
+.mx .pg{display:inline-flex;align-items:stretch;vertical-align:middle}.mx .pg>.in{display:inline-block;padding:0 .12em}
+.mx .lp,.mx .rp{width:.34em;border:0 solid currentColor;border-width:.09em}
+.mx .lp{border-right:0;border-radius:60% 0 0 60%/50% 0 0 50%}.mx .rp{border-left:0;border-radius:0 60% 60% 0/0 50% 50% 0}
+.fx{background:#e4f2f4;border-radius:16px;padding:14px 8px;text-align:center;color:rgba(15,47,54,.5);overflow-x:auto;margin:6px 0}
+.fx .mw{display:inline-block}
+.bx{width:3.4em;height:1.75em;margin:0 .1em;padding:0;border:2px solid var(--c,#336B75);border-radius:9px;background:#fff;color:#0f2f36;text-align:center;font:700 .8em var(--formula);vertical-align:middle;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.bx::placeholder{color:rgba(15,47,54,.32);font-weight:500}
+.bx:focus{outline:0;border-color:#15965a;box-shadow:0 0 0 3px rgba(21,150,90,.25)}.bx.miss{border-color:#dc2626;background:#fff1f1}
+.bx.w{width:100%;height:44px;font-size:1rem;margin:0}
+.hint{font-size:.82rem;color:var(--mu);margin:4px 0 10px}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:8px 0}
+.dgc{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--mu)}
+.cgl{margin:8px 0}.cgl-t{font-size:.8rem;color:var(--mu);margin-bottom:4px}
+.cgl-r{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.cgl-r .bx{width:56px;height:42px;font-size:1rem;margin:0}
+.cgl-b{width:42px;height:42px;border-radius:9px;border:2px solid var(--c,#336B75);background:var(--c,#336B75);color:#fff;font:800 1.3rem var(--formula);cursor:pointer;padding:0}.cgl-b.m{background:#fff;color:var(--c,#336B75)}
+
+
+/* ===== Calculadora científica: tema café ===== */
+.sci{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center}.sci[hidden]{display:none}
+.sci-bk{position:absolute;inset:0;background:rgba(0,0,0,.6)}
+.sci-p{position:relative;width:100%;max-width:480px;background:#160e09;border-top:3px solid #a06a3f;border-radius:22px 22px 0 0;padding:10px 12px calc(12px + env(safe-area-inset-bottom));color:#f3e3d0;box-shadow:0 -10px 34px rgba(160,106,63,.35)}
+.sci-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.sci-h b{font-size:.85rem;color:#d9ad7c;letter-spacing:.04em}
+.sci-h button{background:#2b1b12;color:#f3e3d0;border:1px solid #6b4a33;width:32px;height:32px;border-radius:50%;font-size:.95rem;cursor:pointer}
+.sci-d{background:#0b0705;border:1px solid #5a3b27;border-radius:14px;padding:8px 12px;margin-bottom:10px;font-family:var(--formula)}
+.sci-s{font-size:.66rem;letter-spacing:.08em;color:#a37a52;min-height:1em}
+#sciE{display:block;font-size:1.3rem;min-height:3.4em;color:#fff;overflow-x:auto;overflow-y:hidden;padding:6px 0;white-space:nowrap}
+#sciR{font-size:1.05rem;color:#d9ad7c;min-height:1.4em;text-align:right}#sciR.big{font-size:1.8rem;font-weight:700;color:#fff}#sciR.bad{font-size:.9rem;color:#ff7b8a;font-weight:600}
+#sciE .ch.o{margin:0 .2em}#sciE .ph{display:inline-block;min-width:.75em;height:1em;border:1.5px dashed #a37a52;border-radius:3px;vertical-align:middle;line-height:1}
+#sciE .ab{margin:0 .08em}#sciE .ix{font-size:.6em;vertical-align:.9em;margin-right:-.1em}
+.sc-cur{display:inline-block;width:2px;height:1.1em;background:#ffb36b;vertical-align:middle;animation:bl 1s steps(1) infinite}@keyframes bl{50%{opacity:0}}
+.sci-f{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:8px}.sci-n{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.k{height:42px;border-radius:10px;border:1px solid #6b4a33;background:#2b1b12;color:#ecd4b6;font:700 .88rem var(--formula);cursor:pointer;padding:0;box-shadow:0 2px 0 #0b0705}
+.k:active{transform:translateY(1px);filter:brightness(1.35)}
+.sci-n .k{height:46px;font-size:1.05rem;background:#3a2619;color:#fff}
+.k.ka{background:#1d130d;color:#e8c9a6;font-size:1rem}.k.ksh{color:#ffb36b}.k.ksh.on{background:#a06a3f;color:#fff}
+.sci-n .k.ko{background:#5a3a24;color:#ffd9b0;font-size:1.2rem}
+.sci-n .k.kr{background:#8f1d2c;border-color:#b3202f;color:#fff}
+.sci-n .k.kg{grid-column:span 2;background:#15965a;border-color:#1fbf76;color:#fff;font-size:1.3rem}
+@media(max-height:740px){.k{height:36px}.sci-n .k{height:40px}#sciE{min-height:2.8em}}

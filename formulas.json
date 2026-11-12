@@ -45,7 +45,12 @@
 "id": "e",
 "label": "Error máximo e (ej. 0,05)"
 }
-]
+],
+"map": {
+"Z": "Z",
+"p": "p",
+"e": "e"
+}
 },
 {
 "id": "nfin",
@@ -85,7 +90,13 @@
 "id": "e",
 "label": "Error máximo e (ej. 0,05)"
 }
-]
+],
+"map": {
+"N": "N",
+"Z": "Z",
+"p": "p",
+"e": "e"
+}
 },
 {
 "id": "sturges",
@@ -113,7 +124,10 @@
 "id": "n",
 "label": "Total de datos n"
 }
-]
+],
+"map": {
+"n": "n"
+}
 },
 {
 "id": "amplitud",
@@ -148,7 +162,11 @@
 "id": "k",
 "label": "Número de intervalos k"
 }
-]
+],
+"map": {
+"R": "R",
+"k": "k"
+}
 },
 {
 "id": "marca",
@@ -179,7 +197,11 @@
 "id": "Ls",
 "label": "Límite superior Lₛ"
 }
-]
+],
+"map": {
+"L_i": "Li",
+"L_s": "Ls"
+}
 },
 {
 "id": "frel",
@@ -214,7 +236,11 @@
 "id": "n",
 "label": "Total de datos n"
 }
-]
+],
+"map": {
+"f": "f",
+"n": "n"
+}
 },
 {
 "id": "media",
@@ -336,7 +362,14 @@
 "id": "A",
 "label": "Amplitud A"
 }
-]
+],
+"map": {
+"L_i": "Li",
+"n": "n",
+"F_i−1": "Fa",
+"f_i": "fi",
+"A": "A"
+}
 },
 {
 "id": "modaagr",
@@ -379,7 +412,13 @@
 "id": "A",
 "label": "Amplitud A"
 }
-]
+],
+"map": {
+"L_i": "Li",
+"d_1": "d1",
+"d_2": "d2",
+"A": "A"
+}
 },
 {
 "id": "varianza",
@@ -519,7 +558,12 @@
 "id": "s",
 "label": "Desviación estándar s"
 }
-]
+],
+"map": {
+"x": "x",
+"x̄": "xb",
+"s": "s"
+}
 },
 {
 "id": "atipicos",
@@ -550,7 +594,11 @@
 "id": "q3",
 "label": "Tercer cuartil Q₃"
 }
-]
+],
+"map": {
+"Q_1": "q1",
+"Q_3": "q3"
+}
 },
 {
 "id": "pearson",
@@ -671,7 +719,12 @@
 "id": "xb",
 "label": "Media de X (x̄)"
 }
-]
+],
+"map": {
+"ȳ": "yb",
+"b": "b",
+"x̄": "xb"
+}
 },
 {
 "id": "recta",
@@ -706,7 +759,12 @@
 "id": "x",
 "label": "Valor de X a predecir"
 }
-]
+],
+"map": {
+"a": "a",
+"b": "b",
+"x": "x"
+}
 },
 {
 "id": "r2",
@@ -733,7 +791,10 @@
 "id": "r",
 "label": "Coeficiente de correlación r (−1 a 1)"
 }
-]
+],
+"map": {
+"r": "r"
+}
 },
 {
 "id": "mmovil",
@@ -768,7 +829,12 @@
 "id": "Xc",
 "label": "Valor del período siguiente Xₜ₊₁"
 }
-]
+],
+"map": {
+"X_t−1": "Xa",
+"X_t": "Xb",
+"X_t+1": "Xc"
+}
 },
 {
 "id": "indice",
@@ -803,7 +869,11 @@
 "id": "P0",
 "label": "Precio del período base P₀"
 }
-]
+],
+"map": {
+"P_t": "Pt",
+"P_0": "P0"
+}
 },
 {
 "id": "cp",
@@ -838,7 +908,12 @@
 "id": "s",
 "label": "Desviación estándar del proceso σ"
 }
-]
+],
+"map": {
+"LSE": "LSE",
+"LIE": "LIE",
+"σ": "s"
+}
 },
 {
 "id": "cpk",
@@ -881,7 +956,13 @@
 "id": "s",
 "label": "Desviación estándar del proceso σ"
 }
-]
+],
+"map": {
+"LSE": "LSE",
+"LIE": "LIE",
+"μ": "mu",
+"σ": "s"
+}
 },
 {
 "id": "oee",
@@ -965,7 +1046,11 @@
 "id": "MTTR",
 "label": "MTTR · tiempo medio de reparación"
 }
-]
+],
+"map": {
+"MTBF": "MTBF",
+"MTTR": "MTTR"
+}
 },
 {
 "id": "dpmo",
@@ -1049,7 +1134,12 @@
 "id": "CVu",
 "label": "Costo variable unitario CVᵤ"
 }
-]
+],
+"map": {
+"CF": "CF",
+"P": "P",
+"CV_u": "CVu"
+}
 },
 {
 "id": "velocidad",
