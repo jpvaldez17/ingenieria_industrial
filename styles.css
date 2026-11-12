@@ -455,3 +455,22 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .srow.act{margin:0 -10px;padding:8px 10px;border-top:1px solid transparent}
 .ok{margin:0 8px 0 0}
 .sd{margin:0 8px 0 0}
+
+/* ===== Mi carrera v25 ===== */
+/* nombre: turquesa del tema; seleccionada: gris claro */
+.srow .sn{color:var(--tq);display:flex;align-items:center;cursor:pointer}
+.srow .nm{flex:1;min-width:0}
+.srow.act .sn{color:#d9dee3}
+/* tic y punto en una casilla del mismo ancho: los nombres quedan alineados */
+.ok,.sd{display:none;flex:none}
+.srow[data-e="aprobada"] .ok{display:block;width:24px;text-align:center;margin:0 6px 0 0;font-size:1.35em;line-height:1;vertical-align:baseline}
+.srow[data-e="curso"] .sd,.srow[data-e="pendiente"] .sd{display:block;width:12px;height:12px;margin:0 12px 0 6px}
+/* flechita: más alargada; gris = fondo café con flecha blanca */
+.srow .go{width:44px!important;height:30px!important;border-radius:99px!important}
+.srow .go.g{background:#8b5e3c;box-shadow:0 2px 6px rgba(139,94,60,.35)}
+.srow .go.g .ic{color:#fff!important}
+/* promedio general con brillito turquesa; promedio de semestre con borde café */
+.gpm{box-shadow:0 0 10px 1px rgba(51,107,117,.55),0 0 0 1px rgba(51,107,117,.25)}
+.sem>summary .avg{border-color:#8b5e3c}
+/* separación entre el promedio del semestre y la primera materia */
+.sem>.srow:first-of-type{margin-top:10px}
