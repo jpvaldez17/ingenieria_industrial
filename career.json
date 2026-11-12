@@ -495,148 +495,312 @@
  ],
  "datos": [
   {
-   "t": "Herramienta de calidad: Hoja de verificación",
-   "p": "Registra datos de forma ordenada"
+   "t": "Definiciones",
+   "p": "En control de calidad se inspecciona una muestra del lote y se usa <math display=\"inline\"><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover></math> para estimar <math display=\"inline\"><mi>μ</mi></math> del proceso, porque medir todo sería caro o destructivo."
   },
   {
-   "t": "Herramienta de calidad: Histograma",
-   "p": "Muestra la distribución"
+   "t": "Clases de variables",
+   "p": "La clase decide el cálculo: la moda sirve en nominales, la mediana en ordinales y la media en cuantitativas; promediar códigos de turno no tiene sentido."
   },
   {
-   "t": "Herramienta de calidad: Diagrama de Pareto",
-   "p": "Prioriza causas"
+   "t": "Medidas cualitativas",
+   "p": "El porcentaje de piezas defectuosas por turno permite comparar turnos aunque produzcan cantidades distintas."
   },
   {
-   "t": "Herramienta de calidad: Diagrama de causa-efecto (Ishikawa)",
-   "p": "Organiza posibles causas (6M: método, mano de obra, máquina, material, medio, medición)"
+   "t": "Sumatorias y productorias",
+   "p": "La confiabilidad de un sistema en serie es la productoria de las confiabilidades de sus componentes, <math display=\"inline\"><mrow><mi>R</mi><mo>=</mo><mo>∏</mo><msub><mi>R</mi><mi>i</mi></msub></mrow></math>; la sumatoria, en cambio, acumula costos o tiempos."
   },
   {
-   "t": "Herramienta de calidad: Diagrama de dispersión",
-   "p": "Relación entre dos variables"
+   "t": "Intervalos",
+   "p": "Elegir bien <math display=\"inline\"><mi>k</mi></math> y <math display=\"inline\"><mi>A</mi></math> evita histogramas engañosos al estudiar tiempos de ciclo o diámetros: con pocas clases se oculta la forma; con muchas aparece ruido."
   },
   {
-   "t": "Herramienta de calidad: Estratificación",
-   "p": "Separa datos por grupo (turno, máquina)"
+   "t": "La curva normal",
+   "p": "Si el proceso es normal, el 99,73 % de las piezas cae en <math display=\"inline\"><mrow><mi>μ</mi><mo>±</mo><mn>3</mn><mi>σ</mi></mrow></math>; de ahí salen los límites de las cartas de control y el criterio «tres sigma».\n<strong>Fuentes de verificación:</strong> OpenStax, <em>Introducción a la estadística</em> (distribución normal estándar y regla empírica); Universitat de València, apuntes de estadística descriptiva (tipos de variable y escalas); Universidad Carlos III de Madrid, Tema 1 de estadística descriptiva; Universidad Pablo de Olavide, tablas estadísticas; UNAM FES Zaragoza (estandarización); Universidad de Extremadura, <em>Bioestadística: estadística descriptiva</em> (clases y regla de Sturges); Universidad Nacional de La Plata, cálculo estadístico (puntos de inflexión de la normal)."
   },
   {
-   "t": "Herramienta de calidad: Gráfico de control",
-   "p": "Vigila si el proceso es estable"
+   "t": "Presentación de datos",
+   "p": "Una hoja de verificación bien diseñada en planta ya deja los datos organizados desde el momento de registrarlos."
   },
   {
-   "t": "Amplitud",
-   "p": "Ancho de un intervalo de clase."
+   "t": "Diagramas",
+   "p": "El diagrama de Pareto de defectos ayuda a decidir dónde actuar primero: unas pocas causas suelen explicar la mayor parte de los problemas."
   },
   {
-   "t": "Asimetría",
-   "p": "Falta de simetría de una distribución."
+   "t": "Frecuencias relativas",
+   "p": "Con frecuencias relativas se compara el defecto por turno aunque cada turno produzca una cantidad distinta de piezas."
   },
   {
-   "t": "Atípico",
-   "p": "Dato muy alejado del resto."
+   "t": "Frecuencias acumuladas",
+   "p": "La ojiva permite leer qué porcentaje de piezas cumple una especificación (por ejemplo, «menos de 10,05 mm») y estimar percentiles."
   },
   {
-   "t": "Cuartil",
-   "p": "Valor que divide los datos ordenados en cuatro partes."
+   "t": "Conceptos de clasificación",
+   "p": "Las clases abiertas son comunes en tiempos de entrega o de reparación, donde unos pocos casos son muy largos."
   },
   {
-   "t": "Desviación estándar",
-   "p": "Raíz de la varianza; dispersión típica alrededor de la media."
+   "t": "Clasificación de datos",
+   "p": "Agrupar diámetros o tiempos de ciclo en clases permite ver la forma de la distribución y detectar si el proceso está centrado."
   },
   {
-   "t": "Distribución de frecuencias",
-   "p": "Tabla que muestra cuántos datos caen en cada categoría o intervalo."
+   "t": "Diagrama de tallos y hojas",
+   "p": "Sirve para revisar rápido tiempos o mediciones de taller sin software, y se puede girar para verlo como un histograma.\n<strong>Fuentes de verificación:</strong> programas de Estadística I de la Universidad de Costa Rica (histograma con clases iguales y desiguales, polígono, ojiva «a menos de», clases abiertas, tallo y hojas); Universidad de Extremadura, <em>Bioestadística: estadística descriptiva</em> (clases y regla de Sturges); Universidad de Alcalá, práctica de estadística descriptiva con una variable (tallo y hojas, barras, Pareto, histograma, polígono); materiales de los capítulos anteriores."
   },
   {
-   "t": "Estadístico / Parámetro",
-   "p": "Medida de la muestra / medida de la población."
+   "t": "Parámetros y estadígrafos",
+   "p": "En planta casi nunca se mide toda la población; se calcula <math display=\"inline\"><mover><mi>x</mi><mo accent=\"true\">‾</mo></mover></math> de una muestra para estimar <math display=\"inline\"><mi>μ</mi></math> del proceso."
   },
   {
-   "t": "Frecuencia absoluta",
-   "p": "Número de veces que ocurre un valor."
-  },
-  {
-   "t": "Histograma",
-   "p": "Gráfico de barras pegadas para datos agrupados."
-  },
-  {
-   "t": "KPI",
-   "p": "Indicador clave de desempeño."
-  },
-  {
-   "t": "Marca de clase",
-   "p": "Punto medio de un intervalo."
-  },
-  {
-   "t": "Media",
-   "p": "Promedio aritmético."
+   "t": "Media aritmética (simple, ponderada y agrupada)",
+   "p": "El costo medio por unidad de varias compras se calcula con media ponderada: el precio de cada lote pesa según su cantidad."
   },
   {
    "t": "Mediana",
-   "p": "Valor central de los datos ordenados."
+   "p": "Para sueldos, tiempos de reparación o de entrega, la mediana describe mejor el caso típico que la media cuando hay unos pocos casos muy largos."
   },
   {
    "t": "Moda",
-   "p": "Valor más frecuente."
+   "p": "Una distribución bimodal en diámetros de piezas puede indicar dos máquinas o dos turnos mezclados con ajustes distintos."
   },
   {
-   "t": "Muestra",
-   "p": "Parte de la población que se observa."
+   "t": "Relaciones entre medidas",
+   "p": "Si la media es mucho mayor que la mediana en tiempos de proceso, hay casos muy largos que conviene investigar."
   },
   {
-   "t": "Percentil",
-   "p": "Valor bajo el cual está un porcentaje dado de los datos."
+   "t": "Media geométrica",
+   "p": "Con ventas que crecen 10 %, 20 % y 5 %, la tasa media se obtiene con la media geométrica de 1,10; 1,20 y 1,05, no con el promedio simple."
+  },
+  {
+   "t": "Media armónica",
+   "p": "Si un vehículo recorre dos tramos iguales a 40 y 60 km/h, su velocidad media es 48 km/h (armónica), no 50 km/h."
+  },
+  {
+   "t": "Media cuadrática",
+   "p": "El valor RMS se usa para medir vibraciones y corrientes alternas, donde el promedio simple daría cero."
+  },
+  {
+   "t": "Cuantiles (cuartiles, deciles y percentiles)",
+   "p": "Los percentiles sirven para fijar especificaciones: por ejemplo, «el 95 % de los pedidos se entrega en menos de <math display=\"inline\"><msub><mi>P</mi><mn>95</mn></msub></math> días».\n<strong>Fuentes de verificación:</strong> Universidad Nacional de Chimborazo, material de datos agrupados (mediana, moda, cuantiles); UAEH, <em>Estadística</em> (moda de Czuber, relación empírica, cuartiles, deciles y percentiles); ICAP, <em>Medidas de tendencia central</em> (media, mediana, moda y otras medias); MINEDU Perú, ficha de mediana y moda agrupadas."
   },
   {
    "t": "Rango",
-   "p": "Máximo menos mínimo."
+   "p": "Con muestras pequeñas (por ejemplo, 5 piezas por hora) el rango se usa en cartas de control como indicador rápido de la variabilidad del proceso."
   },
   {
-   "t": "Regresión",
-   "p": "Modelo que estima una variable a partir de otra."
-  },
-  {
-   "t": "Serie de tiempo",
-   "p": "Datos ordenados cronológicamente."
-  },
-  {
-   "t": "Variable",
-   "p": "Característica que puede tomar distintos valores."
+   "t": "Desviación media",
+   "p": "Sirve para decir, en simple, que las piezas se alejan en promedio una cantidad fija de la medida nominal."
   },
   {
    "t": "Varianza",
-   "p": "Promedio de los cuadrados de las desviaciones respecto a la media."
+   "p": "La varianza se suma cuando se combinan variables independientes; por eso es la base de los cálculos de tolerancias y de errores."
   },
   {
-   "t": "Error común",
-   "p": "Confundir población y muestra; parámetro y estadístico."
+   "t": "Desviación estándar",
+   "p": "Una desviación estándar pequeña respecto de la tolerancia indica un proceso estable y capaz de cumplir la especificación."
   },
   {
-   "t": "Error común",
-   "p": "Usar media con datos ordinales o con atípicos fuertes."
+   "t": "Coeficiente de variación",
+   "p": "Permite comparar, por ejemplo, la variabilidad del peso de piezas pequeñas con la de piezas grandes, aunque sus medias sean muy distintas."
   },
   {
-   "t": "Error común",
-   "p": "Olvidar n − 1 en la varianza muestral."
+   "t": "Recorrido estándar",
+   "p": "Un valor muy grande de <math display=\"inline\"><mi>W</mi></math> en una muestra pequeña sugiere un dato atípico que conviene revisar."
   },
   {
-   "t": "Error común",
-   "p": "Interpretar correlación como causa."
+   "t": "Desviación intercuartil",
+   "p": "En tiempos de entrega con unos pocos casos muy largos, el recorrido intercuartil describe mejor la variación típica que el rango.\n<strong>Fuentes de verificación:</strong> Universidad de Zaragoza (OCW), <em>Medidas de dispersión y forma</em>; ICAP, <em>Medidas de variabilidad</em>; Junta de Galicia, recursos de matemáticas (rango, desviación media, varianza, CV); Universidad de Costa Rica, folleto de estadística (recorrido intercuartílico); Universidad Nacional de San Luis, <em>Estadística descriptiva</em>."
   },
   {
-   "t": "Error común",
-   "p": "Comparar desviaciones de variables con unidades distintas en lugar de usar el CV."
+   "t": "Medidas de forma",
+   "p": "Muchos análisis de capacidad de proceso suponen datos normales; las medidas de forma permiten revisar esa suposición antes de usarlos."
   },
   {
-   "t": "Error común",
-   "p": "Gráficos engañosos (ejes cortados, 3D)."
+   "t": "Momentos",
+   "p": "En software de calidad, los momentos de orden 3 y 4 alimentan los índices de sesgo y curtosis que se reportan junto al histograma."
   },
   {
-   "t": "Error común",
-   "p": "Extrapolar una recta de regresión sin cuidado."
+   "t": "Sesgo (asimetría)",
+   "p": "Los tiempos de ciclo, de reparación y de espera suelen tener sesgo positivo; por eso la mediana los describe mejor que la media."
   },
   {
-   "t": "Error común",
-   "p": "No redondear de forma consistente (se recomienda trabajar con 3 decimales y redondear al final)."
+   "t": "Curtosis",
+   "p": "Una curtosis alta en una medida crítica advierte que habrá más piezas fuera de tolerancia de las que prevería un modelo normal.\n<strong>Fuentes de verificación:</strong> Universidad de Zaragoza (OCW), <em>Medidas de dispersión y forma</em>; Universidad Carlos III de Madrid, prácticas de estadística con Excel (coeficiente de asimetría g1); Economipedia, <em>Curtosis</em> (curtosis, exceso y fórmula muestral); EUMED, <em>Coeficiente de asimetría</em> y <em>Curtosis</em>; curso de L. M. Jiménez, <em>Conceptos básicos de estadística</em> (fórmulas de COEFICIENTE.ASIMETRIA y CURTOSIS en Excel)."
+  },
+  {
+   "t": "Número de variables",
+   "p": "En planta casi nunca basta una variable: se estudia, por ejemplo, cómo cambia la temperatura del horno junto con el porcentaje de defectos."
+  },
+  {
+   "t": "Distribución bidimensional",
+   "p": "Una tabla de doble entrada de tipo de falla por turno muestra de inmediato en qué turno se concentra cada falla."
+  },
+  {
+   "t": "Diagramas",
+   "p": "Hacer siempre el diagrama de dispersión antes de calcular la correlación: dos conjuntos muy distintos pueden dar el mismo coeficiente."
+  },
+  {
+   "t": "Distribución marginal",
+   "p": "Las marginales de una tabla de falla por turno dan el total de fallas de cada tipo y el total de cada turno."
+  },
+  {
+   "t": "Frecuencias relativas",
+   "p": "Con relativas se compara la distribución de fallas entre plantas que producen cantidades distintas."
+  },
+  {
+   "t": "Distribución condicionada",
+   "p": "Comparar las condicionadas permite ver, por ejemplo, si el porcentaje de defectuosos cambia de un proveedor a otro."
+  },
+  {
+   "t": "Medidas marginales",
+   "p": "Antes de relacionar dos variables conviene revisar cada una por separado: su centro, su dispersión y sus valores atípicos."
+  },
+  {
+   "t": "Correlación",
+   "p": "Una correlación alta entre la temperatura de un proceso y los defectos orienta qué variable investigar, pero hay que confirmar la causa con un experimento.\n<strong>Fuentes de verificación:</strong> Universidad de Oviedo (OCW), <em>Tema 8: distribuciones bidimensionales</em> (marginales, condicionadas y covarianza); Universitat de València, <em>Análisis de datos multidimensionales</em> y <em>Tema 6</em> (tabla de correlación, covarianza y coeficiente de Pearson); Junta de Andalucía, <em>Variables bidimensionales</em> (frecuencias marginales y coeficiente de correlación lineal)."
+  },
+  {
+   "t": "Conceptos generales",
+   "p": "En ingeniería la regresión sirve para calibrar instrumentos, estimar costos o tiempos y predecir el rendimiento de un proceso a partir de sus variables de control."
+  },
+  {
+   "t": "Tipos de regresión",
+   "p": "Se empieza siempre con el diagrama de dispersión: si la nube es curva, una recta dará predicciones sesgadas."
+  },
+  {
+   "t": "Ajuste de curvas",
+   "p": "Una curva de calibración de un sensor suele ajustarse con una recta o una parábola, según se vea la nube de puntos."
+  },
+  {
+   "t": "Regresión lineal simple",
+   "p": "Con una recta de regresión de tiempo de producción sobre tamaño de lote se puede estimar cuánto tiempo adicional consume cada unidad más del lote."
+  },
+  {
+   "t": "Análisis de correlación",
+   "p": "Un <math display=\"inline\"><mi>r</mi></math> alto entre dos variables de un proceso orienta qué factor investigar, pero hay que confirmar la causa con un experimento."
+  },
+  {
+   "t": "Coeficiente de estimación (determinación)",
+   "p": "Con <math display=\"inline\"><msub><mi>S</mi><mi>e</mi></msub></math> pequeño frente a la tolerancia, la ecuación sirve para predecir con precisión útil; un <math display=\"inline\"><msup><mi>R</mi><mn>2</mn></msup></math> alto por sí solo no basta."
+  },
+  {
+   "t": "Datos agrupados",
+   "p": "Las mediciones de planta suelen venir ya agrupadas en tablas; este método permite ajustar la recta sin volver a los datos originales."
+  },
+  {
+   "t": "Regresión lineal múltiple",
+   "p": "Para predecir el consumo de energía de una planta se pueden usar a la vez producción, temperatura y turnos como variables independientes."
+  },
+  {
+   "t": "Regresión no lineal",
+   "p": "Las curvas de desgaste de herramientas o de crecimiento de ventas suelen ajustarse con modelos exponencial o potencial."
+  },
+  {
+   "t": "Otras regresiones",
+   "p": "La regresión logística permite estimar la probabilidad de que una pieza resulte defectuosa según la temperatura y la velocidad del proceso.\n<strong>Fuentes de verificación:</strong> Universidad de Cantabria (OCW), <em>Tema 6: regresión</em> (error estándar y <math display=\"inline\"><msup><mi>R</mi><mn>2</mn></msup></math>); Universidad de Málaga, <em>Análisis conjunto de dos variables</em> (recta, <math display=\"inline\"><mrow><msup><mi>R</mi><mn>2</mn></msup><mo>=</mo><msup><mi>r</mi><mn>2</mn></msup></mrow></math>); Universidad Carlos III de Madrid, <em>Tema 6</em> (mínimos cuadrados y coeficientes <math display=\"inline\"><mi>a</mi></math> y <math display=\"inline\"><mi>b</mi></math>); ITAM, <em>Estadística Aplicada II</em> (supuestos y ANOVA); ESPOL, examen con fórmulas de regresión simple y múltiple (matrices, <math display=\"inline\"><msub><mi>S</mi><mi>e</mi></msub></math>, <math display=\"inline\"><msup><mi>R</mi><mn>2</mn></msup></math>); OpenStax, <em>Introducción a la estadística empresarial</em> (ecuación de regresión)."
+  },
+  {
+   "t": "Definición",
+   "p": "Los contratos de suministro de materiales suelen ajustarse con un índice de precios para reflejar los cambios de costo sin renegociar cada vez."
+  },
+  {
+   "t": "Tipos (simples y compuestos, Laspeyres, Paasche, Fisher)",
+   "p": "El IPC de la mayoría de los países se calcula con la fórmula de Laspeyres, y la mayoría de los contratos con cláusula de ajuste se basan en él."
+  },
+  {
+   "t": "Elaboración y cambio de base",
+   "p": "Para comparar ventas de varios años en términos reales se deflactan con un índice de precios; así se separa el efecto de la inflación del crecimiento verdadero.\n<strong>Fuentes de verificación:</strong> Universitat de València (CEACES), <em>Tasas de variación e indicadores (números índices)</em> y <em>Deflactación, cambio de base y empalme</em>; Universidad de Oviedo (OCW), <em>Fórmulas de números índices</em> (relativos, Laspeyres, Paasche, valor, enlace, cambio de base, inversión y deflactación); Universidad de Buenos Aires, PICNA, <em>Índices de volumen directos e indirectos</em> (prueba del producto); Revista Ventana Científica (UAJMS, Tarija), sobre Laspeyres, Paasche y Fisher en la práctica."
+  },
+  {
+   "t": "Experimentos aleatorios",
+   "p": "Inspeccionar una pieza y ver si es conforme o defectuosa es un experimento aleatorio; las probabilidades describen la calidad esperada del lote."
+  },
+  {
+   "t": "Probabilidad clásica",
+   "p": "Con un lote de 100 piezas de las cuales 5 son defectuosas, la probabilidad de sacar una defectuosa al azar es 5/100 = 0,05."
+  },
+  {
+   "t": "Eventos excluyentes",
+   "p": "Si una pieza puede fallar por desgaste (4 %) o por rotura (3 %), y ambos modos no coinciden, la probabilidad de falla es 7 %."
+  },
+  {
+   "t": "Probabilidad condicional",
+   "p": "La probabilidad de que una segunda pieza extraída sin reemplazo sea defectuosa depende de si la primera lo fue; se calcula con probabilidad condicional."
+  },
+  {
+   "t": "Eventos independientes",
+   "p": "La confiabilidad de un sistema en serie es el producto de las de sus componentes, y la de uno en paralelo es 1 menos el producto de sus probabilidades de falla."
+  },
+  {
+   "t": "Teorema de Bayes",
+   "p": "Si tres máquinas producen piezas con distinta tasa de defectos, Bayes da la probabilidad de que una pieza defectuosa provenga de cada una."
+  },
+  {
+   "t": "Combinatoria",
+   "p": "En planificación se usan permutaciones para contar secuencias de trabajos en una máquina y combinaciones para armar equipos o muestras."
+  },
+  {
+   "t": "Probabilidad y combinatoria",
+   "p": "Estas fórmulas dan, por ejemplo, la probabilidad de aceptar un lote cuando se inspecciona una muestra y se rechaza si aparece alguna pieza defectuosa.\n<strong>Fuentes de verificación:</strong> Universidad de Oviedo (OCW), <em>Métodos estadísticos para la empresa, Tema 1</em> (probabilidad clásica, condicional, total, Bayes y combinatoria); IES Pino Manso (Xunta de Galicia), apuntes de probabilidad (experimento aleatorio, independencia, Bayes); Secretaría de Educación Pública de México, <em>Regla de la suma</em>; formulario universitario de probabilidad (regla de la multiplicación, probabilidad total, Bayes y permutaciones)."
+  },
+  {
+   "t": "Conceptos previos",
+   "p": "Elegir bien el tipo de variable (conteo o medición) es el primer paso para escoger el modelo adecuado a un problema de calidad o de confiabilidad."
+  },
+  {
+   "t": "Función de probabilidad",
+   "p": "Con la función de densidad de un tiempo de falla se calcula, por ejemplo, la probabilidad de que un equipo falle entre dos fechas."
+  },
+  {
+   "t": "Esperanza matemática",
+   "p": "La esperanza permite calcular costos o ganancias promedio, por ejemplo el costo medio por pieza según la probabilidad de cada tipo de falla."
+  },
+  {
+   "t": "Distribución de Bernoulli",
+   "p": "Cada pieza inspeccionada, conforme o no, es un ensayo de Bernoulli."
+  },
+  {
+   "t": "Distribución binomial",
+   "p": "Con <math display=\"inline\"><mrow><mi>n</mi><mo>=</mo><mn>20</mn></mrow></math> piezas y <math display=\"inline\"><mrow><mi>p</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>05</mn></mrow></math> de defectuosas, el número esperado de defectuosas es <math display=\"inline\"><mrow><mi>n</mi><mi>p</mi><mo>=</mo><mn>1</mn></mrow></math>."
+  },
+  {
+   "t": "Distribución geométrica",
+   "p": "Sirve para estimar cuántas piezas se inspeccionan, en promedio, hasta hallar la primera defectuosa."
+  },
+  {
+   "t": "Distribución de Pascal",
+   "p": "Estima cuántas unidades hay que producir o probar para conseguir una cantidad fija de piezas conformes."
+  },
+  {
+   "t": "Distribución hipergeométrica",
+   "p": "Se usa en muestreo de aceptación: probabilidad de hallar <math display=\"inline\"><mi>x</mi></math> piezas defectuosas en una muestra tomada de un lote pequeño."
+  },
+  {
+   "t": "Distribución de Poisson",
+   "p": "Modela fallas de máquinas por mes, defectos por metro de tela o llegadas de clientes por hora."
+  },
+  {
+   "t": "Distribución uniforme",
+   "p": "Se usa para simular tiempos o errores de redondeo y para generar números aleatorios en simulación."
+  },
+  {
+   "t": "Distribución normal",
+   "p": "Es el modelo de las dimensiones de piezas, y de él salen los límites de las cartas de control y los índices de capacidad del proceso."
+  },
+  {
+   "t": "Distribución gamma",
+   "p": "Se usa para modelar el tiempo total de varias etapas de un proceso o el tiempo hasta la <math display=\"inline\"><mi>α</mi></math>-ésima falla de un equipo."
+  },
+  {
+   "t": "Distribución exponencial",
+   "p": "Con una tasa de falla de 0,002 por hora, el tiempo medio entre fallas es <math display=\"inline\"><mrow><mn>1</mn><mi>/</mi><mn>0</mn><mo>,</mo><mn>002</mn><mo>=</mo><mn>500</mn></mrow></math> horas."
+  },
+  {
+   "t": "Distribución ji cuadrado",
+   "p": "Permite construir intervalos de confianza para la variación de un proceso, que es clave para evaluar su estabilidad."
+  },
+  {
+   "t": "Distribución t de Student",
+   "p": "Es la base de las pruebas y los intervalos de confianza para la media con pocas mediciones, como ensayos de laboratorio con pocas muestras.\n<strong>Fuentes de verificación:</strong> Universidad de Buenos Aires (Departamento de Matemática), <em>Resumen de distribuciones</em> (binomial, geométrica, Pascal, Poisson); formulario universitario de distribuciones de probabilidad (geométrica, binomial negativa, hipergeométrica y Poisson); Universitat de València, <em>Tema 3</em> (uniforme y resumen de discretas); Universidad de Málaga, <em>Modelos probabilísticos para variables continuas</em>; ITAM (E. Barrios), formulario de distribuciones y notas de gamma y beta (exponencial, gamma, ji cuadrado, t); UNAM, <em>Distribuciones derivadas de la normal</em>; OpenStax, <em>Repaso de fórmulas</em>."
   }
  ],
  "desafios": [
