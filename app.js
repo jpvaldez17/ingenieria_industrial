@@ -153,7 +153,7 @@ function tema(sid,tid){
   :emp(`Plantilla lista. Agrega el contenido en <code>${sid}.json</code> → <code>content.${tid}</code>.`);
   p+=`<button class="btn ghost" data-act="done" data-k="${key}">${dn?'Estudiado ✓ (quitar)':'Marcar como estudiado'}</button>`}
  if(tab=='f')p=c.frm?`<p class="tabnote">Para leer y repasar. Para calcular usa la pestaña <b>Formulario</b>.</p><div class="fhd"><span>Nombre</span><span>Fórmula</span></div>${c.frm.join('')}`:emp('Este tema es conceptual: no tiene fórmulas esenciales.');
- if(tab=='g')p=c.glos?`<p class="tabnote">📚 Vocabulario del tema · ${c.glos.length} términos</p>`+c.glos.map(g=>`<div class="gl"><b>${g.t}</b><p>${g.p}</p>${g.e?`<small>${g.e}</small>`:''}</div>`).join(''):emp('Este apartado no tiene glosario.');
+ if(tab=='g')p=c.glos?`<p class="tabnote">📚 Vocabulario del tema · ${c.glos.length} términos</p>`+c.glos.map(g=>`<div class="dgl"><b>${g.t}</b><p>${g.p}</p>${g.e?`<small>${g.e}</small>`:''}</div>`).join(''):emp('Este apartado no tiene glosario.');
  return `<div class="thead" style="--tc:${TC[tab]}"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} Volver</a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
  <p class="eyebrow" style="margin-top:10px">Unidad ${t.u.n} · ${t.u.title}</p><h1>${t.u.n}.${t.i} ${t.t}</h1></div>
  <div class="tabs">${tabs.map(([k,n,i])=>`<button class="tab ${tab==k?'on':''}" data-act="tab" data-t="${k}" style="--tc:${TC[k]}">${ic(i,14)}${n}</button>`).join('')}</div>${p}
@@ -162,8 +162,7 @@ function tema(sid,tid){
 function formulario(a){
  fsub=(a&&SUBJ()[a])?a:curId();const s=SUBJ()[fsub],fs=D.formulas.filter(f=>f.subject==fsub),cats=[...new Set(fs.map(f=>f.cat))];
  const sm=D.career.semesters.find(x=>x.items.includes(fsub))||D.career.semesters[0],pick=x=>x.n==sm.n?fsub:(x.items.find(k=>D.formulas.some(f=>f.subject==k))||x.items[0]);
- return `<div class="fhead"><h1>Formulario</h1><div class="fh-r"><button class="abk" data-act="addf" aria-label="Agregar fórmula">${ic('plus',26)}</button><button class="cbk" data-act="sci" aria-label="Calculadora científica">${ic('calc',26)}</button></div></div><p class="muted">Elige el semestre y la materia.</p>
-  <div class="fl">Semestre</div><div class="sems">${D.career.semesters.map(x=>`<a class="sbtn ${x.n==sm.n?'on':''}" href="#/formulario/${pick(x)}" style="--sc:${SEMC[(x.n-1)%SEMC.length]}">${x.n}</a>`).join('')}</div>
+ return `<div class="fhead"><h1>Formulario</h1><div class="fh-r"><button class="abk" data-act="addf" aria-label="Agregar fórmula">${ic('plus',26)}</button><button class="cbk" data-act="sci" aria-label="Calculadora científica">${ic('calc',26)}</button></div></div> <div class="fl">Semestre</div><div class="sems">${D.career.semesters.map(x=>`<a class="sbtn ${x.n==sm.n?'on':''}" href="#/formulario/${pick(x)}" style="--sc:${SEMC[(x.n-1)%SEMC.length]}">${x.n}</a>`).join('')}</div>
  <div class="fl">${ORD[sm.n]||sm.n+'.º'} Semestre</div><div class="pills">${sm.items.map((k,i)=>`<a class="pl ${k==fsub?'on':''}" href="#/formulario/${k}" style="--c:${PIL[i%PIL.length]}">${SUBJ()[k].short}</a>`).join('')}</div>
  ${fs.length?cats.map(c=>`<h3>${c}</h3><div class="grid2">${fs.filter(f=>f.cat==c).map(fcard).join('')}</div>`).join(''):`<div class="empty">${s.name}: fórmulas próximamente.</div>`}`}
 
@@ -176,7 +175,7 @@ function calc(id){
  const hint=used.size?'Escribe los números en los cuadritos de la fórmula.':(lists.length?'Escribe tus datos en los cuadritos.':'Completa los cuadritos con tus datos.');
  return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${s.color}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}
  ${fx}<p class="hint">${hint}</p>
- ${lists.map(v=>`<div class="cgl"><div class="cgl-t">${v.label.replace(/\s*\(separad[ao]s por comas\)/,'')}</div><div class="cgl-r">${[0,1,2,3,4].map(i=>gbox(v.id,i)).join('')}<button class="cgl-b" data-act="gadd" aria-label="Agregar cuadrito">+</button><button class="cgl-b m" data-act="gdel" aria-label="Quitar cuadrito">−</button></div></div>`).join('')}
+ ${lists.map(v=>`<div class="dgl"><div class="dgl-t">${v.label.replace(/\s*\(separad[ao]s por comas\)/,'')}</div><div class="dgl-r">${[0,1,2,3,4].map(i=>gbox(v.id,i)).join('')}<button class="dgl-b" data-act="gadd" aria-label="Agregar cuadrito">+</button><button class="dgl-b m" data-act="gdel" aria-label="Quitar cuadrito">−</button></div></div>`).join('')}
  ${rest.length?`<div class="dg">${rest.map(v=>`<label class="dgc"><span>${v.label}</span><input class="bx w" data-v="${v.id}" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="0"></label>`).join('')}</div>`:''}
  ${dd}
  <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div>${f.custom?`<div class="rowb"><button class="btn2" data-act="editf" data-f="${f.id}">Editar</button><button class="btn2 del" data-act="delf" data-f="${f.id}">Eliminar</button></div>`:''}</div>`}
@@ -224,8 +223,8 @@ document.addEventListener('click',async e=>{
  else if(a=='cat'){cat=d.c;render()}
  else if(a=='calc')runCalc(d.f);
  else if(a=='sci')sciOpen();
- else if(a=='gadd'){document.querySelectorAll('.cgl-r').forEach(r=>{const bx=r.querySelectorAll('.bx');bx[bx.length-1].insertAdjacentHTML('afterend',gbox(bx[0].dataset.g,bx.length))})}
- else if(a=='gdel'){document.querySelectorAll('.cgl-r').forEach(r=>{const bx=r.querySelectorAll('.bx');if(bx.length>2)bx[bx.length-1].remove()})}
+ else if(a=='gadd'){document.querySelectorAll('.dgl-r').forEach(r=>{const bx=r.querySelectorAll('.bx');bx[bx.length-1].insertAdjacentHTML('afterend',gbox(bx[0].dataset.g,bx.length))})}
+ else if(a=='gdel'){document.querySelectorAll('.dgl-r').forEach(r=>{const bx=r.querySelectorAll('.bx');if(bx.length>2)bx[bx.length-1].remove()})}
  else if(a=='addf')afOpen();
  else if(a=='editf')afOpen(d.f);
  else if(a=='delf'){const f=S.misf.find(x=>x.id==d.f);if(f&&confirm('¿Eliminar esta fórmula?')){S.misf=S.misf.filter(x=>x.id!=d.f);kvSet('misf',S.misf);mergeF();location.hash='#/formulario/'+f.subject}}
