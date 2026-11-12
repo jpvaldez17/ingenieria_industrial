@@ -18,7 +18,7 @@ off:'<path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M5 12.86a10 10 0 0 1 5.17-2.69M1
 plus:'<path d="M5 12h14M12 5v14"/>',trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
 list:'<path d="M3 12h.01M3 18h.01M3 6h.01M8 12h13M8 18h13M8 6h13"/>',check:'<path d="M20 6 9 17l-5-5"/>',
 book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>'};
-Object.assign(I,{bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',download:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>'});
+Object.assign(I,{bookopen:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',download:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>'});
 const PAL=['#1d8fe0','#f97316','#16a34a','#e11d48','#7c3aed','#0d9488','#eab308','#db2777','#0ea5e9','#ef4444'];
 const ic=(n,s=20,f='none')=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${f}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -180,13 +180,13 @@ function calc(id){
  <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div>${f.custom?`<div class="rowb"><button class="btn2" data-act="editf" data-f="${f.id}">Editar</button><button class="btn2 del" data-act="delf" data-f="${f.id}">Eliminar</button></div>`:''}</div>`}
 
 async function biblioteca(){
- const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','PDF','file'],['foto','Apuntes','image'],['eval','Evaluaciones','clip']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
- return `<h1>Biblioteca</h1><p class="muted">Tus archivos se guardan en este dispositivo y se abren sin conexión.</p>
- <div class="tabs">${C.map(([k,n,i])=>`<button class="tab ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>
+ const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','PDF','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
+ return `<h1 class="up">Biblioteca</h1><p class="muted">Tus archivos se guardan en este dispositivo y se abren sin conexión.</p>
+ <div class="tabs">${C.map(([k,n,i,c])=>`<button class="tab ${c} ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>
  ${L.length?L.map(x=>`<div class="card"><div class="r2"><div><b>${esc(x.title)}</b><br><small>${esc(SUBJ()[x.subject]?.short||'')}${x.unit?' · '+esc(x.unit):''}</small></div><button class="btn sm" data-act="open" data-id="${x.id}">Abrir</button><button class="btn ghost sm" data-act="del" data-id="${x.id}" aria-label="Eliminar">${ic('trash',16)}</button></div></div>`).join(''):'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
- <div class="card"><h3 style="margin-top:0">Añadir archivo</h3><input type="file" id="fi" accept="${cat=='foto'?'image/*':'application/pdf,image/*'}">
+ <div class="card"><h3 style="margin-top:0">Añadir archivo</h3><div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" style="display:none" accept="${cat=='foto'?'image/*':'application/pdf,image/*'}">
  <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}">${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
- <label>Unidad / tema (opcional)<input id="fu"></label><button class="btn" data-act="addf">${ic('plus',18)} Guardar en el dispositivo</button></div>`}
+ <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu"></label><button class="btn" data-act="addf">${ic('plus',18)} Guardar en el dispositivo</button></div>`}
 
 function results(q){
  q=norm(q.trim());if(q.length<2)return'<p class="muted">Escribe al menos 2 letras.</p>';const o=[];
@@ -515,3 +515,5 @@ if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
 
 /* Instalación PWA: guarda el evento para el botón Instalar de Inicio */
 let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e});
+
+document.addEventListener('change',e=>{if(e.target&&e.target.id=='fi'){const n=document.getElementById('fn'),f=e.target.files[0];if(n){n.textContent=f?f.name:'Sin archivo';n.classList.toggle('on',!!f)}}});

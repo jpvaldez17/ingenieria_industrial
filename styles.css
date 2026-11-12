@@ -487,3 +487,16 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 /* flechita de temario (no actual): negro liso, flecha roja, sin borde ni brillo */
 .srow .go.g{background:#111;border:0;box-shadow:none}
 .srow.act .go.g{background:#2a2d31}
+
+/* ===== Biblioteca v28 ===== */
+.up{text-transform:uppercase}
+.tabs .tab{border:2px solid var(--c);background:color-mix(in srgb,var(--c) 10%,#fff);color:var(--c);border-radius:14px;padding:11px 4px;font-weight:700;font-size:.82rem;transition:all .15s}
+.tabs .tab .ic{color:var(--c)}
+.tabs .tab.tpdf{--c:#b3202c}.tabs .tab.tapu{--c:#336B75}.tabs .tab.tglo{--c:#e67e00}
+.tabs .tab.on{background:var(--c);color:#fff;box-shadow:0 3px 8px color-mix(in srgb,var(--c) 45%,transparent)}
+.tabs .tab.on .ic{color:#111}
+.fpick{display:flex;align-items:center;gap:10px;margin-top:4px}
+.fbtn{display:inline-flex;align-items:center;gap:6px;margin:0;padding:10px 16px;border-radius:99px;background:#336B75;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap}
+.fname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem;color:var(--mu)}
+.fname.on{color:#111;font-weight:600}
+.sep{height:1px;background:#e2e8f0;margin:14px 0 2px}
