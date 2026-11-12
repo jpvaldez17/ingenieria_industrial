@@ -449,3 +449,9 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .srow .sn{text-transform:uppercase}
 .srm .nota::placeholder{font-size:.95rem;font-weight:700;color:#6b7280;opacity:1}
 .srow.act .sn{color:#4BA9B9}
+
+/* ===== Mi carrera v24: tamaño uniforme, ✓/punto a la izquierda ===== */
+.srow{padding-block:8px}
+.srow.act{margin:0 -10px;padding:8px 10px;border-top:1px solid transparent}
+.ok{margin:0 8px 0 0}
+.sd{margin:0 8px 0 0}
