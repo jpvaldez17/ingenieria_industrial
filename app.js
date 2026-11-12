@@ -179,14 +179,53 @@ function calc(id){
  ${dd}
  <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div>${f.custom?`<div class="rowb"><button class="btn2" data-act="editf" data-f="${f.id}">Editar</button><button class="btn2 del" data-act="delf" data-f="${f.id}">Eliminar</button></div>`:''}</div>`}
 
+/* ===== Google Drive: cada persona vincula su propia cuenta (solo lectura de nombres y enlaces) ===== */
+const GOOGLE_CLIENT_ID='PEGA_AQUI_TU_CLIENT_ID.apps.googleusercontent.com';
+const GSCOPE='https://www.googleapis.com/auth/drive.metadata.readonly',GFOLD={pdf:'IndustriApp Documentos',foto:'IndustriApp Apuntes'},GFOLDER='application/vnd.google-apps.folder';
+let GD={email:'',docs:null,notes:null,ts:0,busy:false,err:''},gtok=null,gexp=0;
+const gOk=()=>!/PEGA_AQUI/.test(GOOGLE_CLIENT_ID);
+const gLoad=()=>new Promise((ok,no)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return ok();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=ok;s.onerror=()=>no(Error('offline'));document.head.appendChild(s)});
+async function gToken(mode){
+ if(gtok&&Date.now()<gexp-60000)return gtok;
+ await gLoad();
+ return new Promise((ok,no)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:GSCOPE,hint:GD.email||undefined,
+  callback:r=>{if(r.error)return no(Error(r.error));gtok=r.access_token;gexp=Date.now()+(r.expires_in||3600)*1000;ok(gtok)},error_callback:e=>no(Error((e&&e.type)||'cancelado'))});
+  c.requestAccessToken({prompt:mode=='pick'?'select_account':''})})}
+async function gGet(q,fields){const t=await gToken();const r=await fetch('https://www.googleapis.com/drive/v3/files?pageSize=200&orderBy=name&q='+encodeURIComponent(q)+'&fields='+encodeURIComponent('files('+fields+')'),{headers:{Authorization:'Bearer '+t}});if(!r.ok)throw Error('Drive '+r.status);return(await r.json()).files||[]}
+async function gFolder(name){
+ const F='id,name,mimeType,webViewLink',f=await gGet(`mimeType='${GFOLDER}' and name='${name}' and trashed=false`,'id,name');
+ if(!f.length)return null;
+ const ch=await gGet(`'${f[0].id}' in parents and trashed=false`,F),subs=ch.filter(x=>x.mimeType==GFOLDER);
+ const lists=await Promise.all(subs.map(s=>gGet(`'${s.id}' in parents and trashed=false and mimeType!='${GFOLDER}'`,F)));
+ return[{n:'General',items:ch.filter(x=>x.mimeType!=GFOLDER)},...subs.map((s,i)=>({n:s.name,items:lists[i]}))].filter(g=>g.items.length)}
+async function gSync(mode){
+ GD.busy=true;GD.err='';render();
+ try{await gToken(mode);
+  if(!GD.email){const r=await fetch('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)',{headers:{Authorization:'Bearer '+gtok}});GD.email=((await r.json()).user||{}).emailAddress||'Cuenta de Google'}
+  const[d,n]=await Promise.all([gFolder(GFOLD.pdf),gFolder(GFOLD.foto)]);
+  GD.docs=d||[];GD.notes=n||[];GD.ts=Date.now();
+  if(!d&&!n)GD.err='No encontré las carpetas «'+GFOLD.pdf+'» ni «'+GFOLD.foto+'» en tu Drive.';
+  await kvSet('gdrive',{email:GD.email,docs:GD.docs,notes:GD.notes,ts:GD.ts})}
+ catch(e){GD.err=navigator.onLine?'No se pudo conectar con Drive. Inténtalo de nuevo.':'Sin conexión: se muestra la última lista guardada.'}
+ GD.busy=false;render()}
+async function gUnlink(){try{if(gtok&&window.google)google.accounts.oauth2.revoke(gtok,()=>{})}catch(e){}gtok=null;GD={email:'',docs:null,notes:null,ts:0,busy:false,err:''};await kvSet('gdrive',null);render()}
+const driveCard=()=>{
+ if(cat=='eval')return'';
+ if(!gOk())return`<div class="card gd"><h3 style="margin-top:0">Drive</h3><p class="muted" style="margin:0">Falta pegar el Client ID de Google en app.js (GOOGLE_CLIENT_ID) para poder vincular cuentas.</p></div>`;
+ if(!GD.email)return`<div class="card gd"><h3 style="margin-top:0">Mi Drive</h3><p class="muted" style="margin:0 0 4px">Vincula tu cuenta de Google para ver aquí tus ${cat=='foto'?'apuntes':'documentos'}. Crea en tu Drive las carpetas «${GFOLD.pdf}» y «${GFOLD.foto}» y sube ahí tus archivos.</p>${GD.err?`<p class="gerr">${esc(GD.err)}</p>`:''}<button class="btn gbtn" data-act="glink"${GD.busy?' disabled':''}><span>${GD.busy?'Conectando…':'Vincular cuenta de Google'}</span></button></div>`;
+ const L=cat=='foto'?GD.notes:GD.docs;
+ return`<div class="card gd"><div class="r2"><div><h3 style="margin:0">Mi Drive</h3><small>${esc(GD.email)}${GD.ts?' · '+new Date(GD.ts).toLocaleDateString('es'):''}</small></div><button class="btn ghost sm" data-act="gsync"${GD.busy?' disabled':''}>${GD.busy?'Buscando…':'Actualizar'}</button><button class="btn ghost sm" data-act="gunlink">Salir</button></div>${GD.err?`<p class="gerr">${esc(GD.err)}</p>`:''}`+
+  (L&&L.length?L.map(g=>`<div class="gg">${esc(g.n)}</div>`+g.items.map(x=>`<a class="gi" href="${esc(x.webViewLink||'#')}" target="_blank" rel="noopener"><span>${esc(x.name)}</span>${ic('chevR',16)}</a>`).join('')).join(''):(GD.busy||GD.err?'':'<p class="muted" style="margin:8px 0 0">Aún no hay archivos aquí. Toca «Actualizar» cuando subas algo.</p>'))+`</div>`};
+
 async function biblioteca(){
- const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
+ if(gOk()&&cat!='eval')gLoad().catch(()=>{});const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
  return `<h1 class="up">Biblioteca</h1><p class="muted">Abre tus archivos desde este dispositivo (sin conexión) o desde un enlace de Drive.</p>
  <div class="tabs">${C.map(([k,n,i,c])=>`<button class="tab ${c} ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>
+ ${driveCard()}${cat=='eval'?'':'<h3 class="lh">En este dispositivo</h3>'}
  ${L.length?L.map(x=>`<div class="card"><div class="r2"><div><b>${esc(x.title)}</b><br><small>${esc(SUBJ()[x.subject]?.short||'')}${x.unit?' · '+esc(x.unit):''} · ${x.blob?'Dispositivo':'Drive'}</small></div><button class="btn sm" data-act="open" data-id="${x.id}">Abrir</button><button class="btn ghost sm" data-act="del" data-id="${x.id}" aria-label="Eliminar">${ic('trash',16)}</button></div></div>`).join(''):'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
  <div class="card"><h3 style="margin-top:0">Añadir archivo</h3><div class="modes"><button class="md ${addMode=='dev'?'on':''}" data-act="mode" data-m="dev">Desde el dispositivo</button><button class="md ${addMode=='drive'?'on':''}" data-act="mode" data-m="drive">Enlace de Drive</button></div>
 ${addMode=='dev'?`<div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" style="display:none" ${cat=='foto'?'accept="image/*"':''}>`:`<label>Nombre del archivo<input id="ft" placeholder="Ej. Resumen unidad 2"></label><label>Enlace de Drive<input id="fl" type="url" inputmode="url" placeholder="https://drive.google.com/..."></label>`}
- <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}">${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
+ <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}" ${k==curId()?'selected':''}>${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
  <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu"></label><button class="btn gbtn" data-act="savef">${ic('plus',18)}<span>${addMode=='dev'?'Guardar archivo':'Guardar enlace'}</span></button></div>`}
 
 function results(q){
@@ -233,6 +272,9 @@ document.addEventListener('click',async e=>{
  else if(a=='ans'){[...b.parentNode.children].forEach((x,i)=>{x.disabled=true;if(i==+d.a)x.classList.add('ok')});const ok=+d.i==+d.a,hoy=new Date().toDateString();
   if(!ok)b.classList.add('bad');if(S.sc.day!==hoy){S.sc.day=hoy;ok?S.sc.ok++:S.sc.bad++;save();$('.sc').innerHTML=`<i class="g">✓ ${S.sc.ok}</i><i class="r">✕ ${S.sc.bad}</i>`}}
  else if(a=='mode'){addMode=d.m;render()}
+ else if(a=='glink')gSync('pick');
+ else if(a=='gsync')gSync();
+ else if(a=='gunlink'){if(confirm('¿Desvincular tu cuenta de Google de esta app?'))gUnlink()}
  else if(a=='savef'){const base={cat,subject:$('#fs').value,unit:$('#fu').value.trim(),date:Date.now()};
   if(addMode=='drive'){const t=$('#ft').value.trim(),u=$('#fl').value.trim();if(!t)return alert('Escribe el nombre del archivo.');if(!/^https?:\/\//i.test(u))return alert('Pega el enlace completo de Drive (empieza con https://).');
    await tx('files','readwrite',s=>s.add({...base,title:t,url:u}))}
@@ -512,7 +554,7 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.fbase=D.formulas;D.sub={};
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data){try{D.sub[k]=await j(`${s.data}.json`)}catch(e){}}
-  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];mergeF();render()}
+  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];{const g=await kvGet('gdrive');if(g)Object.assign(GD,g)}mergeF();render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
