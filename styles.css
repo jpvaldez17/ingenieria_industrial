@@ -566,7 +566,7 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 
 /* ===== v36 ===== */
 /* título: «App» en negro con borde gris */
-#top h1 span{color:#000;text-shadow:-1px -1px 0 #2b2b2b,1px -1px 0 #2b2b2b,-1px 1px 0 #2b2b2b,1px 1px 0 #2b2b2b,0 -1px 0 #2b2b2b,0 1px 0 #2b2b2b,-1px 0 0 #2b2b2b,1px 0 0 #2b2b2b}
+#top h1 span{color:#000;text-shadow:-1px -1px 0 #9ca3af,1px -1px 0 #9ca3af,-1px 1px 0 #9ca3af,1px 1px 0 #9ca3af,0 -1px 0 #9ca3af,0 1px 0 #9ca3af,-1px 0 0 #9ca3af,1px 0 0 #9ca3af}
 /* Dato técnico: colores un poco más oscuros */
 .dato.dtec{background:linear-gradient(135deg,color-mix(in srgb,var(--g,#336B75) 88%,#fff),color-mix(in srgb,var(--g,#336B75) 80%,#000))}
 /* Mi carrera: botón de entrada un poco más ancho */
