@@ -36,6 +36,9 @@ const semTxt=k=>{const m=D.career.semesters.find(x=>x.items.includes(k));return 
 const SEMC=['#2f9cf4','#22c55e','#f97316','#ef4444','#14b8a6','#22d3ee','#c58a5a','#84cc16','#38bdf8'];
 /* Colores de las pastillas de materias (sin rosado ni amarillo) */
 const PIL=['#1d6fe0','#16a34a','#ea580c','#dc2626','#0d9488','#8b5e3c'];
+/* Colores por tema del Formulario (sin rosado ni amarillo): cada tema (Tema 1, Tema 2…) tiene el suyo */
+const CATC=['#1d6fe0','#16a34a','#ea580c','#dc2626','#0d9488','#8b5e3c','#7c3aed','#0891b2','#65a30d','#4f46e5','#475569'];
+const catC=f=>{const i=[...new Set(D.formulas.filter(x=>x.subject==f.subject).map(x=>x.cat))].indexOf(f.cat);return CATC[(i<0?0:i)%CATC.length]};
 const nf=()=>'<div class="empty">No encontrado. <a href="#/inicio"><b>Volver al inicio</b></a></div>';
 
 /* ===== Almacenamiento local (IndexedDB): favoritos, progreso y archivos de la biblioteca ===== */
@@ -82,6 +85,43 @@ pearson:(x,y)=>{const q=xyS(x,y);if(!q.sxx||!q.syy)throw Error('Los datos no var
 pendiente:(x,y)=>{const q=xyS(x,y);if(!q.sxx)throw Error('Todos los valores de X son iguales: la pendiente no está definida.');
  return{r:q.sxy/q.sxx,st:[`x̄ = ${fmt(q.mx)} ; y\u0304 = ${fmt(q.my)}`,`Sxy = Σ(xᵢ − x̄)(yᵢ − y\u0304) = ${fmt(q.sxy)}`,`Sxx = Σ(xᵢ − x̄)² = ${fmt(q.sxx)}`,`b = ${fmt(q.sxy)} / ${fmt(q.sxx)}`]}}
 });
+/* ===== Cálculos del formulario ampliado (listas, probabilidades, índices) ===== */
+const sameLen=(...a)=>{if(a.some(v=>v.length!=a[0].length))throw Error('Las listas deben tener la misma cantidad de datos.')};
+const dot=(a,b)=>sum(a.map((v,i)=>v*b[i]));
+const isInt=v=>Number.isInteger(v);
+/* Φ(z): área de la normal estándar hasta z (integración de Simpson, error < 1e-10) */
+const Phi=z=>{const a=Math.abs(z);if(a>10)return z>0?1:0;if(a===0)return .5;const N=2000,h=a/N;let s=1+Math.exp(-a*a/2);
+ for(let i=1;i<N;i++){const t=i*h;s+=(i%2?4:2)*Math.exp(-t*t/2)}const I=s*h/3/Math.sqrt(2*Math.PI);return z>0?.5+I:.5-I};
+const ssq=a=>{chkN(a,2);const m=mean(a),d=a.map(v=>(v-m)**2);return{m,d,s:sum(d)}};
+const combN=(n,r)=>{if(!isInt(n)||!isInt(r)||n<0||r<0)throw Error('n y r deben ser enteros no negativos.');if(r>n)throw Error('r no puede ser mayor que n.');
+ const k=Math.min(r,n-r);let c=1;for(let j=1;j<=k;j++)c=c*(n-k+j)/j;c=Math.round(c);if(!isFinite(c))throw Error('El resultado es demasiado grande.');return c};
+Object.assign(F,{
+normInt:(za,zb)=>{if(zb<za)throw Error('El límite superior no puede ser menor que el inferior (zb ≥ za).');const A=Phi(za),B=Phi(zb);
+ return{r:B-A,st:[`Φ(zb) = Φ(${fmt(zb)}) = ${fmt(B)}`,`Φ(za) = Φ(${fmt(za)}) = ${fmt(A)}`,`P(a ≤ X ≤ b) = ${fmt(B)} − ${fmt(A)} = ${fmt(B-A)} (≈ ${fmt((B-A)*100)} %)`]}},
+mediaPond:(x,w)=>{sameLen(x,w);const sw=sum(w);if(!sw)throw Error('La suma de pesos es 0.');const sp=dot(x,w);
+ return{r:sp/sw,st:[`Σ wᵢ·xᵢ = ${x.map((v,i)=>`${fmt(w[i])}·${fmt(v)}`).join(' + ')} = ${fmt(sp)}`,`Σ wᵢ = ${fmt(sw)}`,`x̄w = ${fmt(sp)} / ${fmt(sw)}`]}},
+varAgr:(x,f)=>{sameLen(x,f);const n=sum(f);if(!(n>1))throw Error('La suma de frecuencias debe ser mayor que 1.');const m=dot(x,f)/n,ss=sum(x.map((v,i)=>f[i]*(v-m)**2));
+ return{r:ss/(n-1),st:[`n = Σfᵢ = ${fmt(n)}`,`x̄ = ${fmt(m)}`,`Σ fᵢ(xᵢ − x̄)² = ${fmt(ss)}`,`s² = ${fmt(ss)} / ${fmt(n-1)}`]}},
+sxy:(x,y)=>{const q=xyS(x,y);return{r:q.sxy,st:[`x̄ = ${fmt(q.mx)} ; ȳ = ${fmt(q.my)}`,`Sxy = Σ(xᵢ − x̄)(yᵢ − ȳ) = ${fmt(q.sxy)}`]}},
+sxx:x=>{const q=ssq(x);return{r:q.s,st:[`x̄ = ${fmt(q.m)}`,`Sxx = Σ(xᵢ − x̄)² = ${q.d.map(fmt).join(' + ')} = ${fmt(q.s)}`]}},
+syy:y=>{const q=ssq(y);return{r:q.s,st:[`ȳ = ${fmt(q.m)}`,`Syy = Σ(yᵢ − ȳ)² = ${q.d.map(fmt).join(' + ')} = ${fmt(q.s)}`]}},
+laspeyres:(pt,p0,q0)=>{sameLen(pt,p0,q0);const a=dot(pt,q0),b=dot(p0,q0);if(!b)throw Error('El denominador es 0: revisa los precios base y las cantidades.');
+ return{r:a/b*100,st:[`Σ pᵢₜ·qᵢ₀ = ${fmt(a)}`,`Σ pᵢ₀·qᵢ₀ = ${fmt(b)}`,`LP = ${fmt(a)} / ${fmt(b)} × 100`]}},
+paasche:(pt,p0,qt)=>{sameLen(pt,p0,qt);const a=dot(pt,qt),b=dot(p0,qt);if(!b)throw Error('El denominador es 0: revisa los precios base y las cantidades.');
+ return{r:a/b*100,st:[`Σ pᵢₜ·qᵢₜ = ${fmt(a)}`,`Σ pᵢ₀·qᵢₜ = ${fmt(b)}`,`PP = ${fmt(a)} / ${fmt(b)} × 100`]}},
+bayes:(pa,pb,i)=>{sameLen(pa,pb);if(pa.concat(pb).some(v=>v<0||v>1))throw Error('Las probabilidades deben estar entre 0 y 1.');
+ if(Math.abs(sum(pa)-1)>0.01)throw Error(`Las probabilidades iniciales P(Aⱼ) deben sumar 1 (ahora suman ${fmt(sum(pa))}).`);
+ if(!isInt(i)||i<1||i>pa.length)throw Error(`La causa i debe ser un entero entre 1 y ${pa.length}.`);
+ const pr=pa.map((v,j)=>v*pb[j]),den=sum(pr);if(!den)throw Error('El denominador es 0: B no puede ocurrir con esos datos.');
+ return{r:pr[i-1]/den,st:[`P(B|Aⱼ)·P(Aⱼ) = ${pr.map(fmt).join(' ; ')}`,`Denominador = Σ P(B|Aⱼ)·P(Aⱼ) = ${fmt(den)}`,`P(A${i}|B) = ${fmt(pr[i-1])} / ${fmt(den)}`]}},
+comb:(n,r)=>{const c=combN(n,r);return{r:c,st:[`C(n, r) = n! / [r!(n − r)!]`,`C(${n}, ${r}) = ${n}! / [${r}!·${n-r}!]`,`Resultado = ${fmt(c)}`]}},
+binom:(n,x,p)=>{if(!(p>=0&&p<=1))throw Error('p debe estar entre 0 y 1.');if(!isInt(n)||!isInt(x)||n<1||x<0||x>n)throw Error('n y x deben ser enteros, con 0 ≤ x ≤ n.');
+ const q=1-p,c=combN(n,x),pr=c*p**x*q**(n-x);if(!isFinite(pr))throw Error('El resultado es demasiado grande.');
+ return{r:pr,st:[`q = 1 − p = ${fmt(q)}`,`C(${n}, ${x}) = ${fmt(c)}`,`P(X = ${x}) = ${fmt(c)} · ${fmt(p)}^${x} · ${fmt(q)}^${n-x}`,`Media np = ${fmt(n*p)} ; varianza npq = ${fmt(n*p*q)}`]}},
+poisson:(l,x)=>{if(!(l>0))throw Error('λ debe ser mayor que 0.');if(!isInt(x)||x<0)throw Error('x debe ser un entero mayor o igual que 0.');
+ let pr=Math.exp(-l);for(let k=1;k<=x;k++)pr*=l/k;
+ return{r:pr,st:[`e^(−λ) = e^(−${fmt(l)}) = ${fmt(Math.exp(-l))}`,`P(X = ${x}) = e^(−${fmt(l)}) · ${fmt(l)}^${x} / ${x}! = ${fmt(pr)}`,`Media y varianza = λ = ${fmt(l)}`]}}
+});
 function runCalc(id){
  const f=D.formulas.find(x=>x.id==id),out=$('#out'),ins=[...app.querySelectorAll('[data-v]')];
  try{let r;
@@ -101,7 +141,7 @@ function runCalc(id){
 /* ===== Componentes ===== */
 const row=(h,i,t,s,c)=>`<a class="row card" href="${h}" style="--c:${c}"><span class="bd">${ic(i,18)}</span><span>${esc(t)}<br><small>${s}</small></span>${ic('chevR',16)}</a>`;
 const mx=f=>`<span class="fm2 fit"><span class="mw">${f.mathml}</span></span>`;
-const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subject].color}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}${f.custom?' <i class="mine">propia</i>':''}</b>${f.mathml?mx(f):`<code>${f.tex}</code>`}</span>${ic('chevR',16)}</a>`;
+const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${catC(f)}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}${f.custom?' <i class="mine">propia</i>':''}</b>${f.mathml?mx(f):`<code>${f.tex}</code>`}</span>${ic('chevR',16)}</a>`;
 
 /* ===== Dato del día (glosario de la materia actual; cambia al actualizar la app) y Dato técnico (glosario general) ===== */
 let DIA={},DT={h:[],i:-1},DTL=null;
@@ -212,7 +252,7 @@ function formulario(a){
  const sm=D.career.semesters.find(x=>x.items.includes(fsub))||D.career.semesters[0],pick=x=>x.n==sm.n?fsub:(x.items.find(k=>D.formulas.some(f=>f.subject==k))||x.items[0]);
  return `<div class="fhead"><h1>Formulario</h1><div class="fh-r"><button class="abk" data-act="addf" aria-label="Agregar fórmula">${ic('plus',26)}</button><button class="cbk" data-act="sci" aria-label="Calculadora científica">${ic('calc',26)}</button></div></div> <div class="fl">Semestre</div><div class="sems">${D.career.semesters.map(x=>`<a class="sbtn ${x.n==sm.n?'on':''}" href="#/formulario/${pick(x)}" style="--sc:${SEMC[(x.n-1)%SEMC.length]}">${x.n}</a>`).join('')}</div>
  <div class="fl">${ORD[sm.n]||sm.n+'.º'} Semestre</div><div class="pills">${sm.items.map((k,i)=>`<a class="pl ${k==fsub?'on':''}" href="#/formulario/${k}" style="--c:${PIL[i%PIL.length]}">${SUBJ()[k].short}</a>`).join('')}</div>
- ${fs.length?cats.map(c=>`<h3>${c}</h3><div class="grid2">${fs.filter(f=>f.cat==c).map(fcard).join('')}</div>`).join(''):`<div class="empty">${s.name}: fórmulas próximamente.</div>`}`}
+ ${fs.length?cats.map(c=>`<h3 class="th" style="--c:${catC(fs.find(f=>f.cat==c))}">${c}</h3><div class="grid2">${fs.filter(f=>f.cat==c).map(fcard).join('')}</div>`).join(''):`<div class="empty">${s.name}: fórmulas próximamente.</div>`}`}
 
 function calc(id){
  const f=D.formulas.find(x=>x.id==id);if(!f)return nf();const s=SUBJ()[f.subject];
@@ -221,7 +261,7 @@ function calc(id){
  const dd=f.donde?(f.donde.length?`<ul class="dd">${f.donde.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`:''):`<h3>Variables</h3><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning||''}</li>`).join('')}</ul>`;
  const lists=f.vars.filter(v=>v.list),rest=f.vars.filter(v=>!v.list&&!used.has(v.id));
  const hint=used.size?'Escribe los números en los cuadritos de la fórmula.':(lists.length?'Escribe tus datos en los cuadritos.':'Completa los cuadritos con tus datos.');
- return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${s.color}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}
+ return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${catC(f)}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}
  ${fx}<p class="hint">${hint}</p>
  ${lists.map(v=>`<div class="dgl"><div class="dgl-t">${v.label.replace(/\s*\(separad[ao]s por comas\)/,'')}</div><div class="dgl-r">${[0,1,2,3,4].map(i=>gbox(v.id,i)).join('')}<button class="dgl-b" data-act="gadd" aria-label="Agregar cuadrito">+</button><button class="dgl-b m" data-act="gdel" aria-label="Quitar cuadrito">−</button></div></div>`).join('')}
  ${rest.length?`<div class="dg">${rest.map(v=>`<label class="dgc"><span>${v.label}</span><input class="bx w" data-v="${v.id}" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="0"></label>`).join('')}</div>`:''}
@@ -452,7 +492,8 @@ function mathHTML(mathml,opt={}){
    case'msub':return seq([K[0]],on)+`<sub>${seq([K[1]],false)}</sub>`;
    case'msup':return seq([K[0]],on)+`<sup>${seq([K[1]],false)}</sup>`;
    case'msubsup':return seq([K[0]],on)+`<span class="ssp"><sup>${seq([K[2]],false)}</sup><sub>${seq([K[1]],false)}</sub></span>`;
-   case'mfrac':return`<span class="fr"><span class="nu">${seq([K[0]],on)}</span><span class="de">${seq([K[1]],on)}</span></span>`;
+   case'mfrac':if(e.getAttribute('linethickness')==='0')return`<span class="pg"><span class="lp"></span><span class="in"><span class="fr nl"><span class="nu">${seq([K[0]],on)}</span><span class="de">${seq([K[1]],on)}</span></span></span><span class="rp"></span></span>`;
+    return`<span class="fr"><span class="nu">${seq([K[0]],on)}</span><span class="de">${seq([K[1]],on)}</span></span>`;
    case'msqrt':return`<span class="sq">${RAD}<span class="ra">${seq(K,on)}</span></span>`;
    case'mover':return/^[‾¯ˉ]$/.test(tx(K[1]))?`<span class="ba">${seq([K[0]],on)}</span>`:`<span class="ht">${seq([K[0]],on)}</span>`;
    case'munderover':return`<span class="sm"><span class="up2">${seq([K[2]],false)}</span><span class="sg">Σ</span><span class="lo">${seq([K[1]],false)}</span></span>`;

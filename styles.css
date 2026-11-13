@@ -627,3 +627,8 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 .ntp{display:flex;align-items:center;gap:8px;flex:none}
 .ntp i{font-style:normal;font-size:.72rem;font-weight:700;color:var(--mu);white-space:nowrap}
 .ntc{flex:none;min-width:60px;height:34px;padding:0 10px;box-sizing:border-box;border-radius:10px;border:2.5px solid var(--tq);display:flex;align-items:center;justify-content:center;font-family:var(--formula);font-weight:700;font-size:.88rem;line-height:1;color:#111;background:#fff}
+
+
+/* ===== v50: colores por tema en el Formulario y coeficiente binomial ===== */
+.th{color:var(--c);border-left:5px solid var(--c);padding-left:8px}
+.mx .fr.nl>.nu{border-bottom:0}
