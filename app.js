@@ -141,7 +141,8 @@ function home(){
  ${dtHTML()}
  <h2 class="acch">${ic('grid',20)} ACCESOS DIRECTOS</h2>
  <div class="accs">${tl('#/materia/'+cur,'#1686c9','42,160,240',s.icon,s.short,D.sub[cur]?'Unidades y temas':'Próximamente')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
- ${favs?`<h2>Favoritos</h2><div class="card">${favs}</div>`:''}`}
+ ${favs?`<h2>Favoritos</h2><div class="card">${favs}</div>`:''}
+ ${chartNotas()}`}
 
 /* Estado y nota de cada materia: lo que marques o escribas se guarda en este dispositivo */
 const ESTS=[['aprobada','Aprobada'],['curso','En curso'],['pendiente','Pendiente']];
@@ -154,14 +155,14 @@ const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=
 let SEL=null;const OPEN=new Set();let openInit=false;
 /* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
 const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
- const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all));const gc=$('.gcard');if(gc)gc.outerHTML=chartNotas()};
+ const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
 /* Gráfico de notas (solo las que esta persona escribió en este dispositivo). Meta: promedio 90 */
 function chartNotas(){
  const G=[];D.career.semesters.forEach(sm=>{const p=sm.items.map(k=>({k,v:notaOf(k)})).filter(x=>x.v!=null&&!isNaN(x.v));if(p.length)G.push({n:sm.n,p})});
  const n=G.reduce((t,g)=>t+g.p.length,0);
- const head='<div class="gh"><b>Evolución de notas</b><span class="gm"><i></i>Meta 90</span></div>';
- const foot=`<div class="gf"><span class="gl"><span><i style="background:#336B75"></i>Sobre 90</span><span><i style="background:#9b1c28"></i>Bajo 90</span></span><span class="gk">${ic('lock',14)}Solo en tu celular</span></div>`;
- if(!n)return `<div class="gcard">${head}<p class="gempty">Escribe tus notas en cada materia y aquí verás cómo van.</p>${foot}</div>`;
+ const head='<div class="nth"><b>Evolución de notas</b><span class="ntm"><i></i>Meta 90</span></div>';
+ const foot=`<div class="ntf"><span class="ntl"><span><i style="background:#336B75"></i>Sobre 90</span><span><i style="background:#9b1c28"></i>Bajo 90</span></span><span class="ntk">${ic('lock',14)}Solo en tu celular</span></div>`;
+ if(!n)return `<div class="ntcard">${head}<p class="ntempty">Escribe tus notas en cada materia y aquí verás cómo van.</p>${foot}</div>`;
  const vs=G.flatMap(g=>g.p.map(x=>x.v)),lo=Math.min(80,Math.floor(Math.min(...vs)/10)*10),hi=100;
  const Y=v=>118-(Math.min(hi,v)-lo)*104/(hi-lo),slots=n+G.length-1,st=280/slots;
  let s=0,pts=[],seps='',labs='';
@@ -174,11 +175,11 @@ function chartNotas(){
  const dots=pts.map(p=>{const ok=p.v>=90,c=ok?'#336B75':'#9b1c28',ly=ok?p.cy-9:p.cy+17;
   return `<g data-act="gpt" data-k="${p.k}" data-v="${p.v}"><circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="12" fill="transparent"/><circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="4.5" fill="${c}" stroke="#fff" stroke-width="2"/><text x="${p.cx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" fill="${ok?'#374151':'#9b1c28'}">${fp(p.v)}</text></g>`}).join('');
  const y90=Y(90).toFixed(1);
- return `<div class="gcard">${head}<svg viewBox="0 -8 320 160" role="img" aria-label="Gráfico de tus notas por materia con la meta de 90"><rect x="30" y="14" width="280" height="${(Y(90)-14).toFixed(1)}" fill="#336B75" fill-opacity=".08"/><line x1="30" y1="118" x2="310" y2="118" stroke="#d1d5db"/><line x1="30" y1="14" x2="310" y2="14" stroke="#e5e7eb"/>${seps}<line x1="30" y1="${y90}" x2="310" y2="${y90}" stroke="#8b5e3c" stroke-width="1.5" stroke-dasharray="5 4"/>${ticks}<polyline points="${line}" fill="none" stroke="#111" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labs}</svg>${foot}</div>`}
+ return `<div class="ntcard">${head}<svg class="ntsvg" viewBox="0 -8 320 160" role="img" aria-label="Gráfico de tus notas por materia con la meta de 90"><rect x="30" y="14" width="280" height="${(Y(90)-14).toFixed(1)}" fill="#336B75" fill-opacity=".08"/><line x1="30" y1="118" x2="310" y2="118" stroke="#d1d5db"/><line x1="30" y1="14" x2="310" y2="14" stroke="#e5e7eb"/>${seps}<line x1="30" y1="${y90}" x2="310" y2="${y90}" stroke="#8b5e3c" stroke-width="1.5" stroke-dasharray="5 4"/>${ticks}<polyline points="${line}" fill="none" stroke="#111" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labs}</svg>${foot}</div>`}
 function carrera(){
  if(!openInit){openInit=true;const m=D.career.semesters.find(x=>x.items.includes(curId()));if(m)OPEN.add(m.n)}
  const all=Object.keys(SUBJ());
- return chartNotas()+`<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>general</i><b class="gpn">${fp(prom(all))}</b></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
+ return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>general</i><b class="gpn">${fp(prom(all))}</b></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
   sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),sel=k==(SEL??curId()),e=estOf(k),n=notaOf(k);return `<div class="srow ${sel?'act':''}" data-e="${e}" style="--c:${s.color}"><div class="srt"><span class="row"><span class="sn" data-act="setsel" data-k="${k}"><i class="ok" aria-label="Aprobada">✓</i><i class="sd" aria-hidden="true"></i><span class="nm">${s.name}</span></span><a class="go ${on?'r':'g'}" href="#/materia/${k}" aria-label="Abrir temario de ${s.name}">${ic('chevR',16)}</a></span><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm"><span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="---" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){

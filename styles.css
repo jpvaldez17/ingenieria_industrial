@@ -603,20 +603,20 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 a,button,summary,label,[data-act]{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:focus-visible){outline:0}
 
-/* ===== v43: Mi carrera, gráfico de notas y círculo del promedio ===== */
-.gcard{background:#fff;border-radius:16px;padding:12px 12px 10px;margin:2px 0 12px}
-.gh{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.gh b{font-size:.95rem;color:#111}
-.gm{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#8b5e3c;font-weight:700}
-.gm i{display:inline-block;width:16px;border-top:2px dashed #8b5e3c}
-.gcard svg{display:block;width:100%;height:auto;overflow:visible}
-.gcard svg text{font-size:11px;font-family:inherit}
-.gcard [data-act="gpt"]{cursor:pointer}
-.gf{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;padding-top:8px;border-top:1px solid #e5e7eb;font-size:.78rem;color:var(--mu)}
-.gl{display:flex;gap:12px}.gl span{display:flex;align-items:center;gap:4px}.gl i{width:9px;height:9px;border-radius:50%;display:inline-block}
-.gk{display:flex;align-items:center;gap:4px;color:#8b5e3c;font-weight:700;white-space:nowrap}
-.gk .ic{color:#8b5e3c}
-.gempty{margin:10px 0;color:var(--mu);font-size:.85rem}
+/* ===== v43: gráfico de notas (Inicio) y círculo del promedio (Mi carrera) ===== */
+.ntcard{background:#fff;border-radius:16px;padding:12px 12px 10px;margin:18px 0 8px}
+.nth{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.nth b{font-size:.95rem;color:#111}
+.ntm{display:flex;align-items:center;gap:6px;font-size:.78rem;color:#8b5e3c;font-weight:700}
+.ntm i{display:inline-block;width:16px;border-top:2px dashed #8b5e3c}
+.ntsvg{display:block;width:100%;height:auto;overflow:visible}
+.ntsvg text{font-size:11px;font-family:inherit}
+.ntcard [data-act="gpt"]{cursor:pointer}
+.ntf{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;padding-top:8px;border-top:1px solid #e5e7eb;font-size:.78rem;color:var(--mu)}
+.ntl{display:flex;gap:12px}.ntl span{display:flex;align-items:center;gap:4px}.ntl i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.ntk{display:flex;align-items:center;gap:4px;color:#8b5e3c;font-weight:700;white-space:nowrap}
+.ntk .ic{color:#8b5e3c}
+.ntempty{margin:10px 0;color:var(--mu);font-size:.85rem}
 .gpm{width:64px;height:64px;min-width:0;padding:0;border-radius:50%;border:3px solid var(--tq);justify-content:center;align-items:center;box-shadow:none}
 .gpm i{font-size:.66rem;letter-spacing:0;font-weight:400;text-transform:none;color:var(--mu)}
 .gpm b{font-size:1.1rem}
