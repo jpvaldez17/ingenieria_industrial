@@ -18,7 +18,7 @@ off:'<path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M5 12.86a10 10 0 0 1 5.17-2.69M1
 plus:'<path d="M5 12h14M12 5v14"/>',trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
 list:'<path d="M3 12h.01M3 18h.01M3 6h.01M8 12h13M8 18h13M8 6h13"/>',check:'<path d="M20 6 9 17l-5-5"/>',
 book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>'};
-Object.assign(I,{bookopen:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',download:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>'});
+Object.assign(I,{x:'<path d="M18 6 6 18M6 6l12 12"/>',cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',bookopen:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',download:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>'});
 const PAL=['#1d8fe0','#f97316','#16a34a','#e11d48','#7c3aed','#0d9488','#eab308','#db2777','#0ea5e9','#ef4444'];
 const ic=(n,s=20,f='none')=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${f}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -123,7 +123,7 @@ const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:(SUBJ()[k].nota??null);
 const prom=ks=>{const v=ks.map(notaOf).filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
 const fp=n=>n==null?'---':(+n.toFixed(1)).toLocaleString('es',{maximumFractionDigits:1});
 const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=>estOf(k)=='aprobada').length;return `${n} ${n==1?'materia':'materias'} con nota · ${a} ${a==1?'aprobada':'aprobadas'}`};
-let SEL=null,addMode='dev';const OPEN=new Set();let openInit=false;
+let SEL=null;const OPEN=new Set();let openInit=false;
 /* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
 const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
  const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
@@ -179,54 +179,117 @@ function calc(id){
  ${dd}
  <button class="btn" data-act="calc" data-f="${f.id}">${ic('calc',18)} Calcular</button><div id="out"></div>${f.custom?`<div class="rowb"><button class="btn2" data-act="editf" data-f="${f.id}">Editar</button><button class="btn2 del" data-act="delf" data-f="${f.id}">Eliminar</button></div>`:''}</div>`}
 
-/* ===== Google Drive: cada persona vincula su propia cuenta (solo lectura de nombres y enlaces) ===== */
-const GOOGLE_CLIENT_ID='PEGA_AQUI_TU_CLIENT_ID.apps.googleusercontent.com';
-const GSCOPE='https://www.googleapis.com/auth/drive.metadata.readonly',GFOLD={pdf:'IndustriApp Documentos',foto:'IndustriApp Apuntes'},GFOLDER='application/vnd.google-apps.folder';
-let GD={email:'',docs:null,notes:null,ts:0,busy:false,err:''},gtok=null,gexp=0;
-const gOk=()=>!/PEGA_AQUI/.test(GOOGLE_CLIENT_ID);
-const gLoad=()=>new Promise((ok,no)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return ok();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=ok;s.onerror=()=>no(Error('offline'));document.head.appendChild(s)});
-async function gToken(mode){
- if(gtok&&Date.now()<gexp-60000)return gtok;
- await gLoad();
- return new Promise((ok,no)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:GSCOPE,hint:GD.email||undefined,
-  callback:r=>{if(r.error)return no(Error(r.error));gtok=r.access_token;gexp=Date.now()+(r.expires_in||3600)*1000;ok(gtok)},error_callback:e=>no(Error((e&&e.type)||'cancelado'))});
-  c.requestAccessToken({prompt:mode=='pick'?'select_account':''})})}
-async function gGet(q,fields){const t=await gToken();const r=await fetch('https://www.googleapis.com/drive/v3/files?pageSize=200&orderBy=name&q='+encodeURIComponent(q)+'&fields='+encodeURIComponent('files('+fields+')'),{headers:{Authorization:'Bearer '+t}});if(!r.ok)throw Error('Drive '+r.status);return(await r.json()).files||[]}
-async function gFolder(name){
- const F='id,name,mimeType,webViewLink',f=await gGet(`mimeType='${GFOLDER}' and name='${name}' and trashed=false`,'id,name');
- if(!f.length)return null;
- const ch=await gGet(`'${f[0].id}' in parents and trashed=false`,F),subs=ch.filter(x=>x.mimeType==GFOLDER);
- const lists=await Promise.all(subs.map(s=>gGet(`'${s.id}' in parents and trashed=false and mimeType!='${GFOLDER}'`,F)));
- return[{n:'General',items:ch.filter(x=>x.mimeType!=GFOLDER)},...subs.map((s,i)=>({n:s.name,items:lists[i]}))].filter(g=>g.items.length)}
-async function gSync(mode){
- GD.busy=true;GD.err='';render();
- try{await gToken(mode);
-  if(!GD.email){const r=await fetch('https://www.googleapis.com/drive/v3/about?fields=user(emailAddress)',{headers:{Authorization:'Bearer '+gtok}});GD.email=((await r.json()).user||{}).emailAddress||'Cuenta de Google'}
-  const[d,n]=await Promise.all([gFolder(GFOLD.pdf),gFolder(GFOLD.foto)]);
-  GD.docs=d||[];GD.notes=n||[];GD.ts=Date.now();
-  if(!d&&!n)GD.err='No encontré las carpetas «'+GFOLD.pdf+'» ni «'+GFOLD.foto+'» en tu Drive.';
-  await kvSet('gdrive',{email:GD.email,docs:GD.docs,notes:GD.notes,ts:GD.ts})}
- catch(e){GD.err=navigator.onLine?'No se pudo conectar con Drive. Inténtalo de nuevo.':'Sin conexión: se muestra la última lista guardada.'}
- GD.busy=false;render()}
-async function gUnlink(){try{if(gtok&&window.google)google.accounts.oauth2.revoke(gtok,()=>{})}catch(e){}gtok=null;GD={email:'',docs:null,notes:null,ts:0,busy:false,err:''};await kvSet('gdrive',null);render()}
-const driveCard=()=>{
- if(cat=='eval')return'';
- if(!gOk())return`<div class="card gd"><h3 style="margin-top:0">Drive</h3><p class="muted" style="margin:0">Falta pegar el Client ID de Google en app.js (GOOGLE_CLIENT_ID) para poder vincular cuentas.</p></div>`;
- if(!GD.email)return`<div class="card gd"><h3 style="margin-top:0">Mi Drive</h3><p class="muted" style="margin:0 0 4px">Vincula tu cuenta de Google para ver aquí tus ${cat=='foto'?'apuntes':'documentos'}. Crea en tu Drive las carpetas «${GFOLD.pdf}» y «${GFOLD.foto}» y sube ahí tus archivos.</p>${GD.err?`<p class="gerr">${esc(GD.err)}</p>`:''}<button class="btn gbtn" data-act="glink"${GD.busy?' disabled':''}><span>${GD.busy?'Conectando…':'Vincular cuenta de Google'}</span></button></div>`;
- const L=cat=='foto'?GD.notes:GD.docs;
- return`<div class="card gd"><div class="r2"><div><h3 style="margin:0">Mi Drive</h3><small>${esc(GD.email)}${GD.ts?' · '+new Date(GD.ts).toLocaleDateString('es'):''}</small></div><button class="btn ghost sm" data-act="gsync"${GD.busy?' disabled':''}>${GD.busy?'Buscando…':'Actualizar'}</button><button class="btn ghost sm" data-act="gunlink">Salir</button></div>${GD.err?`<p class="gerr">${esc(GD.err)}</p>`:''}`+
-  (L&&L.length?L.map(g=>`<div class="gg">${esc(g.n)}</div>`+g.items.map(x=>`<a class="gi" href="${esc(x.webViewLink||'#')}" target="_blank" rel="noopener"><span>${esc(x.name)}</span>${ic('chevR',16)}</a>`).join('')).join(''):(GD.busy||GD.err?'':'<p class="muted" style="margin:8px 0 0">Aún no hay archivos aquí. Toca «Actualizar» cuando subas algo.</p>'))+`</div>`};
+/* ===== Biblioteca: archivos guardados en este dispositivo (IndexedDB, sin servidores externos) ===== */
+const LMAX=150*1024*1024; // límite por archivo (150 MB)
+const DOC_EXT=['pdf','doc','docx','odt','rtf','txt','md','xls','xlsx','ods','csv','ppt','pptx','odp'],
+ IMG_EXT=['jpg','jpeg','png','gif','webp','bmp','heic','heif','avif'],
+ MIME={pdf:'application/pdf',doc:'application/msword',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',odt:'application/vnd.oasis.opendocument.text',rtf:'application/rtf',txt:'text/plain',md:'text/markdown',xls:'application/vnd.ms-excel',xlsx:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',ods:'application/vnd.oasis.opendocument.spreadsheet',csv:'text/csv',ppt:'application/vnd.ms-powerpoint',pptx:'application/vnd.openxmlformats-officedocument.presentationml.presentation',odp:'application/vnd.oasis.opendocument.presentation',jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',gif:'image/gif',webp:'image/webp',bmp:'image/bmp',heic:'image/heic',heif:'image/heif',avif:'image/avif'};
+const fext=n=>{const m=/\.([a-z0-9]+)$/i.exec(n||'');return m?m[1].toLowerCase():''};
+const fsize=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(1)+' MB';
+const isImg=(e,m)=>/^image\//.test(m||'')||IMG_EXT.includes(e);
+/* Tipo de archivo → etiqueta, color e icono */
+function fk(r){
+ const e=r.ext||fext(r.title),m=r.mime||(r.blob&&r.blob.type)||'',E=(e||'?').toUpperCase().slice(0,4);
+ if(isImg(e,m))return{k:'img',c:'#336B75',i:'image',l:E};
+ if(e=='pdf'||m=='application/pdf')return{k:'pdf',c:'#b3202c',i:'file',l:'PDF'};
+ if(['doc','docx','odt','rtf'].includes(e))return{k:'word',c:'#1d6fe0',i:'file',l:E};
+ if(['xls','xlsx','ods','csv'].includes(e))return{k:'xls',c:'#16a34a',i:'file',l:E};
+ if(['ppt','pptx','odp'].includes(e))return{k:'ppt',c:'#ea580c',i:'file',l:E};
+ if(['txt','md'].includes(e))return{k:'txt',c:'#64748b',i:'file',l:E};
+ return{k:'otro',c:'#8b5e3c',i:'file',l:E};
+}
+/* Acceso a la tabla 'files' con manejo de errores (cuota llena, transacción abortada) */
+const lt=async(m,f)=>{const d=await db;return new Promise((ok,ko)=>{let q;const t=d.transaction('files',m);
+ try{q=f(t.objectStore('files'))}catch(e){return ko(e)}
+ t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>ko(t.error||(q&&q.error));t.onabort=()=>ko(t.error||(q&&q.error)||Error('abort'))})};
+const lall=()=>lt('readonly',s=>s.getAll()).then(a=>a.filter(x=>x.blob)),
+ lget=id=>lt('readonly',s=>s.get(id)),lput=r=>lt('readwrite',s=>s.add(r)),ldelRaw=id=>lt('readwrite',s=>s.delete(id));
+const lkey=(n,s)=>n+'|'+s;
+
+/* Estado de conexión (indicador discreto) */
+const netUpd=()=>{const n=document.getElementById('net');if(!n)return;const on=navigator.onLine;n.classList.toggle('off',!on);n.lastElementChild.textContent=on?'Con conexión':'Sin conexión'};
+addEventListener('online',netUpd);addEventListener('offline',netUpd);
+
+/* Unidades / temas sugeridos para la materia elegida (opcional) */
+const unitOpts=sid=>((D.sub[sid]&&D.sub[sid].units)||[]).flatMap(u=>[`Unidad ${u.n} · ${u.title}`,...u.topics.map((t,i)=>`${u.n}.${i+1} ${t}`)]).map(v=>`<option value="${esc(v)}">`).join('');
+
+/* Guardar uno o varios archivos */
+async function lsave(){
+ const inp=$('#fi'),fl=inp?[...inp.files]:[];if(!fl.length)return alert('Selecciona un archivo primero.');
+ const btn=$('[data-act="savef"]');if(btn)btn.disabled=true;
+ const base={cat,subject:$('#fs').value,unit:$('#fu').value.trim()};
+ let ok=0;const dup=[],bad=[];
+ try{
+  const have=new Set((await lall()).filter(x=>x.cat==cat).map(x=>lkey(x.title,x.blob.size)));
+  for(const f of fl){
+   const e=fext(f.name),im=isImg(e,f.type);
+   if(cat=='foto'&&!im){bad.push(f.name+': en Apuntes solo se guardan fotografías e imágenes.');continue}
+   if(cat=='pdf'&&(im||!DOC_EXT.includes(e))){bad.push(f.name+(im?': las imágenes se guardan en Apuntes.':': formato no compatible.'));continue}
+   if(f.size>LMAX){bad.push(f.name+': supera los 150 MB.');continue}
+   const key=lkey(f.name,f.size);if(have.has(key)){dup.push(f.name);continue}
+   try{
+    const mime=MIME[e]||f.type||'application/octet-stream',blob=new Blob([await f.arrayBuffer()],{type:mime}); // copia propia: no depende del archivo original
+    await lput({...base,title:f.name,ext:e,mime,size:f.size,date:Date.now(),blob});have.add(key);ok++}
+   catch(er){bad.push(f.name+(er&&er.name=='QuotaExceededError'?': no hay espacio suficiente en el dispositivo.':': no se pudo leer o guardar el archivo.'))}}
+  if(ok&&navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+ }catch(er){bad.push('No se pudo acceder al almacenamiento del navegador.')}
+ await render();
+ const m=[];if(ok)m.push(ok==1?'Archivo guardado ✓':ok+' archivos guardados ✓');
+ if(dup.length)m.push('Ya estaba guardado: '+dup.join(', '));
+ bad.forEach(x=>m.push(x));
+ if(dup.length||bad.length)alert(m.join('\n'));else if(m.length)toast(m[0])}
+
+/* Abrir / visualizar */
+function closeVisor(){const v=document.getElementById('vw');if(v){URL.revokeObjectURL(v.dataset.u);v.remove()}}
+function visor(r,u,k){
+ closeVisor();const v=document.createElement('div');v.id='vw';v.dataset.u=u;
+ v.innerHTML=`<div class="vh"><b>${esc(r.title)}</b><button class="vx" data-act="vclose" aria-label="Cerrar">${ic('x',20)}</button></div><div class="vbody">${k.k=='img'?`<img src="${u}" alt="${esc(r.title)}">`:`<iframe src="${u}" title="${esc(r.title)}"></iframe>`}</div>`;
+ document.body.appendChild(v)}
+async function lopen(id){
+ let r;try{r=await lget(id)}catch(e){}
+ if(!r||!r.blob)return toast('No se encontró el archivo');
+ const k=fk(r),u=URL.createObjectURL(r.blob);
+ if(k.k=='img'||(k.k=='pdf'&&navigator.pdfViewerEnabled))return visor(r,u,k);
+ const a=document.createElement('a');a.href=u;
+ if(k.k=='pdf'){a.target='_blank';a.rel='noopener'}else{a.download=r.title;toast('Se descargará para abrirlo con otra app')}
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),120000)}
+addEventListener('hashchange',closeVisor);
+addEventListener('keydown',e=>{if(e.key=='Escape')closeVisor()});
+
+async function ldel(id){
+ if(!confirm('¿Eliminar este archivo del dispositivo? Esta acción no se puede deshacer.'))return;
+ try{await ldelRaw(id);await render();toast('Archivo eliminado')}catch(e){alert('No se pudo eliminar el archivo.')}}
+
+/* Glosario: términos de los temas, agrupados por materia (se lee de los datos de la app, sin conexión) */
+function glosario(){
+ const g=[];
+ for(const k of Object.keys(SUBJ())){const c=(D.sub[k]&&D.sub[k].content)||{},seen=new Set(),it=[];
+  Object.keys(c).forEach(tid=>(c[tid].glos||[]).forEach(x=>{const n=norm(String(x.t));if(!seen.has(n)){seen.add(n);it.push(x)}}));
+  if(it.length)g.push([k,it.sort((a,b)=>norm(String(a.t)).localeCompare(norm(String(b.t)),'es'))])}
+ if(!g.length)return'<div class="empty">Aún no hay términos en el glosario.</div>';
+ return g.map(([k,it])=>`<div class="lgh">${esc(SUBJ()[k].name)} · ${it.length}</div>`+it.map(x=>`<div class="card dgl"><b>${x.t}</b><p>${x.p}</p>${x.e?`<small>${x.e}</small>`:''}</div>`).join('')).join('')}
 
 async function biblioteca(){
- if(gOk()&&cat!='eval')gLoad().catch(()=>{});const all=await tx('files','readonly',s=>s.getAll()),C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],L=all.filter(x=>x.cat==cat).sort((a,b)=>b.date-a.date);
- return `<h1 class="up">Biblioteca</h1><p class="muted">Abre tus archivos desde este dispositivo (sin conexión) o desde un enlace de Drive.</p>
- <div class="tabs">${C.map(([k,n,i,c])=>`<button class="tab ${c} ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>
- ${driveCard()}${cat=='eval'?'':'<h3 class="lh">En este dispositivo</h3>'}
- ${L.length?L.map(x=>`<div class="card"><div class="r2"><div><b>${esc(x.title)}</b><br><small>${esc(SUBJ()[x.subject]?.short||'')}${x.unit?' · '+esc(x.unit):''} · ${x.blob?'Dispositivo':'Drive'}</small></div><button class="btn sm" data-act="open" data-id="${x.id}">Abrir</button><button class="btn ghost sm" data-act="del" data-id="${x.id}" aria-label="Eliminar">${ic('trash',16)}</button></div></div>`).join(''):'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
- <div class="card"><h3 style="margin-top:0">Añadir archivo</h3><div class="modes"><button class="md ${addMode=='dev'?'on':''}" data-act="mode" data-m="dev">Desde el dispositivo</button><button class="md ${addMode=='drive'?'on':''}" data-act="mode" data-m="drive">Enlace de Drive</button></div>
-${addMode=='dev'?`<div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" style="display:none" ${cat=='foto'?'accept="image/*"':''}>`:`<label>Nombre del archivo<input id="ft" placeholder="Ej. Resumen unidad 2"></label><label>Enlace de Drive<input id="fl" type="url" inputmode="url" placeholder="https://drive.google.com/..."></label>`}
+ const C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],on=navigator.onLine;
+ const head=`<div class="lhd"><h1 class="up">Biblioteca</h1><span id="net" class="net${on?'':' off'}"><i></i><span>${on?'Con conexión':'Sin conexión'}</span></span></div><p class="muted">Guarda tus archivos en este dispositivo y ábrelos sin conexión.</p>
+ <div class="tabs">${C.map(([k,n,i,c])=>`<button class="tab ${c} ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>`;
+ const drive=`<a class="btn gdrv" href="https://drive.google.com/" target="_blank" rel="noopener noreferrer">${ic('cloud',20)}<span>Consultar en Google Drive</span>${ic('ext',16)}</a>`;
+ if(cat=='eval')return head+glosario()+drive;
+ let all=[],err='';try{all=await lall()}catch(e){err='No se pudo acceder al almacenamiento de este navegador. Si estás en modo privado, abre la app en una ventana normal.'}
+ const L=all.filter(x=>x.cat==cat);let use='';
+ try{const s=await navigator.storage.estimate();if(s&&s.usage)use=` Espacio usado por la app: ${fsize(s.usage)}.`}catch(e){}
+ const order=[...D.career.semesters.flatMap(s=>s.items),...new Set(L.map(x=>x.subject))].filter((k,i,a)=>a.indexOf(k)==i);
+ const list=order.map(k=>{const it=L.filter(x=>x.subject==k).sort((a,b)=>b.date-a.date);if(!it.length)return'';
+  return`<div class="lgh">${esc((SUBJ()[k]&&SUBJ()[k].name)||'Otra materia')} · ${it.length}</div>`+it.map(x=>{const t=fk(x);
+   return`<div class="card lf"><div class="r2"><span class="fic" style="--c:${t.c}">${ic(t.i,20)}<em>${esc(t.l)}</em></span><div><b>${esc(x.title)}</b><br><small>${x.unit?esc(x.unit)+' · ':''}${fsize(x.blob.size)} · ${new Date(x.date).toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'})}</small></div><button class="btn sm" data-act="open" data-id="${x.id}">Abrir</button><button class="btn ghost sm" data-act="del" data-id="${x.id}" aria-label="Eliminar">${ic('trash',16)}</button></div></div>`}).join('')}).join('');
+ const acc=cat=='foto'?'accept="image/*"':'accept="'+DOC_EXT.map(e=>'.'+e).join(',')+',application/pdf"';
+ return head+`<div class="lbar"><h3 class="lh">En este dispositivo</h3><button class="btn ghost sm" data-act="lrefresh" aria-label="Actualizar lista">${ic('refresh',16)} Actualizar</button></div>
+ ${err?`<div class="empty">${esc(err)}</div>`:L.length?list:'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
+ <div class="card"><h3 style="margin-top:0">Añadir archivo</h3>
+ <div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" multiple style="display:none" ${acc}>
  <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}" ${k==curId()?'selected':''}>${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
- <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu"></label><button class="btn gbtn" data-act="savef">${ic('plus',18)}<span>${addMode=='dev'?'Guardar archivo':'Guardar enlace'}</span></button></div>`}
+ <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu" list="fus" autocomplete="off"><datalist id="fus">${unitOpts(curId())}</datalist></label><button class="btn gbtn" data-act="savef">${ic('plus',18)}<span>Guardar archivo</span></button></div>
+ <p class="lwarn"><b>Importante:</b> los archivos se guardan solo en este dispositivo y navegador; no se suben a ningún servidor. Si borras los datos del navegador o del sitio, podrías perder los archivos guardados. Conserva una copia en otro lugar.${use}</p>`+drive}
 
 function results(q){
  q=norm(q.trim());if(q.length<2)return'<p class="muted">Escribe al menos 2 letras.</p>';const o=[];
@@ -271,17 +334,11 @@ document.addEventListener('click',async e=>{
  else if(a=='inst'){if(ip){ip.prompt();await ip.userChoice;ip=null}else alert('Para instalar: menú ⋮ de Chrome → "Instalar app" o "Agregar a la pantalla de inicio".')}
  else if(a=='ans'){[...b.parentNode.children].forEach((x,i)=>{x.disabled=true;if(i==+d.a)x.classList.add('ok')});const ok=+d.i==+d.a,hoy=new Date().toDateString();
   if(!ok)b.classList.add('bad');if(S.sc.day!==hoy){S.sc.day=hoy;ok?S.sc.ok++:S.sc.bad++;save();$('.sc').innerHTML=`<i class="g">✓ ${S.sc.ok}</i><i class="r">✕ ${S.sc.bad}</i>`}}
- else if(a=='mode'){addMode=d.m;render()}
- else if(a=='glink')gSync('pick');
- else if(a=='gsync')gSync();
- else if(a=='gunlink'){if(confirm('¿Desvincular tu cuenta de Google de esta app?'))gUnlink()}
- else if(a=='savef'){const base={cat,subject:$('#fs').value,unit:$('#fu').value.trim(),date:Date.now()};
-  if(addMode=='drive'){const t=$('#ft').value.trim(),u=$('#fl').value.trim();if(!t)return alert('Escribe el nombre del archivo.');if(!/^https?:\/\//i.test(u))return alert('Pega el enlace completo de Drive (empieza con https://).');
-   await tx('files','readwrite',s=>s.add({...base,title:t,url:u}))}
-  else{const f=$('#fi').files[0];if(!f)return alert('Selecciona un archivo primero.');await tx('files','readwrite',s=>s.add({...base,title:f.name,blob:f}))}
-  render()}
- else if(a=='open'){const r=await tx('files','readonly',s=>s.get(+d.id));if(r){if(r.blob)window.open(URL.createObjectURL(r.blob),'_blank');else if(r.url)window.open(r.url,'_blank','noopener')}}
- else if(a=='del'){if(confirm('¿Eliminar este archivo del dispositivo?')){await tx('files','readwrite',s=>s.delete(+d.id));render()}}});
+ else if(a=='lrefresh'){await render();toast('Lista actualizada ✓')}
+ else if(a=='savef')lsave();
+ else if(a=='open')lopen(+d.id);
+ else if(a=='del')ldel(+d.id);
+ else if(a=='vclose')closeVisor()});
 
 const toast=m=>{let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1600)};
 const notaIn=k=>document.querySelector(`input.nota[data-k="${k}"]`),notaAc=k=>document.querySelector(`.nac[data-k="${k}"]`);
@@ -554,7 +611,7 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.fbase=D.formulas;D.sub={};
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data){try{D.sub[k]=await j(`${s.data}.json`)}catch(e){}}
-  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];{const g=await kvGet('gdrive');if(g)Object.assign(GD,g)}mergeF();render()}
+  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];tx('kv','readwrite',s=>s.delete('gdrive')).catch(()=>{});mergeF();render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
@@ -563,4 +620,6 @@ if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
 /* Instalación PWA: guarda el evento para el botón Instalar de Inicio */
 let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e});
 
-document.addEventListener('change',e=>{if(e.target&&e.target.id=='fi'){const n=document.getElementById('fn'),f=e.target.files[0];if(n){n.textContent=f?f.name:'Sin archivo';n.classList.toggle('on',!!f)}}});
+document.addEventListener('change',e=>{const t=e.target;if(!t)return;
+ if(t.id=='fi'){const n=document.getElementById('fn'),f=t.files;if(n){n.textContent=!f.length?'Sin archivo':f.length==1?f[0].name:f.length+' archivos';n.classList.toggle('on',!!f.length)}}
+ else if(t.id=='fs'){const l=document.getElementById('fus');if(l)l.innerHTML=unitOpts(t.value)}});
