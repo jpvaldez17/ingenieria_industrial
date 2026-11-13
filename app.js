@@ -167,7 +167,7 @@ function materia(sid){
  return `<a class="back" href="#/carrera">${ic('chevL')}<span class="bk">Volver</span></a>
  <div class="thead sh" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i class="${p>=100?'full':''}" style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
  <h2>Unidades temáticas</h2>`+d.units.map(u=>`<details class="card unit" style="--c:${PAL[(u.n-1)%10]}" ${u.n==1?'open':''}><summary><span class="num">${u.n}</span>${u.title}<span class="ucv" aria-hidden="true">${ic('chevR',16)}</span></summary>${
-  u.topics.map((t,i)=>{const id=`u${u.n}t${i+1}`;return `<a class="row" href="#/tema/${sid}/${id}"><span class="idx">${u.n}.${i+1}</span><span>${t}${S.done.includes(sid+'/'+id)?ic('check',16):''}</span><span class="go2">${ic('chevR',16)}</span></a>`}).join('')}</details>`).join('')}
+  u.topics.map((t,i)=>{const id=`u${u.n}t${i+1}`;return `<a class="row" href="#/tema/${sid}/${id}"><span class="idx">${u.n}.${i+1}</span><span>${t}${S.done.includes(sid+'/'+id)?'<i class="tk" aria-label="Estudiado">✓</i>':''}</span><span class="go2">${ic('chevR',16)}</span></a>`}).join('')}</details>`).join('')}
 
 function tema(sid,tid){
  const s=SUBJ()[sid],T=topics(sid),k=T.findIndex(x=>x.id==tid);if(k<0)return nf();
