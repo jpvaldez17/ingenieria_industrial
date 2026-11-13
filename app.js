@@ -162,12 +162,12 @@ function carrera(){
 
 function materia(sid){
  const s=SUBJ()[sid],d=D.sub[sid];if(!s)return nf();
- if(!d)return `<a class="back" href="#/carrera">${ic('chevL')}Volver</a><div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1></div><div class="empty">Contenido próximamente.<br><small>Se activa subiendo <code>${sid}.json</code> y agregando <code>"data": "${sid}"</code> a esta materia en career.json.</small></div>`;
+ if(!d)return `<a class="back" href="#/carrera">${ic('chevL')}<span class="bk">Volver</span></a><div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1></div><div class="empty">Contenido próximamente.<br><small>Se activa subiendo <code>${sid}.json</code> y agregando <code>"data": "${sid}"</code> a esta materia en career.json.</small></div>`;
  const T=topics(sid),n=S.done.filter(x=>x.startsWith(sid+'/')).length,p=T.length?Math.round(n/T.length*100):0;
- return `<a class="back" href="#/carrera">${ic('chevL')}Volver</a>
- <div class="thead" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
+ return `<a class="back" href="#/carrera">${ic('chevL')}<span class="bk">Volver</span></a>
+ <div class="thead sh" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i class="${p>=100?'full':''}" style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
  <h2>Unidades temáticas</h2>`+d.units.map(u=>`<details class="card unit" style="--c:${PAL[(u.n-1)%10]}" ${u.n==1?'open':''}><summary><span class="num">${u.n}</span>${u.title}<span class="muted">${u.topics.length}</span></summary>${
-  u.topics.map((t,i)=>{const id=`u${u.n}t${i+1}`;return `<a class="row" href="#/tema/${sid}/${id}"><span class="idx">${u.n}.${i+1}</span><span>${t}</span>${S.done.includes(sid+'/'+id)?ic('check',16):''}${ic('chevR',16)}</a>`}).join('')}</details>`).join('')}
+  u.topics.map((t,i)=>{const id=`u${u.n}t${i+1}`;return `<a class="row" href="#/tema/${sid}/${id}"><span class="idx">${u.n}.${i+1}</span><span>${t}</span>${S.done.includes(sid+'/'+id)?ic('check',16):''}<span class="go2">${ic('chevR',16)}</span></a>`}).join('')}</details>`).join('')}
 
 function tema(sid,tid){
  const s=SUBJ()[sid],T=topics(sid),k=T.findIndex(x=>x.id==tid);if(k<0)return nf();
@@ -180,7 +180,7 @@ function tema(sid,tid){
   p+=`<button class="btn ghost" data-act="done" data-k="${key}">${dn?'Estudiado ✓ (quitar)':'Marcar como estudiado'}</button>`}
  if(tab=='f')p=c.frm?`<p class="tabnote">Para leer y repasar. Para calcular usa la pestaña <b>Formulario</b>.</p><div class="fhd"><span>Nombre</span><span>Fórmula</span></div>${c.frm.join('')}`:emp('Este tema es conceptual: no tiene fórmulas esenciales.');
  if(tab=='g')p=c.glos?`<p class="tabnote">📚 Vocabulario del tema · ${c.glos.length} términos</p>`+c.glos.map(g=>`<div class="dgl"><b>${g.t}</b><p>${g.p}</p>${g.e?`<small>${g.e}</small>`:''}</div>`).join(''):emp('Este apartado no tiene glosario.');
- return `<div class="thead" style="--tc:${TC[tab]}"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} Volver</a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
+ return `<div class="thead" style="--tc:${TC[tab]}"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} <span class="bk">Volver</span></a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
  <p class="eyebrow" style="margin-top:10px">Unidad ${t.u.n} · ${t.u.title}</p><h1>${t.u.n}.${t.i} ${t.t}</h1></div>
  <div class="tabs">${tabs.map(([k,n,i])=>`<button class="tab ${tab==k?'on':''}" data-act="tab" data-t="${k}" style="--tc:${TC[k]}">${ic(i,14)}${n}</button>`).join('')}</div>${p}
  <div class="nav2">${k>0?`<a href="#/tema/${sid}/${T[k-1].id}">${ic('chevL',16)}Anterior</a>`:'<span>Anterior</span>'}<a href="#/materia/${sid}">${ic('list',16)}Índice</a>${k<T.length-1?`<a class="pri" href="#/tema/${sid}/${T[k+1].id}">Siguiente${ic('chevR',16)}</a>`:'<span>Siguiente</span>'}</div>`}

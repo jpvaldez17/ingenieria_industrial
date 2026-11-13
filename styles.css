@@ -571,3 +571,14 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 .dato.dtec{background:linear-gradient(135deg,color-mix(in srgb,var(--g,#336B75) 88%,#fff),color-mix(in srgb,var(--g,#336B75) 80%,#000))}
 /* Mi carrera: botón de entrada un poco más ancho */
 .srow .go{width:56px!important;height:32px!important}
+
+/* ===== v37: pantalla de materia ===== */
+.thead.sh .eyebrow{color:rgba(17,24,39,.55)}
+.thead.sh h1{color:#111;text-align:center}
+.thead.sh .bar i{background:#d92b3a}
+.thead.sh .bar i.full{background:#16a34a}
+.go2{display:grid;place-items:center;flex:none;width:52px;height:30px;border-radius:99px;background:#111;margin-left:4px}
+.go2 .ic{color:#d92b3a!important;stroke-width:3}
+/* botón Volver: fondo negro, palabra blanca, flecha roja, un poco más ancho */
+.back,.thead a.vb{padding-left:20px;padding-right:24px}
+.back .bk,.vb .bk{color:#fff}
