@@ -172,7 +172,7 @@ function materia(sid){
 function tema(sid,tid){
  const s=SUBJ()[sid],T=topics(sid),k=T.findIndex(x=>x.id==tid);if(k<0)return nf();
  const t=T[k],c=D.sub[sid].content?.[tid]||{},key=`${sid}/${tid}`,fav=S.favs.includes(key),dn=S.done.includes(key);
- const tabs=[['c','Contenido','book'],['f','Fórmulas','sigma'],['g','Glosario','list']],TC={c:'#336B75',f:'#8b5e3c',g:'#9b1c2e'};
+ const tabs=[['c','Contenido','book'],['f','Fórmulas','sigma'],['g','Glosario','list']],TC={c:'#9b1c2e',f:'#2b7f8c',g:'#8b5e3c'};
  const lst=a=>`<ul class="chk">${a.map(i=>`<li>${i}</li>`).join('')}</ul>`,emp=m=>`<div class="empty">${m}</div>`;
  let p;
  if(tab=='c'){p=c.sections?c.sections.map(x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.p?`<p>${x.p}</p>`:''}${x.html||''}${x.l?lst(x.l):''}</section>`).join('')

@@ -490,11 +490,11 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 
 /* ===== Biblioteca v28 ===== */
 .up{text-transform:uppercase}
-.tabs .tab{border:2px solid var(--c);background:color-mix(in srgb,var(--c) 10%,#fff);color:var(--c);border-radius:14px;padding:11px 4px;font-weight:700;font-size:.82rem;transition:all .15s}
-.tabs .tab .ic{color:var(--c)}
+.tabs .tab:is(.tpdf,.tapu,.tglo){border:2px solid var(--c);background:color-mix(in srgb,var(--c) 10%,#fff);color:var(--c);border-radius:14px;padding:11px 4px;font-weight:700;font-size:.82rem;transition:all .15s}
+.tabs .tab:is(.tpdf,.tapu,.tglo) .ic{color:var(--c)}
 .tabs .tab.tpdf{--c:#b3202c}.tabs .tab.tapu{--c:#336B75}.tabs .tab.tglo{--c:#8b5e3c}
-.tabs .tab.on{background:var(--c);color:#fff;box-shadow:0 3px 8px color-mix(in srgb,var(--c) 45%,transparent)}
-.tabs .tab.on .ic{color:#111}
+.tabs .tab:is(.tpdf,.tapu,.tglo).on{background:var(--c);color:#fff;box-shadow:0 3px 8px color-mix(in srgb,var(--c) 45%,transparent)}
+.tabs .tab:is(.tpdf,.tapu,.tglo).on .ic{color:#111}
 .fpick{display:flex;align-items:center;gap:10px;margin-top:4px}
 .fbtn{display:inline-flex;align-items:center;gap:6px;margin:0;padding:10px 16px;border-radius:99px;background:#336B75;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap}
 .fname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.85rem;color:var(--mu)}
@@ -563,3 +563,11 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 .dtec .dnav button{width:54px;height:40px;border-radius:99px}
 .dtec .dnav .ic{color:#d1d5db!important}
 .dtec .dgr{color:#111}
+
+/* ===== v36 ===== */
+/* título: «App» en negro con borde gris */
+#top h1 span{color:#000;text-shadow:-1px -1px 0 #9ca3af,1px -1px 0 #9ca3af,-1px 1px 0 #9ca3af,1px 1px 0 #9ca3af,0 -1px 0 #9ca3af,0 1px 0 #9ca3af,-1px 0 0 #9ca3af,1px 0 0 #9ca3af}
+/* Dato técnico: colores un poco más oscuros */
+.dato.dtec{background:linear-gradient(135deg,color-mix(in srgb,var(--g,#336B75) 88%,#fff),color-mix(in srgb,var(--g,#336B75) 80%,#000))}
+/* Mi carrera: botón de entrada un poco más ancho */
+.srow .go{width:56px!important;height:32px!important}
