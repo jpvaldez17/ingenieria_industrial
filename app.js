@@ -5,7 +5,7 @@ const I={home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d
 cap:'<path d="M21.42 10.92a1 1 0 0 0 0-1.84l-8.59-3.9a2 2 0 0 0-1.66 0l-8.57 3.9a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
 lib:'<path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/>',
 calc:'<rect width="16" height="20" x="4" y="2" rx="2"/><path d="M8 6h8M16 14v4M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/>',
-search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',chevR:'<path d="m9 18 6-6-6-6"/>',chevL:'<path d="m15 18-6-6 6-6"/>',
+lock:'<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',chevR:'<path d="m9 18 6-6-6-6"/>',chevL:'<path d="m15 18-6-6 6-6"/>',
 bookmark:'<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>',
 sigma:'<path d="M18 7V5a1 1 0 0 0-1-1H6.5a.5.5 0 0 0-.4.8l4.5 6a2 2 0 0 1 0 2.4l-4.5 6a.5.5 0 0 0 .4.8H17a1 1 0 0 0 1-1v-2"/>',
 chart:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/>',
@@ -146,18 +146,39 @@ function home(){
 /* Estado y nota de cada materia: lo que marques o escribas se guarda en este dispositivo */
 const ESTS=[['aprobada','Aprobada'],['curso','En curso'],['pendiente','Pendiente']];
 const estOf=k=>notaOf(k)!=null?'aprobada':(k==curId()?'curso':'pendiente');
-const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:(SUBJ()[k].nota??null);
+/* Privacidad: las notas se leen SOLO de la memoria de este dispositivo (nunca de career.json) */
+const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:null;
 const prom=ks=>{const v=ks.map(notaOf).filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
 const fp=n=>n==null?'---':(+n.toFixed(1)).toLocaleString('es',{maximumFractionDigits:1});
 const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=>estOf(k)=='aprobada').length;return `${n} ${n==1?'materia':'materias'} con nota · ${a} ${a==1?'aprobada':'aprobadas'}`};
 let SEL=null;const OPEN=new Set();let openInit=false;
 /* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
 const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
- const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
+ const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all));const gc=$('.gcard');if(gc)gc.outerHTML=chartNotas()};
+/* Gráfico de notas (solo las que esta persona escribió en este dispositivo). Meta: promedio 90 */
+function chartNotas(){
+ const G=[];D.career.semesters.forEach(sm=>{const p=sm.items.map(k=>({k,v:notaOf(k)})).filter(x=>x.v!=null&&!isNaN(x.v));if(p.length)G.push({n:sm.n,p})});
+ const n=G.reduce((t,g)=>t+g.p.length,0);
+ const head='<div class="gh"><b>Evolución de notas</b><span class="gm"><i></i>Meta 90</span></div>';
+ const foot=`<div class="gf"><span class="gl"><span><i style="background:#336B75"></i>Sobre 90</span><span><i style="background:#9b1c28"></i>Bajo 90</span></span><span class="gk">${ic('lock',14)}Solo en tu celular</span></div>`;
+ if(!n)return `<div class="gcard">${head}<p class="gempty">Escribe tus notas en cada materia y aquí verás cómo van.</p>${foot}</div>`;
+ const vs=G.flatMap(g=>g.p.map(x=>x.v)),lo=Math.min(80,Math.floor(Math.min(...vs)/10)*10),hi=100;
+ const Y=v=>118-(Math.min(hi,v)-lo)*104/(hi-lo),slots=n+G.length-1,st=280/slots;
+ let s=0,pts=[],seps='',labs='';
+ G.forEach((g,gi)=>{
+  if(gi){const x=(30+st*(s+.5)).toFixed(1);seps+=`<line x1="${x}" y1="14" x2="${x}" y2="118" stroke="#d1d5db" stroke-dasharray="3 4"/>`;s++}
+  const xs=[];g.p.forEach(x=>{const cx=30+st*(s+.5);xs.push(cx);pts.push({k:x.k,v:x.v,cx,cy:Y(x.v)});s++});
+  labs+=`<text x="${((xs[0]+xs[xs.length-1])/2).toFixed(1)}" y="146" text-anchor="middle" fill="#6b7280">${g.n}.º sem</text>`});
+ const ticks=[...new Set([lo,90,100])].map(t=>`<text x="24" y="${(Y(t)+4).toFixed(1)}" text-anchor="end" fill="#6b7280">${t}</text>`).join('');
+ const line=pts.map(p=>`${p.cx.toFixed(1)},${p.cy.toFixed(1)}`).join(' ');
+ const dots=pts.map(p=>{const ok=p.v>=90,c=ok?'#336B75':'#9b1c28',ly=ok?p.cy-9:p.cy+17;
+  return `<g data-act="gpt" data-k="${p.k}" data-v="${p.v}"><circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="12" fill="transparent"/><circle cx="${p.cx.toFixed(1)}" cy="${p.cy.toFixed(1)}" r="4.5" fill="${c}" stroke="#fff" stroke-width="2"/><text x="${p.cx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" fill="${ok?'#374151':'#9b1c28'}">${fp(p.v)}</text></g>`}).join('');
+ const y90=Y(90).toFixed(1);
+ return `<div class="gcard">${head}<svg viewBox="0 -8 320 160" role="img" aria-label="Gráfico de tus notas por materia con la meta de 90"><rect x="30" y="14" width="280" height="${(Y(90)-14).toFixed(1)}" fill="#336B75" fill-opacity=".08"/><line x1="30" y1="118" x2="310" y2="118" stroke="#d1d5db"/><line x1="30" y1="14" x2="310" y2="14" stroke="#e5e7eb"/>${seps}<line x1="30" y1="${y90}" x2="310" y2="${y90}" stroke="#8b5e3c" stroke-width="1.5" stroke-dasharray="5 4"/>${ticks}<polyline points="${line}" fill="none" stroke="#111" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${labs}</svg>${foot}</div>`}
 function carrera(){
  if(!openInit){openInit=true;const m=D.career.semesters.find(x=>x.items.includes(curId()));if(m)OPEN.add(m.n)}
  const all=Object.keys(SUBJ());
- return `<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>PROM. GENERAL</i><b class="gpn">${fp(prom(all))}</b></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
+ return chartNotas()+`<div class="chead"><h1>Ingeniería Industrial</h1><div class="gpm" title="${gpText(all)}"><i>general</i><b class="gpn">${fp(prom(all))}</b></div></div>`+D.career.semesters.map(sm=>`<details class="card sem" data-n="${sm.n}" ${OPEN.has(sm.n)?'open':''}><summary><span class="num" style="color:${SEMC[(sm.n-1)%SEMC.length]}">${sm.n}</span>${ORD[sm.n]||sm.n+'.º'} Semestre<span class="avg"><i>PROM.</i><b>${fp(prom(sm.items))}</b></span><span class="cv">${ic('chevR',20)}</span></summary>${
   sm.items.map(k=>{const s=SUBJ()[k],on=k==curId(),sel=k==(SEL??curId()),e=estOf(k),n=notaOf(k);return `<div class="srow ${sel?'act':''}" data-e="${e}" style="--c:${s.color}"><div class="srt"><span class="row"><span class="sn" data-act="setsel" data-k="${k}"><i class="ok" aria-label="Aprobada">✓</i><i class="sd" aria-hidden="true"></i><span class="nm">${s.name}</span></span><a class="go ${on?'r':'g'}" href="#/materia/${k}" aria-label="Abrir temario de ${s.name}">${ic('chevR',16)}</a></span><button class="cbtn ${on?'on':''}" data-act="setcur" data-k="${k}">${on?'✓ Actual':'Usar'}</button></div><div class="srm"><span class="nw"><span class="nac" data-k="${k}" hidden><button class="ns" data-act="nsave" data-k="${k}" aria-label="Guardar nota">✓</button><button class="nc" data-act="ncancel" data-k="${k}" aria-label="Cancelar">✕</button></span><input class="nota" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="---" value="${n??''}" data-k="${k}" data-orig="${n??''}" aria-label="Nota de ${s.name}"></span></div></div>`}).join('')}</details>`).join('')}
 
 function materia(sid){
@@ -362,6 +383,7 @@ document.addEventListener('click',async e=>{
  else if(a=='nsave')notaSave(d.k);
  else if(a=='ncancel')notaCancel(d.k);
  else if(a=='setsel'){SEL=d.k;render()}
+ else if(a=='gpt'){toast(`${SUBJ()[d.k].name}: ${fp(+d.v)}`)}
  else if(a=='setcur'){S.cur=d.k;SEL=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
@@ -657,7 +679,9 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.fbase=D.formulas;D.sub={};
   for(const[k,s]of Object.entries(D.career.subjects))if(s.data){try{D.sub[k]=await j(`${s.data}.json`)}catch(e){}}
-  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];tx('kv','readwrite',s=>s.delete('gdrive')).catch(()=>{});mergeF();render()}
+  S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];
+  if(/[?&]migrar\b/.test(location.search)){let c=0;for(const[k,s]of Object.entries(D.career.subjects))if(s.nota!=null&&S.notas[k]===undefined){S.notas[k]=s.nota;c++}await kvSet('notas',S.notas);history.replaceState(null,'',location.pathname+location.hash);setTimeout(()=>toast(c?`Notas copiadas a este celular: ${c}`:'No había notas por copiar'),700)}
+ tx('kv','readwrite',s=>s.delete('gdrive')).catch(()=>{});mergeF();render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
 if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)location.reload()});
