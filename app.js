@@ -103,15 +103,42 @@ const row=(h,i,t,s,c)=>`<a class="row card" href="${h}" style="--c:${c}"><span c
 const mx=f=>`<span class="fm2 fit"><span class="mw">${f.mathml}</span></span>`;
 const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${SUBJ()[f.subject].color}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}${f.custom?' <i class="mine">propia</i>':''}</b>${f.mathml?mx(f):`<code>${f.tex}</code>`}</span>${ic('chevR',16)}</a>`;
 
+/* ===== Dato del día (glosario de la materia actual; cambia al actualizar la app) y Dato técnico (glosario general) ===== */
+let DIA={},DT={h:[],i:-1},DTL=null;
+function diaPick(sid){
+ if(DIA[sid])return DIA[sid];
+ const c=(D.sub[sid]&&D.sub[sid].content)||{},pool=[];
+ for(const tid in c)(c[tid].glos||[]).forEach(g=>pool.push({t:g.t,p:g.p,tid}));
+ let r;
+ if(pool.length){const x=pool[Math.floor(Math.random()*pool.length)];r={t:x.t,p:/^[a-záéíóúñ]/.test(x.p)?x.p[0].toUpperCase()+x.p.slice(1):x.p,href:`#/tema/${sid}/${x.tid}`}}
+ else{const k=D.career.datos,d=k[Math.floor(Math.random()*k.length)];r={t:d.t,p:d.p,href:`#/materia/${sid}`}}
+ return DIA[sid]=r}
+function dtList(){if(!DTL&&GL)DTL=GL.secciones.flatMap(s=>s.items.map(x=>({n:s.n,g:s.t,t:x[0],p:x[1]})));return DTL||[]}
+function dtCur(){const L=dtList();if(!L.length)return null;if(DT.i<0){DT.h=[Math.floor(Math.random()*L.length)];DT.i=0}return L[DT.h[DT.i]]}
+function dtMove(dir){
+ const L=dtList();if(!L.length)return;
+ if(dir>0){if(DT.i<DT.h.length-1)DT.i++;else{let r,t=0;do{r=Math.floor(Math.random()*L.length)}while(r==DT.h[DT.i]&&++t<5);DT.h.push(r);DT.i++}}
+ else if(DT.i>0)DT.i--;
+ const e=document.getElementById('dtec');if(e)dtFill(e)}
+function dtInner(){
+ const x=dtCur();
+ if(!x)return`<div class="dh"><b>DATO TÉCNICO</b></div><div class="db"><p>Cargando glosario…</p></div>`;
+ return`<div class="dh"><span class="dnav"><button data-act="dtp" aria-label="Anterior"${DT.i>0?'':' disabled'}>${ic('chevL',18)}</button><button data-act="dtn" aria-label="Siguiente">${ic('chevR',18)}</button></span><b>DATO TÉCNICO</b></div><div class="dgr">${esc(x.g)}</div><div class="db"><strong>${esc(x.t)}</strong><p>${esc(x.p)}</p></div>`}
+function dtFill(e){const x=dtCur();if(x)e.style.setProperty('--g',gcol(x.n));e.innerHTML=dtInner()}
+const dtHTML=()=>{
+ if(!GL)loadGlos().then(()=>{const e=document.getElementById('dtec');if(e)dtFill(e)});
+ const x=dtCur();return`<div class="dato dtec" id="dtec" style="--g:${x?gcol(x.n):'#336B75'}">${dtInner()}</div>`};
+
 /* ===== Pantallas ===== */
 function home(){
  const cur=curId(),s=SUBJ()[cur],T=topics(cur),d=S.done.filter(x=>x.startsWith(cur+'/')).length,p=T.length?Math.round(d/T.length*100):0;
- const dt=D.career.datos[Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/864e5)%D.career.datos.length],stand=matchMedia('(display-mode: standalone)').matches;
+ const dt=diaPick(cur),stand=matchMedia('(display-mode: standalone)').matches;
  const favs=S.favs.map(f=>{const[sid,tid]=f.split('/'),t=topics(sid).find(x=>x.id==tid);return t?`<a class="row" href="#/tema/${f}">${ic('bookmark',16)}<span>${esc(t.t)}</span>${ic('chevR',16)}</a>`:''}).join('');
  const tl=(h,c,hz,i,t,sb)=>`<a class="acc" href="${h}" style="--c:${c};--haz:${hz}"><span class="bd">${ic(i,22)}</span><span class="at"><b>${t}</b><small>${sb}</small></span></a>`;
  return `<div class="search"><a href="#/buscar">${ic('search')}<span>Buscar materia, tema, fórmula…</span></a>${stand?'':`<button data-act="inst">${ic('download',16)} Instalar</button>`}</div>
  <a class="card cur" href="#/materia/${cur}" style="--c:var(--tq)"><div class="r"><span><b>${s.name}</b> <small>· ${semTxt(cur)}</small></span>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${T.length?`${d} de ${T.length} temas estudiados · ${p}%`:'Contenido próximamente'}</small></a>
- <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DEL DÍA</b><a class="pillb" href="#/materia/${cur}">Más información ${ic('arrow',14)}</a></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div></div>
+ <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DEL DÍA</b><a class="pillb" href="${dt.href}">Más información ${ic('arrow',14)}</a></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div></div>
+ ${dtHTML()}
  <h2 class="acch">${ic('grid',20)} ACCESOS DIRECTOS</h2>
  <div class="accs">${tl('#/materia/'+cur,'#1686c9','42,160,240',s.icon,s.short,D.sub[cur]?'Unidades y temas':'Próximamente')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
  ${favs?`<h2>Favoritos</h2><div class="card">${favs}</div>`:''}`}
@@ -353,6 +380,8 @@ document.addEventListener('click',async e=>{
  else if(a=='open')lopen(+d.id);
  else if(a=='del')ldel(+d.id);
  else if(a=='vclose')closeVisor()
+ else if(a=='dtn')dtMove(1);
+ else if(a=='dtp')dtMove(-1);
  else if(a=='gfilt'){GP=!GP;gRefresh()}
  else if(a=='gfsec'){const n=+d.n;GF.has(n)?GF.delete(n):GF.add(n);gRefresh()}
  else if(a=='gfclr'){GF.clear();gRefresh()}});

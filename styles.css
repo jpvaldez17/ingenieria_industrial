@@ -547,3 +547,13 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 
 /* ===== Glosario v33: subtítulo de área dentro de cada grupo ===== */
 .gs .ga{margin:12px 0 2px;padding:5px 10px;border-radius:8px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+
+/* ===== Inicio v34: Dato técnico (color según el grupo del glosario) ===== */
+.dato.dtec{background:linear-gradient(135deg,color-mix(in srgb,var(--g,#336B75) 68%,#fff),var(--g,#336B75));box-shadow:0 6px 16px color-mix(in srgb,var(--g,#336B75) 40%,transparent);transition:box-shadow .3s}
+.dtec .dh{display:flex;align-items:center;gap:10px}
+.dtec .dnav{display:flex;gap:8px}
+.dtec .dnav button{width:38px;height:38px;border-radius:50%;border:0;background:#111;display:grid;place-items:center;padding:0;cursor:pointer}
+.dtec .dnav button:disabled{opacity:.45}
+.dtec .dnav .ic{color:#e11d2e!important;stroke-width:3}
+.dtec .dgr{margin:2px 4px 8px;font-size:.74rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff}
+.dato.dtec .db strong{color:var(--g)}
