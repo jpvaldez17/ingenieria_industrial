@@ -582,3 +582,14 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 /* botón Volver: fondo negro, palabra blanca, flecha roja, un poco más ancho */
 .back,.thead a.vb{padding-left:20px;padding-right:24px}
 .back .bk,.vb .bk{color:#fff}
+
+/* ===== v38: pantalla de materia ===== */
+/* barra de avance: rojo más oscuro */
+.thead.sh .bar i{background:#9b1c28}
+/* unidad: botón negro con flecha roja (más pequeño) en lugar del número; la flecha gira al abrir */
+.unit>summary .ucv{display:grid;place-items:center;flex:none;margin-left:auto;width:40px;height:24px;border-radius:99px;background:#111}
+.unit>summary .ucv .ic{color:#d92b3a;stroke-width:3;transform:rotate(90deg);transition:transform .2s}
+.unit[open]>summary .ucv .ic{transform:rotate(-90deg)}
+/* temas: círculo gris con flecha negra */
+.go2{width:30px;height:30px;border-radius:50%;background:#d1d5db;margin-left:4px}
+.go2 .ic{color:#111!important;stroke-width:3}
