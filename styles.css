@@ -620,6 +620,10 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 .gpm{width:64px;height:64px;min-width:0;padding:0;border-radius:50%;border:3px solid var(--tq);justify-content:center;align-items:center;box-shadow:none}
 .gpm i{font-size:.66rem;letter-spacing:0;font-weight:400;text-transform:none;color:var(--mu)}
 .gpm b{font-size:1.1rem}
-/* círculo pequeño con el promedio general, en el encabezado del gráfico */
-.ntc{flex:none;width:46px;height:46px;border-radius:50%;border:3px solid var(--tq);display:flex;align-items:center;justify-content:center;font-family:var(--formula);font-weight:700;font-size:1.05rem;color:#111;background:#fff}
-.nth{margin-bottom:0}
+/* promedio general: óvalo pequeño con su etiqueta a la izquierda; debajo del título, el nombre de la carrera en azul */
+.nth{margin-bottom:2px}
+.ntt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ntt small{color:#1686c9;font-size:.68rem;font-weight:700;letter-spacing:.08em}
+.ntp{display:flex;align-items:center;gap:8px;flex:none}
+.ntp i{font-style:normal;font-size:.72rem;font-weight:700;color:var(--mu);white-space:nowrap}
+.ntc{flex:none;min-width:58px;height:34px;padding:0 8px;box-sizing:border-box;border-radius:50%;border:2.5px solid var(--tq);display:flex;align-items:center;justify-content:center;font-family:var(--formula);font-weight:700;font-size:.88rem;line-height:1;color:#111;background:#fff}
