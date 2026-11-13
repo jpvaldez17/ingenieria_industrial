@@ -557,3 +557,9 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 .dtec .dnav .ic{color:#e11d2e!important;stroke-width:3}
 .dtec .dgr{margin:2px 4px 8px;font-size:.74rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff}
 .dato.dtec .db strong{color:var(--g)}
+
+/* ===== Inicio v35: flechas a la derecha, más anchas y en gris claro; título del grupo en negro ===== */
+.dtec .dnav{margin-left:auto;gap:6px}
+.dtec .dnav button{width:54px;height:40px;border-radius:99px}
+.dtec .dnav .ic{color:#d1d5db!important}
+.dtec .dgr{color:#111}
