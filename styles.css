@@ -590,10 +590,10 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 .thead.sh .eyebrow{color:#e3e7ea;font-weight:700}
 /* unidad: botón negro grande con V roja gruesa; gira al abrir */
 .unit>summary .ucv{display:grid;place-items:center;flex:none;margin-left:auto;width:62px;height:30px;border-radius:99px;background:#111}
-.unit>summary .ucv .ic{width:38px;height:38px;color:#d92b3a;stroke-width:3;transform:rotate(90deg);transition:transform .2s}
+.unit>summary .ucv .ic{width:16px;height:16px;color:#d92b3a;stroke-width:3;transform:rotate(90deg);transition:transform .2s}
 .unit[open]>summary .ucv .ic{transform:rotate(-90deg)}
 /* temas: círculo gris con flecha negra (flex:none evita que se estire a óvalo) */
 .unit .row>.go2{flex:none!important;width:38px;height:38px;border-radius:50%;background:#d1d5db;margin-left:4px}
 .go2 .ic{width:22px;height:22px;color:#111!important;stroke-width:3}
-/* tic de tema estudiado: grande y turquesa del tema */
-.unit .row>svg.ic{width:30px;height:30px;color:var(--tq);stroke-width:3}
+/* tic de tema estudiado: pequeño, al final del texto, turquesa del tema */
+.unit .row>span:not(.go2) svg.ic{width:16px;height:16px;margin-left:6px;vertical-align:-2px;color:var(--tq);stroke-width:3}
