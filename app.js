@@ -18,7 +18,7 @@ off:'<path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M5 12.86a10 10 0 0 1 5.17-2.69M1
 plus:'<path d="M5 12h14M12 5v14"/>',trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
 list:'<path d="M3 12h.01M3 18h.01M3 6h.01M8 12h13M8 18h13M8 6h13"/>',check:'<path d="M20 6 9 17l-5-5"/>',
 book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>'};
-Object.assign(I,{x:'<path d="M18 6 6 18M6 6l12 12"/>',cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',bookopen:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',download:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>'});
+Object.assign(I,{menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',cloud:'<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',bookopen:'<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',bulb:'<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/>',grid:'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',download:'<path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>'});
 const PAL=['#1d8fe0','#f97316','#16a34a','#e11d48','#7c3aed','#0d9488','#eab308','#db2777','#0ea5e9','#ef4444'];
 const ic=(n,s=20,f='none')=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${f}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[n]||''}</svg>`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -257,21 +257,40 @@ async function ldel(id){
  if(!confirm('¿Eliminar este archivo del dispositivo? Esta acción no se puede deshacer.'))return;
  try{await ldelRaw(id);await render();toast('Archivo eliminado')}catch(e){alert('No se pudo eliminar el archivo.')}}
 
-/* Glosario: términos de los temas, agrupados por materia (se lee de los datos de la app, sin conexión) */
-function glosario(){
- const g=[];
- for(const k of Object.keys(SUBJ())){const c=(D.sub[k]&&D.sub[k].content)||{},seen=new Set(),it=[];
-  Object.keys(c).forEach(tid=>(c[tid].glos||[]).forEach(x=>{const n=norm(String(x.t));if(!seen.has(n)){seen.add(n);it.push(x)}}));
-  if(it.length)g.push([k,it.sort((a,b)=>norm(String(a.t)).localeCompare(norm(String(b.t)),'es'))])}
- if(!g.length)return'<div class="empty">Aún no hay términos en el glosario.</div>';
- return g.map(([k,it])=>`<div class="lgh">${esc(SUBJ()[k].name)} · ${it.length}</div>`+it.map(x=>`<div class="card dgl"><b>${x.t}</b><p>${x.p}</p>${x.e?`<small>${x.e}</small>`:''}</div>`).join('')).join('')}
+/* Glosario de Ingeniería Industrial: datos en glosario.json (se guarda en caché y funciona sin conexión) */
+const GC=['#1d6fe0','#ea580c','#16a34a','#dc2626','#7c3aed','#0d9488','#0284c7','#8b5e3c','#4f46e5','#475569','#0891b2','#9a3412','#166534','#1e3a8a','#581c87'];
+let GL=null,GQ='',GF=new Set(),GP=false;const GOPEN=new Set();
+async function loadGlos(){if(GL)return;try{const r=await fetch('glosario.json');if(r.ok)GL=await r.json()}catch(e){}}
+const gcol=n=>GC[(n-1)%GC.length];
+function gData(){
+ const q=norm(GQ.trim()),act=!!q||GF.size>0;let tot=0;
+ const secs=GL.secciones.filter(s=>!GF.size||GF.has(s.n)).map(s=>{
+  const it=q?s.items.filter(x=>norm(x[0]).includes(q)||norm(x[1]).includes(q)):s.items;tot+=it.length;return{...s,it}}).filter(s=>s.it.length);
+ return{secs,tot,act,q}}
+function gBody(){
+ const{secs,tot,act}=gData(),all=GL.secciones.reduce((a,s)=>a+s.items.length,0);
+ const info=act?`${tot} resultado${tot==1?'':'s'}`:`${all} términos · ${GL.secciones.length} áreas`;
+ if(!secs.length)return`<p class="gcount">${info}</p><div class="empty">Sin resultados${GQ.trim()?' para «'+esc(GQ.trim())+'»':''}.</div>`;
+ return`<p class="gcount">${info}</p>`+secs.map(s=>`<details class="gs card" data-n="${s.n}" style="--c:${gcol(s.n)}" ${act||GOPEN.has(s.n)?'open':''}><summary><span class="gnum">${s.n}</span><span class="gst">${esc(s.t)}</span><span class="muted">${s.it.length}</span>${ic('chevR',16)}</summary>${s.it.map(x=>`<div class="gt"><b>${esc(x[0])}</b><p>${esc(x[1])}</p></div>`).join('')}</details>`).join('')}
+const gPanel=()=>`<div class="gfh"><b>Filtrar por área</b><button class="gclr" data-act="gfclr"${GF.size?'':' disabled'}>Limpiar</button></div><div class="gchips">${GL.secciones.map(s=>`<button class="gchip${GF.has(s.n)?' on':''}" style="--c:${gcol(s.n)}" data-act="gfsec" data-n="${s.n}">${esc(s.t)}</button>`).join('')}</div>`;
+function gRefresh(){
+ const b=document.getElementById('gbody'),p=document.getElementById('gfp'),d=document.getElementById('gbd');
+ if(b)b.innerHTML=gBody();if(p){p.hidden=!GP;p.innerHTML=gPanel()}if(d){d.textContent=GF.size;d.hidden=!GF.size}}
+function glosarioHTML(){
+ if(!GL)return'<div class="empty">No se pudo cargar el glosario. Conéctate una vez a internet para descargarlo; luego funcionará sin conexión.</div>';
+ return`<h2 class="gtit">${esc(GL.titulo)}</h2><p class="muted gsub">${esc(GL.sub)}</p>
+ <div class="gsb"><span class="gsi">${ic('search',20)}</span><input id="gq" type="search" placeholder="Buscar término o definición…" autocomplete="off" enterkeyhint="search" value="${esc(GQ)}"><button class="gfb" data-act="gfilt" aria-label="Filtros">${ic('menu',20)}<i class="gbd" id="gbd"${GF.size?'':' hidden'}>${GF.size}</i></button></div>
+ <div class="gfp card" id="gfp"${GP?'':' hidden'}>${gPanel()}</div><div id="gbody">${gBody()}</div>`}
+document.addEventListener('input',e=>{if(e.target&&e.target.id=='gq'){GQ=e.target.value;gRefresh()}});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target&&e.target.id=='gq')e.target.blur()});
+document.addEventListener('toggle',e=>{const d=e.target;if(d.matches&&d.matches('details.gs')&&!GQ.trim()&&!GF.size){const n=+d.dataset.n;d.open?GOPEN.add(n):GOPEN.delete(n)}},true);
 
 async function biblioteca(){
  const C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']];
  const head=`<h1 class="up">Biblioteca</h1><p class="muted">Guarda tus archivos en este dispositivo y ábrelos sin conexión.</p>
  <div class="tabs">${C.map(([k,n,i,c])=>`<button class="tab ${c} ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>`;
  const drive=`<a class="btn gdrv" href="https://drive.google.com/" target="_blank" rel="noopener noreferrer">${ic('cloud',20)}<span>Consultar en Google Drive</span>${ic('ext',16)}</a>`;
- if(cat=='eval')return head+glosario()+drive;
+ if(cat=='eval'){await loadGlos();return head+glosarioHTML()+drive}
  let all=[],err='';try{all=await lall()}catch(e){err='No se pudo acceder al almacenamiento de este navegador. Si estás en modo privado, abre la app en una ventana normal.'}
  const L=all.filter(x=>x.cat==cat);
  const order=[...D.career.semesters.flatMap(s=>s.items),...new Set(L.map(x=>x.subject))].filter((k,i,a)=>a.indexOf(k)==i);
@@ -333,7 +352,10 @@ document.addEventListener('click',async e=>{
  else if(a=='savef')lsave();
  else if(a=='open')lopen(+d.id);
  else if(a=='del')ldel(+d.id);
- else if(a=='vclose')closeVisor()});
+ else if(a=='vclose')closeVisor()
+ else if(a=='gfilt'){GP=!GP;gRefresh()}
+ else if(a=='gfsec'){const n=+d.n;GF.has(n)?GF.delete(n):GF.add(n);gRefresh()}
+ else if(a=='gfclr'){GF.clear();gRefresh()}});
 
 const toast=m=>{let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1600)};
 const notaIn=k=>document.querySelector(`input.nota[data-k="${k}"]`),notaAc=k=>document.querySelector(`.nac[data-k="${k}"]`);
