@@ -620,3 +620,6 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 .gpm{width:64px;height:64px;min-width:0;padding:0;border-radius:50%;border:3px solid var(--tq);justify-content:center;align-items:center;box-shadow:none}
 .gpm i{font-size:.66rem;letter-spacing:0;font-weight:400;text-transform:none;color:var(--mu)}
 .gpm b{font-size:1.1rem}
+/* círculo pequeño con el promedio general, en el encabezado del gráfico */
+.ntc{flex:none;width:46px;height:46px;border-radius:50%;border:3px solid var(--tq);display:flex;align-items:center;justify-content:center;font-family:var(--formula);font-weight:700;font-size:1.05rem;color:#111;background:#fff}
+.nth{margin-bottom:0}

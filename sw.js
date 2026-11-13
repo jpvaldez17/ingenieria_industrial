@@ -1,5 +1,5 @@
-// Service Worker v44: red primero (siempre ve la versión nueva si hay internet) y caché de respaldo (offline).
-const V='ii-upds-v44',A=['./','index.html','styles.css','app.js','manifest.webmanifest','icon.svg','logo-gear.png','logo-upds.png','career.json','estadistica.json','formulas.json'];
+// Service Worker v45: red primero (siempre ve la versión nueva si hay internet) y caché de respaldo (offline).
+const V='ii-upds-v45',A=['./','index.html','styles.css','app.js','manifest.webmanifest','icon.svg','logo-gear.png','logo-upds.png','career.json','estadistica.json','formulas.json'];
 // Opcionales: si el archivo aún no está en el repo, no se rompe la instalación (ej. las fuentes).
 const O=['WinkySans-VariableFont_wght.ttf','WinkySans-Italic-VariableFont_wght.ttf','FormulaSans-Regular.woff','FormulaSans-Bold.woff','glosario.json','icon-192.png','icon-512.png','glosario.json'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(A).then(()=>Promise.allSettled(O.map(u=>c.add(u))))));self.skipWaiting()});

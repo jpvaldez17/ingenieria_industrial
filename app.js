@@ -160,8 +160,8 @@ const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySel
 function chartNotas(){
  const G=[];D.career.semesters.forEach(sm=>{const p=sm.items.map(k=>({k,v:notaOf(k)})).filter(x=>x.v!=null&&!isNaN(x.v));if(p.length)G.push({n:sm.n,p})});
  const n=G.reduce((t,g)=>t+g.p.length,0);
- const head='<div class="nth"><b>Evolución de notas</b><span class="ntm"><i></i>Meta 90</span></div>';
- const foot=`<div class="ntf"><span class="ntl"><span><i style="background:#336B75"></i>Sobre 90</span><span><i style="background:#9b1c28"></i>Bajo 90</span></span><span class="ntk">${ic('lock',14)}Solo en tu celular</span></div>`;
+ const head=`<div class="nth"><b>Evolución de notas</b><span class="ntc" aria-label="Promedio general">${fp(prom(Object.keys(SUBJ())))}</span></div>`;
+ const foot=`<div class="ntf"><span class="ntl"><span><i style="background:#336B75"></i>Sobre 90</span><span><i style="background:#9b1c28"></i>Bajo 90</span></span><span class="ntm"><i></i>Meta 90</span></div>`;
  if(!n)return `<div class="ntcard">${head}<p class="ntempty">Escribe tus notas en cada materia y aquí verás cómo van.</p>${foot}</div>`;
  const vs=G.flatMap(g=>g.p.map(x=>x.v)),lo=Math.min(80,Math.floor(Math.min(...vs)/10)*10),hi=100;
  const Y=v=>118-(Math.min(hi,v)-lo)*104/(hi-lo),slots=n+G.length-1,st=280/slots;
