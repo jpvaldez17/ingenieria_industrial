@@ -507,16 +507,12 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 
 /* ===== Biblioteca v31: almacenamiento local ===== */
 .lh{margin:16px 2px 6px}
-.lhd{display:flex;align-items:center;justify-content:space-between;gap:10px}.lhd h1{margin-right:0}
-.net{display:inline-flex;align-items:center;gap:6px;flex:none;font-size:.72rem;font-weight:700;color:#15803d;background:#e6f4ec;border-radius:99px;padding:4px 10px}
-.net i{width:8px;height:8px;border-radius:50%;background:currentColor}.net.off{color:#b3202c;background:#fbe9ea}
 .lbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:16px 0 6px}.lbar .lh{margin:0}
 .lbar .btn.sm{display:inline-flex;gap:6px;font-weight:700}
 .lgh{margin:14px 2px 6px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#336B75}
 .fic{flex:none;width:46px;height:46px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c)}
 .fic em{font-style:normal;font-size:.56rem;font-weight:800;line-height:1;letter-spacing:.03em}
 .lf .r2>div{overflow-wrap:anywhere}
-.lwarn{margin:4px 0 6px;padding:11px 13px;border-radius:14px;background:#fff7e6;border:1px solid #f1d9a6;color:#6b4e12;font-size:.82rem;line-height:1.4}
 .btn.gdrv{background:#facc15;color:#111;border:2px solid #a16207;box-shadow:0 0 0 3px rgba(250,204,21,.28);font-weight:800;text-decoration:none;margin:14px 0 18px}
 .btn.gdrv .ic{color:#111}
 #vw{position:fixed;inset:0;z-index:50;background:#0b1418;display:flex;flex-direction:column}

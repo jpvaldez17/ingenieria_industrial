@@ -202,13 +202,10 @@ function fk(r){
 const lt=async(m,f)=>{const d=await db;return new Promise((ok,ko)=>{let q;const t=d.transaction('files',m);
  try{q=f(t.objectStore('files'))}catch(e){return ko(e)}
  t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>ko(t.error||(q&&q.error));t.onabort=()=>ko(t.error||(q&&q.error)||Error('abort'))})};
-const lall=()=>lt('readonly',s=>s.getAll()).then(a=>a.filter(x=>x.blob)),
+const lall=()=>lt('readonly',s=>{const out=[],q={};const r=s.openCursor();r.onsuccess=()=>{const c=r.result;if(c){const v=c.value;if(v.blob)out.push({...v,blob:{size:v.blob.size,type:v.blob.type}});c.continue()}else q.result=out};return q}),
+ 
  lget=id=>lt('readonly',s=>s.get(id)),lput=r=>lt('readwrite',s=>s.add(r)),ldelRaw=id=>lt('readwrite',s=>s.delete(id));
 const lkey=(n,s)=>n+'|'+s;
-
-/* Estado de conexión (indicador discreto) */
-const netUpd=()=>{const n=document.getElementById('net');if(!n)return;const on=navigator.onLine;n.classList.toggle('off',!on);n.lastElementChild.textContent=on?'Con conexión':'Sin conexión'};
-addEventListener('online',netUpd);addEventListener('offline',netUpd);
 
 /* Unidades / temas sugeridos para la materia elegida (opcional) */
 const unitOpts=sid=>((D.sub[sid]&&D.sub[sid].units)||[]).flatMap(u=>[`Unidad ${u.n} · ${u.title}`,...u.topics.map((t,i)=>`${u.n}.${i+1} ${t}`)]).map(v=>`<option value="${esc(v)}">`).join('');
@@ -228,7 +225,7 @@ async function lsave(){
    if(f.size>LMAX){bad.push(f.name+': supera los 150 MB.');continue}
    const key=lkey(f.name,f.size);if(have.has(key)){dup.push(f.name);continue}
    try{
-    const mime=MIME[e]||f.type||'application/octet-stream',blob=new Blob([await f.arrayBuffer()],{type:mime}); // copia propia: no depende del archivo original
+    const mime=MIME[e]||f.type||'application/octet-stream',blob=f.slice(0,f.size,mime); // referencia, sin cargar el archivo en RAM
     await lput({...base,title:f.name,ext:e,mime,size:f.size,date:Date.now(),blob});have.add(key);ok++}
    catch(er){bad.push(f.name+(er&&er.name=='QuotaExceededError'?': no hay espacio suficiente en el dispositivo.':': no se pudo leer o guardar el archivo.'))}}
   if(ok&&navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
@@ -270,14 +267,13 @@ function glosario(){
  return g.map(([k,it])=>`<div class="lgh">${esc(SUBJ()[k].name)} · ${it.length}</div>`+it.map(x=>`<div class="card dgl"><b>${x.t}</b><p>${x.p}</p>${x.e?`<small>${x.e}</small>`:''}</div>`).join('')).join('')}
 
 async function biblioteca(){
- const C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']],on=navigator.onLine;
- const head=`<div class="lhd"><h1 class="up">Biblioteca</h1><span id="net" class="net${on?'':' off'}"><i></i><span>${on?'Con conexión':'Sin conexión'}</span></span></div><p class="muted">Guarda tus archivos en este dispositivo y ábrelos sin conexión.</p>
+ const C=[['pdf','Documentos','file','tpdf'],['foto','Apuntes','image','tapu'],['eval','Glosario','bookopen','tglo']];
+ const head=`<h1 class="up">Biblioteca</h1><p class="muted">Guarda tus archivos en este dispositivo y ábrelos sin conexión.</p>
  <div class="tabs">${C.map(([k,n,i,c])=>`<button class="tab ${c} ${cat==k?'on':''}" data-act="cat" data-c="${k}">${ic(i,14)}${n}</button>`).join('')}</div>`;
  const drive=`<a class="btn gdrv" href="https://drive.google.com/" target="_blank" rel="noopener noreferrer">${ic('cloud',20)}<span>Consultar en Google Drive</span>${ic('ext',16)}</a>`;
  if(cat=='eval')return head+glosario()+drive;
  let all=[],err='';try{all=await lall()}catch(e){err='No se pudo acceder al almacenamiento de este navegador. Si estás en modo privado, abre la app en una ventana normal.'}
- const L=all.filter(x=>x.cat==cat);let use='';
- try{const s=await navigator.storage.estimate();if(s&&s.usage)use=` Espacio usado por la app: ${fsize(s.usage)}.`}catch(e){}
+ const L=all.filter(x=>x.cat==cat);
  const order=[...D.career.semesters.flatMap(s=>s.items),...new Set(L.map(x=>x.subject))].filter((k,i,a)=>a.indexOf(k)==i);
  const list=order.map(k=>{const it=L.filter(x=>x.subject==k).sort((a,b)=>b.date-a.date);if(!it.length)return'';
   return`<div class="lgh">${esc((SUBJ()[k]&&SUBJ()[k].name)||'Otra materia')} · ${it.length}</div>`+it.map(x=>{const t=fk(x);
@@ -288,8 +284,7 @@ async function biblioteca(){
  <div class="card"><h3 style="margin-top:0">Añadir archivo</h3>
  <div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" multiple style="display:none" ${acc}>
  <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}" ${k==curId()?'selected':''}>${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
- <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu" list="fus" autocomplete="off"><datalist id="fus">${unitOpts(curId())}</datalist></label><button class="btn gbtn" data-act="savef">${ic('plus',18)}<span>Guardar archivo</span></button></div>
- <p class="lwarn"><b>Importante:</b> los archivos se guardan solo en este dispositivo y navegador; no se suben a ningún servidor. Si borras los datos del navegador o del sitio, podrías perder los archivos guardados. Conserva una copia en otro lugar.${use}</p>`+drive}
+ <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu" list="fus" autocomplete="off"><datalist id="fus">${unitOpts(curId())}</datalist></label><button class="btn gbtn" data-act="savef">${ic('plus',18)}<span>Guardar archivo</span></button></div>`+drive}
 
 function results(q){
  q=norm(q.trim());if(q.length<2)return'<p class="muted">Escribe al menos 2 letras.</p>';const o=[];
