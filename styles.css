@@ -566,7 +566,7 @@ details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open
 
 /* ===== v36 ===== */
 /* título: «App» en negro con borde gris */
-#top h1 span{color:#000;text-shadow:-1px -1px 0 #9ca3af,1px -1px 0 #9ca3af,-1px 1px 0 #9ca3af,1px 1px 0 #9ca3af,0 -1px 0 #9ca3af,0 1px 0 #9ca3af,-1px 0 0 #9ca3af,1px 0 0 #9ca3af}
+#top h1 span{color:#000;text-shadow:-1px -1px 0 #2b2b2b,1px -1px 0 #2b2b2b,-1px 1px 0 #2b2b2b,1px 1px 0 #2b2b2b,0 -1px 0 #2b2b2b,0 1px 0 #2b2b2b,-1px 0 0 #2b2b2b,1px 0 0 #2b2b2b}
 /* Dato técnico: colores un poco más oscuros */
 .dato.dtec{background:linear-gradient(135deg,color-mix(in srgb,var(--g,#336B75) 88%,#fff),color-mix(in srgb,var(--g,#336B75) 80%,#000))}
 /* Mi carrera: botón de entrada un poco más ancho */
@@ -626,4 +626,4 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 .ntt small{color:#1686c9;font-size:.68rem;font-weight:700;letter-spacing:.08em}
 .ntp{display:flex;align-items:center;gap:8px;flex:none}
 .ntp i{font-style:normal;font-size:.72rem;font-weight:700;color:var(--mu);white-space:nowrap}
-.ntc{flex:none;min-width:58px;height:34px;padding:0 8px;box-sizing:border-box;border-radius:50%;border:2.5px solid var(--tq);display:flex;align-items:center;justify-content:center;font-family:var(--formula);font-weight:700;font-size:.88rem;line-height:1;color:#111;background:#fff}
+.ntc{flex:none;min-width:60px;height:34px;padding:0 10px;box-sizing:border-box;border-radius:10px;border:2.5px solid var(--tq);display:flex;align-items:center;justify-content:center;font-family:var(--formula);font-weight:700;font-size:.88rem;line-height:1;color:#111;background:#fff}

@@ -137,7 +137,7 @@ function home(){
  const tl=(h,c,hz,i,t,sb)=>`<a class="acc" href="${h}" style="--c:${c};--haz:${hz}"><span class="bd">${ic(i,22)}</span><span class="at"><b>${t}</b><small>${sb}</small></span></a>`;
  return `<div class="search"><a href="#/buscar">${ic('search')}<span>Buscar materia, tema, fórmula…</span></a>${stand?'':`<button data-act="inst">${ic('download',16)} Instalar</button>`}</div>
  <a class="card cur" href="#/materia/${cur}" style="--c:var(--tq)"><div class="r"><span><b>${s.name}</b> <small>· ${semTxt(cur)}</small></span>${ic('chevR',18)}</div><div class="bar"><i style="width:${p}%"></i></div><small>${T.length?`${d} de ${T.length} temas estudiados · ${p}%`:'Contenido próximamente'}</small></a>
- <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DEL DÍA</b><a class="pillb" href="${dt.href}">Más información ${ic('arrow',14)}</a></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div></div>
+ <div class="dato"><div class="dh"><span class="bd w">${ic('bulb',22)}</span><b>DATO DE ASIGNATURA</b><a class="pillb" href="${dt.href}">Más información ${ic('arrow',14)}</a></div><div class="db"><strong>${dt.t}</strong><p>${dt.p}</p></div></div>
  ${dtHTML()}
  <h2 class="acch">${ic('grid',20)} ACCESOS DIRECTOS</h2>
  <div class="accs">${tl('#/materia/'+cur,'#1686c9','42,160,240',s.icon,s.short,D.sub[cur]?'Unidades y temas':'Próximamente')}${tl('#/formulario/'+cur,'#15965a','34,192,111','calc','Calculadoras','Fórmulas y cálculo')}${tl('#/biblioteca','#e67e00','255,122,0','lib','Biblioteca','PDF y apuntes')}${tl('#/carrera','#8b5e3c','185,28,40','cap','Mi carrera','Materias por semestre')}</div>
