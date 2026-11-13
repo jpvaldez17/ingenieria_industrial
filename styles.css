@@ -513,8 +513,8 @@ details.ans summary{cursor:pointer;font-weight:700;color:var(--tq)}details.ans p
 .fic{flex:none;width:46px;height:46px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c)}
 .fic em{font-style:normal;font-size:.56rem;font-weight:800;line-height:1;letter-spacing:.03em}
 .lf .r2>div{overflow-wrap:anywhere}
-.btn.gdrv{background:#facc15;color:#111;border:2px solid #a16207;box-shadow:0 0 0 3px rgba(250,204,21,.28);font-weight:800;text-decoration:none;margin:14px 0 18px}
-.btn.gdrv .ic{color:#111}
+.btn.gdrv{background:#c2542d;color:#fff;border:2px solid #7c2d12;box-shadow:0 0 0 3px rgba(194,84,45,.28);font-weight:800;text-decoration:none;margin:14px 0 18px}
+.btn.gdrv .ic{color:#fff}
 #vw{position:fixed;inset:0;z-index:50;background:#0b1418;display:flex;flex-direction:column}
 #vw .vh{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:#1d3b45;color:#fff}
 #vw .vh b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.95rem}
@@ -544,3 +544,6 @@ details.gs>summary{padding:12px 14px;gap:10px}
 details.gs>summary .ic{color:var(--mu);transition:transform .15s}details.gs[open]>summary .ic{transform:rotate(90deg)}
 .gt{padding:9px 14px 10px;border-top:1px solid #e2e8f0}.gt b{display:block;color:var(--c);font-size:.95rem}
 .gt p{margin:3px 0 0;font-size:.88rem;line-height:1.4;color:var(--tx)}
+
+/* ===== Glosario v33: subtítulo de área dentro de cada grupo ===== */
+.gs .ga{margin:12px 0 2px;padding:5px 10px;border-radius:8px;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c);font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}

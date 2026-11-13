@@ -269,18 +269,18 @@ function gData(){
  return{secs,tot,act,q}}
 function gBody(){
  const{secs,tot,act}=gData(),all=GL.secciones.reduce((a,s)=>a+s.items.length,0);
- const info=act?`${tot} resultado${tot==1?'':'s'}`:`${all} términos · ${GL.secciones.length} áreas`;
+ const info=act?`${tot} resultado${tot==1?'':'s'}`:`${all} términos · ${GL.secciones.length} grupos`;
  if(!secs.length)return`<p class="gcount">${info}</p><div class="empty">Sin resultados${GQ.trim()?' para «'+esc(GQ.trim())+'»':''}.</div>`;
- return`<p class="gcount">${info}</p>`+secs.map(s=>`<details class="gs card" data-n="${s.n}" style="--c:${gcol(s.n)}" ${act||GOPEN.has(s.n)?'open':''}><summary><span class="gnum">${s.n}</span><span class="gst">${esc(s.t)}</span><span class="muted">${s.it.length}</span>${ic('chevR',16)}</summary>${s.it.map(x=>`<div class="gt"><b>${esc(x[0])}</b><p>${esc(x[1])}</p></div>`).join('')}</details>`).join('')}
+ return`<p class="gcount">${info}</p>`+secs.map(s=>`<details class="gs card" data-n="${s.n}" style="--c:${gcol(s.n)}" ${act||GOPEN.has(s.n)?'open':''}><summary><span class="gnum">${s.n}</span><span class="gst">${esc(s.t)}</span><span class="muted">${s.it.length}</span>${ic('chevR',16)}</summary>${s.it.map((x,i)=>(x[2]&&x[2]!=(s.it[i-1]||[])[2]?`<div class="ga">${esc(x[2])}</div>`:'')+`<div class="gt"><b>${esc(x[0])}</b><p>${esc(x[1])}</p></div>`).join('')}</details>`).join('')}
 const gPanel=()=>`<div class="gfh"><b>Filtrar por área</b><button class="gclr" data-act="gfclr"${GF.size?'':' disabled'}>Limpiar</button></div><div class="gchips">${GL.secciones.map(s=>`<button class="gchip${GF.has(s.n)?' on':''}" style="--c:${gcol(s.n)}" data-act="gfsec" data-n="${s.n}">${esc(s.t)}</button>`).join('')}</div>`;
 function gRefresh(){
  const b=document.getElementById('gbody'),p=document.getElementById('gfp'),d=document.getElementById('gbd');
- if(b)b.innerHTML=gBody();if(p){p.hidden=!GP;p.innerHTML=gPanel()}if(d){d.textContent=GF.size;d.hidden=!GF.size}}
+ if(b)b.innerHTML=gBody();if(p){p.hidden=!GP||!!GQ.trim();p.innerHTML=gPanel()}if(d){d.textContent=GF.size;d.hidden=!GF.size}}
 function glosarioHTML(){
  if(!GL)return'<div class="empty">No se pudo cargar el glosario. Conéctate una vez a internet para descargarlo; luego funcionará sin conexión.</div>';
  return`<h2 class="gtit">${esc(GL.titulo)}</h2><p class="muted gsub">${esc(GL.sub)}</p>
  <div class="gsb"><span class="gsi">${ic('search',20)}</span><input id="gq" type="search" placeholder="Buscar término o definición…" autocomplete="off" enterkeyhint="search" value="${esc(GQ)}"><button class="gfb" data-act="gfilt" aria-label="Filtros">${ic('menu',20)}<i class="gbd" id="gbd"${GF.size?'':' hidden'}>${GF.size}</i></button></div>
- <div class="gfp card" id="gfp"${GP?'':' hidden'}>${gPanel()}</div><div id="gbody">${gBody()}</div>`}
+ <div class="gfp card" id="gfp"${GP&&!GQ.trim()?'':' hidden'}>${gPanel()}</div><div id="gbody">${gBody()}</div>`}
 document.addEventListener('input',e=>{if(e.target&&e.target.id=='gq'){GQ=e.target.value;gRefresh()}});
 document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target&&e.target.id=='gq')e.target.blur()});
 document.addEventListener('toggle',e=>{const d=e.target;if(d.matches&&d.matches('details.gs')&&!GQ.trim()&&!GF.size){const n=+d.dataset.n;d.open?GOPEN.add(n):GOPEN.delete(n)}},true);
