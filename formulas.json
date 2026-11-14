@@ -67,8 +67,20 @@
 "tamaño de la población"
 ],
 [
-"Z, p, q y e",
-"igual que arriba"
+"Z",
+"valor de la normal según la confianza (1,96 para 95 %)"
+],
+[
+"p",
+"proporción esperada (0,5 si se desconoce)"
+],
+[
+"q",
+"1 − p"
+],
+[
+"e",
+"error máximo admitido"
 ]
 ],
 "fn": "nFin",
@@ -1999,8 +2011,12 @@
 "se toma el menor de los dos valores"
 ],
 [
-"LSE, LIE y σ",
-"igual que arriba"
+"LSE y LIE",
+"límites superior e inferior de especificación"
+],
+[
+"σ",
+"desviación estándar del proceso"
 ]
 ],
 "expr": "Math.min((LSE-mu)/(3*s),(mu-LIE)/(3*s))",

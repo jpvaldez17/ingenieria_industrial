@@ -673,8 +673,8 @@ function sciOpen(fid){let p=$('#sci');
   document.body.appendChild(p);
   Promise.all(['deg','dec','dk'].map(k=>kvGet(k).catch(()=>undefined))).then(([d,c,k])=>{if(typeof d=='boolean')SCI.deg=d;if(c)SCI.dec=c;if(typeof k=='boolean')SCI.dk=k;sciDraw()})}
  SCI.fid=fid||null;const g=$('#sciG');g.hidden=!fid;g.classList.remove('col');g.innerHTML=fid?guideHTML(fid):'';OVX();
- p.hidden=false;document.body.style.overflow='hidden';sciDraw();if(fid)fitMath()}
-function sciClose(){const p=$('#sci');if(p)p.hidden=true;document.body.style.overflow=''}
+ p.hidden=false;document.body.style.overflow='hidden';document.documentElement.classList.add('sci-lock');sciDraw();if(fid)fitMath()}
+function sciClose(){const p=$('#sci');if(p)p.hidden=true;document.body.style.overflow='';document.documentElement.classList.remove('sci-lock')}
 addEventListener('hashchange',sciClose);
 const ANN=(on,t)=>`<span class="${on?'on':''}">${t}</span>`;
 function sciDraw(){const E=$('#sciE');if(!E)return;E.innerHTML=rowH(CR);const t=ser(CR),S_=SCI;let r='';
