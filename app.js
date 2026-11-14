@@ -656,7 +656,7 @@ const KR=[
   ['1','1','stat',0,'n'],['2','2',0,0,'n'],['3','3','distr',0,'n'],['+','+','Pol','Ceil','o'],['−','−','Rec','Floor','o'],
   ['0','0',0,0,'n'],[',','.','Ran#','RanInt','n'],['exp','Exp','π','e'],['ans','Ans','PreAns'],['=','=','hist',0,'g']]];
 const kc=([id,l,sh,al,cl])=>`<div class="kc"><span class="kl">${sh?`<i class="s">${LB[sh]||sh}</i>`:''}${al?`<i class="a">${LB[al]||al}</i>`:''}</span><button class="k k${cl||'f'}" data-k="${id}" ${sh?`data-s="${sh}"`:''} ${al?`data-a="${al}"`:''} ${id=='shift'?'id="sciSh"':id=='alpha'?'id="sciAl"':''}>${l}</button></div>`;
-const DPAD='<div class="dpad"><button data-k="▲" class="u" aria-label="Arriba">▲</button><button data-k="◀" class="l" aria-label="Izquierda">◀</button><span class="c" aria-hidden="true"></span><button data-k="▶" class="r" aria-label="Derecha">▶</button><button data-k="▼" class="d" aria-label="Abajo">▼</button></div>';
+const DPAD='<div class="dpad"><button data-k="▲" class="au" aria-label="Arriba">▲</button><button data-k="◀" class="al" aria-label="Izquierda">◀</button><button data-k="▶" class="ar" aria-label="Derecha">▶</button><button data-k="▼" class="ad" aria-label="Abajo">▼</button></div>';
 const $o=()=>$('#sciO'),OV=h=>{$o().innerHTML=h;$o().hidden=false},OVX=()=>{$o().hidden=true};
 const ovh=t=>`<div class="ov-h"><b>${t}</b><button data-sk="ox" aria-label="Cerrar">✕</button></div>`;
 function guideHTML(fid){const f=fid&&D.formulas.find(x=>x.id==fid);if(!f)return '';
