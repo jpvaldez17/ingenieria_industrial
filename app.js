@@ -50,6 +50,8 @@ const tx=async(s,m,f)=>{const d=await db;return new Promise((ok,ko)=>{const t=d.
 const kvGet=k=>tx('kv','readonly',s=>s.get(k)),kvSet=(k,v)=>tx('kv','readwrite',s=>s.put(v,k));
 
 /* ===== Estado y datos (los contenidos viven en /data/*.json) ===== */
+const UOPEN=()=>{try{return JSON.parse(sessionStorage.getItem('uopen')||'[]')}catch(e){return[]}};
+document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.unit[data-k]'))return;const k=d.dataset.k,a=UOPEN().filter(x=>x!==k);if(d.open)a.push(k);try{sessionStorage.setItem('uopen',JSON.stringify(a))}catch(e){}},true);
 let D={},S={last:{},favs:[],done:[],misf:[],cur:null,notas:{},est:{},sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
 const save=()=>{kvSet('favs',S.favs);kvSet('done',S.done);kvSet('sc',S.sc)};
 /* Carga bajo demanda: el contenido de cada materia se descarga solo cuando se necesita (al abrirla o al buscar) */
@@ -152,7 +154,7 @@ function materia(sid){
  const T=topics(sid),n=S.done.filter(x=>x.startsWith(sid+'/')).length,p=T.length?Math.round(n/T.length*100):0;
  return `<a class="back" href="#/carrera">${ic('chevL')}<span class="bk">Volver</span></a>
  <div class="thead sh" style="--c:${s.color}"><p class="eyebrow">${semTxt(sid)}</p><h1>${s.name}</h1><p>${s.desc}</p><div class="bar"><i class="${p>=100?'full':''}" style="width:${p}%"></i></div><small style="color:#9fb4d3">${p}% de avance · ${n}/${T.length} temas</small></div>
- <h2>Unidades temáticas</h2>`+d.units.map(u=>`<details class="card unit" style="--c:${PAL[(u.n-1)%10]}"><summary><span class="num">${u.n}</span>${u.title}<span class="ucv" aria-hidden="true">${ic('chevR',16)}</span></summary>${
+ <h2>Unidades temáticas</h2>`+d.units.map(u=>`<details class="card unit" data-k="${sid}/${u.n}" style="--c:${PAL[(u.n-1)%10]}"${UOPEN().includes(sid+'/'+u.n)?' open':''}><summary><span class="num">${u.n}</span>${u.title}<span class="ucv" aria-hidden="true">${ic('chevR',16)}</span></summary>${
   u.topics.map((t,i)=>{const id=`u${u.n}t${i+1}`;return `<a class="row" href="#/tema/${sid}/${id}"><span class="idx">${u.n}.${i+1}</span><span>${t}${S.done.includes(sid+'/'+id)?'<i class="tk" aria-label="Estudiado">✓</i>':''}${S.last[sid]==id?'<i class="ldot" aria-label="Último tema visto"></i>':''}</span><span class="go2">${ic('chevR',16)}</span></a>`}).join('')}</details>`).join('')}
 
 function tema(sid,tid){
