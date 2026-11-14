@@ -57,6 +57,8 @@ const SUBJ=()=>D.career.subjects;
 /* ===== Componentes ===== */
 const row=(h,i,t,s,c)=>`<a class="row card" href="${h}" style="--c:${c}"><span class="bd">${ic(i,18)}</span><span>${esc(t)}<br><small>${s}</small></span>${ic('chevR',16)}</a>`;
 const mx=f=>`<span class="fm2 fit"><span class="mw">${f.mathml}</span></span>`;
+// Colorea signos (vino) y paréntesis (azul) del MathML nativo marcando cada <mo> con una clase.
+const tintMath=h=>h.replace(/<mo(\s[^>]*)?>([^<]*)<\/mo>/g,(m,at,t)=>{const s=t.trim(),c=/^[=+−\-×÷·⋅*]$/.test(s)?'mo-r':/^[()\[\]]$/.test(s)?'mo-b':'';return c?`<mo${at||''} class="${c}">${t}</mo>`:m});
 const fcard=f=>`<a class="fc" href="#/calc/${f.id}" style="--c:${catC(f)}"><span class="bd">${ic(f.icon||'sigma',18)}</span><span class="ft"><b>${f.name}${f.custom?' <i class="mine">propia</i>':''}</b>${f.mathml?mx(f):`<code>${f.tex}</code>`}</span>${ic('chevR',16)}</a>`;
 
 /* ===== Dato del día (glosario de la materia actual; cambia al actualizar la app) y Dato técnico (glosario general) ===== */
@@ -172,7 +174,7 @@ function formulario(a){
 
 function calc(id){
  const f=D.formulas.find(x=>x.id==id);if(!f)return nf();const s=SUBJ()[f.subject];
- const fx=f.mathml?`<div class="fx fit"><span class="mw">${mathHTML(f.mathml,{plain:true}).html}</span></div>`:`<div class="fx"><code>${f.tex}</code></div>`;
+ const fx=f.mathml?`<div class="fx">${mx({mathml:tintMath(f.mathml)})}</div>`:`<div class="fx"><code>${f.tex}</code></div>`;
  const dd=f.donde?(f.donde.length?`<ul class="dd">${f.donde.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`:''):`<h3>Variables</h3><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning||v.label||''}</li>`).join('')}</ul>`;
  return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${catC(f)}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}
  ${fx}${dd}
@@ -654,11 +656,11 @@ const KR=[
   ['1','1','stat',0,'n'],['2','2',0,0,'n'],['3','3','distr',0,'n'],['+','+','Pol','Ceil','o'],['−','−','Rec','Floor','o'],
   ['0','0',0,0,'n'],[',','.','Ran#','RanInt','n'],['exp','Exp','π','e'],['ans','Ans','PreAns'],['=','=','hist',0,'g']]];
 const kc=([id,l,sh,al,cl])=>`<div class="kc"><span class="kl">${sh?`<i class="s">${LB[sh]||sh}</i>`:''}${al?`<i class="a">${LB[al]||al}</i>`:''}</span><button class="k k${cl||'f'}" data-k="${id}" ${sh?`data-s="${sh}"`:''} ${al?`data-a="${al}"`:''} ${id=='shift'?'id="sciSh"':id=='alpha'?'id="sciAl"':''}>${l}</button></div>`;
-const DPAD='<div class="dpad"><button data-k="▲" class="u">▲</button><button data-k="◀" class="l">◀</button><button data-k="▶" class="r">▶</button><button data-k="▼" class="d">▼</button></div>';
+const DPAD='<div class="dpad"><button data-k="▲" class="u" aria-label="Arriba">▲</button><button data-k="◀" class="l" aria-label="Izquierda">◀</button><span class="c" aria-hidden="true"></span><button data-k="▶" class="r" aria-label="Derecha">▶</button><button data-k="▼" class="d" aria-label="Abajo">▼</button></div>';
 const $o=()=>$('#sciO'),OV=h=>{$o().innerHTML=h;$o().hidden=false},OVX=()=>{$o().hidden=true};
 const ovh=t=>`<div class="ov-h"><b>${t}</b><button data-sk="ox" aria-label="Cerrar">✕</button></div>`;
 function guideHTML(fid){const f=fid&&D.formulas.find(x=>x.id==fid);if(!f)return '';
- const fx=f.mathml?mathHTML(f.mathml,{plain:true}).html:`<code>${esc(f.tex||f.plain||'')}</code>`,
+ const fx=f.mathml?tintMath(f.mathml):`<code>${esc(f.tex||f.plain||'')}</code>`,
   dd=(f.donde&&f.donde.length?f.donde:(f.vars||[]).map(v=>[v.id,v.meaning||v.label||''])).map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('');
  return fixM(`<div class="gf fit"><span class="mw">${fx}</span></div><ul class="gd">${dd}</ul><button class="gt" data-sk="gtog" aria-label="Contraer o expandir">▴</button>`)}
 function sciOpen(fid){let p=$('#sci');

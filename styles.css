@@ -652,3 +652,44 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 /* ===== v50: colores por tema en el Formulario y coeficiente binomial ===== */
 .th{color:var(--c);border-left:5px solid var(--c);padding-left:8px}
 .mx .fr.nl>.nu{border-bottom:0}
+
+/* ===== Estética v51: pantalla de fórmula, mini pantalla y calculadora ===== */
+.fx{background:#e6e8eb;color:#000;padding:14px 8px}
+.fx .fm2 math,.sci-g .gf math{font-family:var(--formula);font-weight:700;color:#000}
+.fx .fm2 math{font-size:1.4em}.sci-g .gf math{font-size:1.02em}
+.fx mfrac,.sci-g .gf mfrac{color:#8f1d2c}
+.fx mfrac>*,.sci-g .gf mfrac>*{color:#000}
+.fx .mo-r,.sci-g .gf .mo-r{color:#8f1d2c}
+.fx .mo-b,.sci-g .gf .mo-b{color:#1f5fd1}
+.fx code{color:#000;font-weight:700}
+.card .dd b,.sci-g .gd b{color:#0b7fc2;background:#d9f0fc;border:1px solid #9fd4ef;border-radius:7px;padding:0 6px;font-weight:800;line-height:1.45}
+.card .dd li span,.sci-g .gd li span{color:#000}
+.card .dd li{align-items:baseline;gap:9px}
+/* Mini pantalla */
+.sci-g{background:#e6e8eb;color:#000;padding:4px 24px 4px 6px;gap:6px;max-height:104px;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
+.sci-g .gd{border-left:1px dashed rgba(0,0,0,.35);padding-left:6px;font-size:.6rem;line-height:1.2;gap:2px;max-height:98px}
+.sci-g .gd li{align-items:baseline}.sci-g .gd b{align-self:flex-start}
+.sci-g .gd b{border-radius:5px;padding:0 4px;line-height:1.35}
+.sci-g .gt{color:#000}
+.sci-g.col{max-height:62px}
+/* Calculadora: más grande */
+.sci-p{max-width:520px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));gap:5px}
+.sci-d{min-height:116px;padding:6px 12px}
+#sciE{font-size:1.5rem;min-height:2.6em}
+#sciR{font-size:1.05rem}#sciR.big{font-size:1.9rem}
+.k{height:clamp(28px,4.7dvh,42px)}
+/* Cruceta */
+.dpad{grid-template:1fr 1.45fr 1fr/1fr 1.45fr 1fr;align-items:stretch;justify-items:stretch}
+.dpad .c{grid-area:2/2;align-self:center;justify-self:center;width:100%;aspect-ratio:1;box-sizing:border-box;border-radius:12px;border:1px solid var(--kd);background:var(--kb);box-shadow:0 2px 0 rgba(0,0,0,.14)}
+.dpad button{display:grid;place-items:center;font-size:0;line-height:0;width:100%;height:100%;color:var(--kt)}
+.dpad button:before{content:"";width:.78rem;height:.78rem;background:currentColor}
+.dpad .u:before{clip-path:polygon(50% 12%,92% 88%,8% 88%)}
+.dpad .d:before{clip-path:polygon(8% 12%,92% 12%,50% 88%)}
+.dpad .l:before{clip-path:polygon(12% 50%,88% 8%,88% 92%)}
+.dpad .r:before{clip-path:polygon(88% 50%,12% 8%,12% 92%)}
+.dpad button:active{opacity:.55}
+/* Botones resaltados */
+.k.kr{background:#d6303f;color:#fff;border:1.5px solid #000;font-weight:800}
+.k.kg{background:#34a86a;color:#fff;border:1.5px solid #000;font-weight:800}
+.sci-p.dk .k.kr{background:#b0222f}.sci-p.dk .k.kg{background:#23794a}
+@media(max-height:760px){.sci-g{max-height:78px}.sci-d{min-height:100px}#sciE{min-height:2.2em;font-size:1.35rem}}
