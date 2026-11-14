@@ -766,3 +766,9 @@ body{overflow-x:hidden}
 
 /* Pequeña separación entre "Industri" y "App" */
 #top h1 span{margin-left:.1em}
+
+/* Efecto al deslizar entre pestañas */
+@keyframes slN{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes slP{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+#app.sl-n{animation:slN .22s ease-out}#app.sl-p{animation:slP .22s ease-out}
+@media (prefers-reduced-motion:reduce){#app.sl-n,#app.sl-p{animation:none}}

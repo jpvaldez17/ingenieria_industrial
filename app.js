@@ -342,8 +342,14 @@ async function render(){
 function fitMath(){document.querySelectorAll('.fit').forEach(c=>{const w=c.querySelector('.mw'),m=c.querySelector('math,.mx');if(!w||!m)return;m.style.fontSize='';const cw=c.clientWidth-6,mw=w.getBoundingClientRect().width;if(cw>0&&mw>cw){const fs=parseFloat(getComputedStyle(m).fontSize);m.style.fontSize=Math.max(c.classList.contains('fx')?fs*.78:10,fs*cw/mw)+'px'}})}
 addEventListener('resize',fitMath);
 const SS={get:(k,d)=>{try{return JSON.parse(sessionStorage.getItem(k))||d}catch(e){return d}},set:(k,v)=>{try{sessionStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-let RESTORE=false;
-window.addEventListener('hashchange',async e=>{const oh='#'+((e.oldURL||'').split('#')[1]||'/inicio'),sc=SS.get('scr',{});sc[oh]=scrollY;SS.set('scr',sc);const rs=RESTORE;RESTORE=false;tab='c';scrollTo(0,0);await render();if(rs){const y=SS.get('scr',{})[location.hash||'#/inicio'];if(y)scrollTo(0,y)}});
+let RESTORE=false,SLD='';
+/* Deslizar entre pestañas: dedo hacia la izquierda = siguiente, hacia la derecha = anterior */
+const SW_TABS=['inicio','carrera','biblioteca','formulario'];let swX=0,swY=0,swT=0,swOk=false;
+const swBlock=el=>{for(;el&&el!==document.body&&el.nodeType==1;el=el.parentElement){if(el.matches('input,textarea,select,[contenteditable],#vw,#sci,#af,canvas,.noswipe'))return true;const o=getComputedStyle(el).overflowX;if((o=='auto'||o=='scroll')&&el.scrollWidth>el.clientWidth+2)return true}return false};
+document.addEventListener('touchstart',e=>{if(e.touches.length!=1){swOk=false;return}const t=e.touches[0];swX=t.clientX;swY=t.clientY;swT=Date.now();swOk=swX>28&&swX<innerWidth-28&&!swBlock(e.target)},{passive:true});
+document.addEventListener('touchcancel',()=>{swOk=false},{passive:true});
+document.addEventListener('touchend',e=>{if(!swOk)return;swOk=false;const t=e.changedTouches[0],dx=t.clientX-swX,dy=t.clientY-swY;if(Math.abs(dx)<70||Math.abs(dx)<Math.abs(dy)*1.7||Date.now()-swT>700)return;if(String(getSelection()||''))return;const cur=document.querySelector('nav a.on');if(!cur)return;const j=SW_TABS.indexOf(cur.dataset.r)+(dx<0?1:-1);if(j<0||j>=SW_TABS.length)return;SLD=dx<0?'sl-n':'sl-p';const n=document.querySelector(`nav a[data-r="${SW_TABS[j]}"]`);if(n)n.click()},{passive:true});
+window.addEventListener('hashchange',async e=>{const oh='#'+((e.oldURL||'').split('#')[1]||'/inicio'),sc=SS.get('scr',{});sc[oh]=scrollY;SS.set('scr',sc);const rs=RESTORE;RESTORE=false;tab='c';scrollTo(0,0);await render();if(SLD){app.classList.remove('sl-n','sl-p');void app.offsetWidth;app.classList.add(SLD);SLD=''}if(rs){const y=SS.get('scr',{})[location.hash||'#/inicio'];if(y)scrollTo(0,y)}});
 /* Al tocar otra pestaña del menú, vuelve al lugar donde la dejaste (materia, tema, fórmula…) y a su posición; tocar la pestaña activa va a su inicio */
 document.addEventListener('click',e=>{const n=e.target.closest&&e.target.closest('nav a[data-r]');if(!n||n.classList.contains('on'))return;const h=SS.get('lt',{})[n.dataset.r];if(!h||h===(location.hash||'#/inicio'))return;e.preventDefault();RESTORE=true;location.hash=h},true);
 
