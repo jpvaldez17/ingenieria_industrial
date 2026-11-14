@@ -746,3 +746,8 @@ body{overflow-x:hidden}
 .cambtn:after{content:"";width:8px;height:8px;border-radius:50%;background:#d6202f;margin-left:1px}
 .fpv{margin:10px 0 4px}.fpv img{display:block;max-width:100%;max-height:230px;border-radius:12px;border:1px solid #d8dde3}
 .camdeco{flex:1;display:flex;justify-content:center;align-items:center;color:var(--muted,#64748b);opacity:.6;-webkit-user-select:none;user-select:none}.camdeco .ic{stroke-width:1.5}
+
+/* Temas: número en círculo con el color de su unidad */
+.unit .row>.idx{display:grid;place-items:center;width:38px;height:38px;min-width:38px;flex:none!important;border-radius:50%;background:var(--c);color:#fff;font-size:.74rem;font-weight:800;letter-spacing:-.02em;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+/* Título de la materia: texto negro con borde gris claro */
+.thead.sh h1{color:#111;text-shadow:1px 0 #d1d5db,-1px 0 #d1d5db,0 1px #d1d5db,0 -1px #d1d5db,1px 1px #d1d5db,-1px -1px #d1d5db,1px -1px #d1d5db,-1px 1px #d1d5db,0 0 3px #d1d5db}
