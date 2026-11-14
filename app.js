@@ -346,8 +346,6 @@ let RESTORE=false;
 window.addEventListener('hashchange',async e=>{const oh='#'+((e.oldURL||'').split('#')[1]||'/inicio'),sc=SS.get('scr',{});sc[oh]=scrollY;SS.set('scr',sc);const rs=RESTORE;RESTORE=false;tab='c';scrollTo(0,0);await render();if(rs){const y=SS.get('scr',{})[location.hash||'#/inicio'];if(y)scrollTo(0,y)}});
 /* Al tocar otra pestaña del menú, vuelve al lugar donde la dejaste (materia, tema, fórmula…) y a su posición; tocar la pestaña activa va a su inicio */
 document.addEventListener('click',e=>{const n=e.target.closest&&e.target.closest('nav a[data-r]');if(!n||n.classList.contains('on'))return;const h=SS.get('lt',{})[n.dataset.r];if(!h||h===(location.hash||'#/inicio'))return;e.preventDefault();RESTORE=true;location.hash=h},true);
-/* Color de la barra del navegador acorde al nuevo turquesa */
-{let m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m)}m.content='#2ec4d2'}
 
 document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
