@@ -740,8 +740,9 @@ body{overflow-x:hidden}
 .srow input{-webkit-user-select:text;user-select:text}
 
 /* ===== Biblioteca > Apuntes: botón de cámara ===== */
-.fpick.cam{flex-wrap:wrap}.fpick.cam .fname{flex-basis:100%}
+.fpick.cam{flex-wrap:wrap;justify-content:space-between}.fpick.cam .fname{flex-basis:100%}
 .cambtn{display:inline-flex;align-items:center;gap:7px;margin:0;padding:8px 16px 8px 14px;border-radius:99px;background:#0d0d0d;color:#fff;border:2px solid #8f1d2c;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(143,29,44,.4)}
 .cambtn .ic{color:#fff}
 .cambtn:after{content:"";width:8px;height:8px;border-radius:50%;background:#d6202f;margin-left:1px}
 .fpv{margin:10px 0 4px}.fpv img{display:block;max-width:100%;max-height:230px;border-radius:12px;border:1px solid #d8dde3}
+.camdeco{flex:1;text-align:center;font-size:1.5rem;line-height:1;opacity:.5;-webkit-user-select:none;user-select:none}
