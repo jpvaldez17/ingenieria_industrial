@@ -731,3 +731,10 @@ body{overflow-x:hidden}
 .cbk.cbk-s:after{right:4px;top:4px;width:6px;height:6px}
 .fn .fcb{display:grid;margin-top:8px}
 .fcard2{position:relative}
+
+/* ===== Ajustes v58 ===== */
+.thead .r .eyebrow{color:#fff;font-weight:700}
+.thead p.eyebrow.un{text-shadow:1px 0 #fff,-1px 0 #fff,0 1px #fff,0 -1px #fff,1px 1px #fff,-1px -1px #fff,1px -1px #fff,-1px 1px #fff,0 0 3px #fff}
+.btn.ghost.done{background:#16a34a;color:#fff}
+.srow{touch-action:manipulation;cursor:pointer;-webkit-user-select:none;user-select:none}
+.srow input{-webkit-user-select:text;user-select:text}
