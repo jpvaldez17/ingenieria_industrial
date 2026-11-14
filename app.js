@@ -12,6 +12,7 @@ chart:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/>'
 zap:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
 flask:'<path d="M10 2v7.53a2 2 0 0 1-.21.9L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45L14.21 10.43A2 2 0 0 1 14 9.53V2"/><path d="M8.5 2h7"/>',
 file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/>',
+camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
 image:'<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/>',
 clip:'<rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
 off:'<path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M5 12.86a10 10 0 0 1 5.17-2.69M19 12.86a10 10 0 0 0-2-1.52M2 8.82a15 15 0 0 1 4.18-2.64M22 8.82a15 15 0 0 0-11.29-3.76"/><path d="m2 2 20 20"/>',
@@ -51,6 +52,11 @@ const kvGet=k=>tx('kv','readonly',s=>s.get(k)),kvSet=(k,v)=>tx('kv','readwrite',
 /* ===== Estado y datos (los contenidos viven en /data/*.json) ===== */
 let D={},S={favs:[],done:[],misf:[],cur:null,notas:{},est:{},sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
 const save=()=>{kvSet('favs',S.favs);kvSet('done',S.done);kvSet('sc',S.sc)};
+/* Carga bajo demanda: el contenido de cada materia se descarga solo cuando se necesita (al abrirla o al buscar) */
+const subFetch={};
+const ensureSub=async sid=>{const s=D.career&&D.career.subjects[sid];if(!s||!s.data||D.sub[sid])return;
+ try{D.sub[sid]=await(subFetch[sid]||(subFetch[sid]=fetch(`${s.data}.json`).then(r=>{if(!r.ok)throw new Error('http');return r.json()})))}catch(e){delete subFetch[sid]}};
+const ensureAll=()=>Promise.all(Object.keys(D.career.subjects).map(ensureSub));
 const topics=sid=>(D.sub[sid]?.units||[]).flatMap(u=>u.topics.map((t,i)=>({id:`u${u.n}t${i+1}`,t,u,i:i+1,sid})));
 const SUBJ=()=>D.career.subjects;
 
@@ -110,7 +116,7 @@ const notaOf=k=>S.notas[k]!==undefined?S.notas[k]:null;
 const prom=ks=>{const v=ks.map(notaOf).filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
 const fp=n=>n==null?'---':(+n.toFixed(1)).toLocaleString('es',{maximumFractionDigits:1});
 const gpText=all=>{const n=all.filter(k=>notaOf(k)!=null).length,a=all.filter(k=>estOf(k)=='aprobada').length;return `${n} ${n==1?'materia':'materias'} con nota · ${a} ${a==1?'aprobada':'aprobadas'}`};
-let SEL=null,TAP={k:null,t:0};const OPEN=new Set();let openInit=false;
+let SEL=null,TAP={k:null,t:0},CAMF=null,PVU=null;const OPEN=new Set();let openInit=false;
 /* Actualiza los promedios en pantalla sin volver a dibujar todo (así no se pierde el cursor al escribir) */
 const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySelector(`details.sem[data-n="${sm.n}"] .avg b`);if(el)el.textContent=fp(prom(sm.items))});
  const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
@@ -214,7 +220,9 @@ const unitOpts=sid=>((D.sub[sid]&&D.sub[sid].units)||[]).flatMap(u=>[`Unidad ${u
 
 /* Guardar uno o varios archivos */
 async function lsave(){
- const inp=$('#fi'),fl=inp?[...inp.files]:[];if(!fl.length)return alert('Selecciona un archivo primero.');
+ const inp=$('#fi'),fl=CAMF?[CAMF]:(inp?[...inp.files]:[]);if(!fl.length)return alert('Selecciona un archivo o toma una foto primero.');
+ const nmv=(($('#fnm')||{}).value||'').trim().replace(/[\\/:*?"<>|]/g,' ').replace(/\s+/g,' ').trim();
+ if(fl.length==1&&nmv){const e0=fext(fl[0].name)||'jpg';fl[0]=new File([fl[0]],nmv.replace(new RegExp('\\.'+e0+'$','i'),'')+'.'+e0,{type:fl[0].type,lastModified:fl[0].lastModified})}
  const btn=$('[data-act="savef"]');if(btn)btn.disabled=true;
  const base={cat,subject:$('#fs').value,unit:$('#fu').value.trim()};
  let ok=0;const dup=[],bad=[];
@@ -232,7 +240,7 @@ async function lsave(){
    catch(er){bad.push(f.name+(er&&er.name=='QuotaExceededError'?': no hay espacio suficiente en el dispositivo.':': no se pudo leer o guardar el archivo.'))}}
   if(ok&&navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
  }catch(er){bad.push('No se pudo acceder al almacenamiento del navegador.')}
- await render();
+ CAMF=null;await render();
  const m=[];if(ok)m.push(ok==1?'Archivo guardado ✓':ok+' archivos guardados ✓');
  if(dup.length)m.push('Ya estaba guardado: '+dup.join(', '));
  bad.forEach(x=>m.push(x));
@@ -303,7 +311,7 @@ async function biblioteca(){
  return head+`<div class="lbar"><h3 class="lh">En este dispositivo</h3><button class="btn ghost sm" data-act="lrefresh" aria-label="Actualizar lista">${ic('refresh',16)} Actualizar</button></div>
  ${err?`<div class="empty">${esc(err)}</div>`:L.length?list:'<div class="empty">Aún no hay archivos en esta categoría.</div>'}
  <div class="card"><h3 style="margin-top:0">Añadir archivo</h3>
- <div class="fpick"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label><span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" multiple style="display:none" ${acc}>
+ <div class="fpick${cat=='foto'?' cam':''}"><label class="fbtn" for="fi">${ic('plus',18)} Seleccionar archivo</label>${cat=='foto'?`<label class="cambtn" for="fc">${ic('camera',18)} Cámara</label>`:''}<span class="fname" id="fn">Sin archivo</span></div><input type="file" id="fi" multiple style="display:none" ${acc}>${cat=='foto'?'<input type="file" id="fc" accept="image/*" capture="environment" style="display:none"><div class="fpv" id="fpv" hidden><img id="fpvi" alt="Vista previa"></div><label>Nombre (opcional)<input id="fnm" autocomplete="off" placeholder="Ej. Pizarra Unidad 3"></label>':''}
  <label>Materia<select id="fs">${D.career.semesters.map(sm=>`<optgroup label="Semestre ${sm.n}">${sm.items.map(k=>`<option value="${k}" ${k==curId()?'selected':''}>${SUBJ()[k].name}</option>`).join('')}</optgroup>`).join('')}</select></label>
  <div class="sep"></div><label>Unidad / tema (opcional)<input id="fu" list="fus" autocomplete="off"><datalist id="fus">${unitOpts(curId())}</datalist></label><button class="btn gbtn" data-act="savef">${ic('plus',18)}<span>Guardar archivo</span></button></div>`+drive}
 
@@ -319,10 +327,12 @@ const buscar=()=>`<div class="searchbox">${ic('search')}<input id="q" placeholde
 async function render(){
  const[r,a,b]=location.hash.slice(2).split('/'),route=r||'inicio';
  const V={inicio:home,carrera,biblioteca,formulario:()=>formulario(a),materia:()=>materia(a),tema:()=>tema(a,b),calc:()=>calc(a),buscar};
+ const need=(!V[route]||route=='inicio')?[curId(),...S.favs.map(f=>f.split('/')[0])]:(route=='materia'||route=='tema')?[a]:route=='biblioteca'?[curId()]:[];
+ await Promise.all([...new Set(need)].map(ensureSub));
  app.innerHTML=fixM(await (V[route]||home)());
  const act={materia:'carrera',tema:'carrera',calc:'formulario',buscar:'inicio'}[route]||route;
  document.querySelectorAll('nav a').forEach(n=>n.classList.toggle('on',n.dataset.r==act));
- if(route=='buscar'){const q=$('#q');q.focus();q.oninput=()=>$('#res').innerHTML=results(q.value)}
+ if(route=='buscar'){const q=$('#q');q.focus();q.oninput=async()=>{const v=q.value;if(norm(v.trim()).length>=2)await ensureAll();if(q.value===v)$('#res').innerHTML=results(v)}}
  fitMath();document.querySelectorAll('.sbtn.on,.pl.on').forEach(e=>e.scrollIntoView({block:'nearest',inline:'center'}));if(document.fonts)document.fonts.ready.then(fitMath)}
 /* Fórmulas más anchas que su tarjeta: se reducen para que quepan completas */
 function fitMath(){document.querySelectorAll('.fit').forEach(c=>{const w=c.querySelector('.mw'),m=c.querySelector('math,.mx');if(!w||!m)return;m.style.fontSize='';const cw=c.clientWidth-6,mw=w.getBoundingClientRect().width;if(cw>0&&mw>cw){const fs=parseFloat(getComputedStyle(m).fontSize);m.style.fontSize=Math.max(c.classList.contains('fx')?fs*.78:10,fs*cw/mw)+'px'}})}
@@ -340,7 +350,7 @@ document.addEventListener('click',async e=>{
  else if(a=='gpt'){toast(`${SUBJ()[d.k].name}: ${fp(+d.v)}`)}
  else if(a=='setcur'){S.cur=d.k;SEL=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
- else if(a=='cat'){cat=d.c;render()}
+ else if(a=='cat'){cat=d.c;CAMF=null;render()}
  else if(a=='sci'){d.fr?sciOpen(null,frGuide(d.fr)):sciOpen(d.f)}
  else if(a=='addf')afOpen();
  else if(a=='editf')afOpen(d.f);
@@ -796,7 +806,6 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
 (async()=>{
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.fbase=D.formulas;D.sub={};
-  for(const[k,s]of Object.entries(D.career.subjects))if(s.data){try{D.sub[k]=await j(`${s.data}.json`)}catch(e){}}
   S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];
   if(/[?&]migrar\b/.test(location.search)){let c=0;for(const[k,s]of Object.entries(D.career.subjects))if(s.nota!=null&&S.notas[k]===undefined){S.notas[k]=s.nota;c++}await kvSet('notas',S.notas);history.replaceState(null,'',location.pathname+location.hash);setTimeout(()=>toast(c?`Notas copiadas a este celular: ${c}`:'No había notas por copiar'),700)}
  tx('kv','readwrite',s=>s.delete('gdrive')).catch(()=>{});mergeF();render()}
@@ -809,5 +818,14 @@ if('serviceWorker'in navigator){const had=navigator.serviceWorker.controller;
 let ip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();ip=e});
 
 document.addEventListener('change',e=>{const t=e.target;if(!t)return;
- if(t.id=='fi'){const n=document.getElementById('fn'),f=t.files;if(n){n.textContent=!f.length?'Sin archivo':f.length==1?f[0].name:f.length+' archivos';n.classList.toggle('on',!!f.length)}}
- else if(t.id=='fs'){const l=document.getElementById('fus');if(l)l.innerHTML=unitOpts(t.value)}});
+ if(t.id=='fi'||t.id=='fc'){const fi=document.getElementById('fi'),n=document.getElementById('fn'),pv=document.getElementById('fpv'),pi=document.getElementById('fpvi'),nm=document.getElementById('fnm');
+  let f;
+  if(t.id=='fc'){const c=t.files[0];CAMF=null;if(c){const d=new Date(),p=x=>String(x).padStart(2,'0'),ex=(c.type.split('/')[1]||'jpg').replace('jpeg','jpg').replace('+xml',''),base='Apunte '+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+'.'+p(d.getMinutes());
+    CAMF=new File([c],base+'.'+ex,{type:c.type||'image/jpeg',lastModified:Date.now()});if(nm)nm.value=base}
+   if(fi)fi.value='';f=CAMF?[CAMF]:[]}
+  else{CAMF=null;f=[...t.files]}
+  if(n){n.textContent=!f.length?'Sin archivo':f.length==1?f[0].name:f.length+' archivos';n.classList.toggle('on',!!f.length)}
+  if(PVU){URL.revokeObjectURL(PVU);PVU=null}
+  if(pv&&pi){if(f.length==1&&/^image\//.test(f[0].type||'')){PVU=URL.createObjectURL(f[0]);pi.src=PVU;pv.hidden=false}else pv.hidden=true}
+  if(t.id=='fi'&&nm&&f.length!=1)nm.value=''}
+ else if(t.id=='fs'){ensureSub(t.value).then(()=>{const l=document.getElementById('fus');if(l)l.innerHTML=unitOpts(t.value)})}});
