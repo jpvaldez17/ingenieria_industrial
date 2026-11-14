@@ -763,14 +763,99 @@ function distrUI(k){if(!k)return menu('Distribuciones',[['Normal','d:N'],['Binom
 function distrGo(k){const v={};$o().querySelectorAll('[data-dv]').forEach(x=>v[x.dataset.dv]=x.value.trim()===''?NaN:readNum(x.value));
  try{$o().querySelector('#dR').innerHTML=ores(DS[k].run(v))}catch(e){$o().querySelector('#dR').innerHTML=`<div class="oe">${esc(e.message)}</div>`}}
 function histUI(){const H=SCI.hist;OV(ovh('Historial')+(H.length?`<div class="hl">${H.map((x,i)=>`<button data-sk="hi:${i}"><span class="mx">${x.h}</span><b>= ${x.r}</b></button>`).join('')}</div>`:'<p class="oh">Aún no hay cálculos.</p>'))}
-function modeUI(){const S_=SCI;menu('Ajustes y modos',[['Calculadora (cálculo normal)','ox'],['Estadística · 1 y 2 variables','stat'],['Distribuciones · Normal, Binomial, Poisson','distr'],[`Ángulo: ${S_.deg?'DEG (grados) → cambiar a RAD':'RAD (radianes) → cambiar a DEG'}`,'deg'],[`Separador decimal: «${S_.dec}» → cambiar`,'dec'],['Tema claro / oscuro','theme']])}
+/* ===== Ecuaciones (polinomios y sistemas) y Tabla de valores ===== */
+const nz=v=>{v=String(v).trim().replace(',','.').replace('−','-');if(v==='')return 0;const m=/^(-?[\d.]+)\/(-?[\d.]+)$/.exec(v);return m?parseFloat(m[1])/parseFloat(m[2]):Number(v)};
+const z0=x=>Math.abs(x)<1e-12?0:x;
+const cxf=(re,im)=>{re=z0(re);im=z0(im);return(re===0?'':sciFmt(re)+(im<0?' − ':' + '))+(re===0&&im<0?'−':'')+sciFmt(Math.abs(im))+'i'};
+function cubicRoots(a,b,c,d){const B=b/a,C=c/a,D=d/a,p=C-B*B/3,q=2*B*B*B/27-B*C/3+D,disc=(q/2)**2+(p/3)**3,eps=1e-13*(1+q*q+Math.abs(p*p*p)),sh=-B/3;
+ if(disc>eps){const s=Math.sqrt(disc),u=Math.cbrt(-q/2+s),v=Math.cbrt(-q/2-s);return[[u+v+sh,0],[-(u+v)/2+sh,(u-v)*Math.sqrt(3)/2],[-(u+v)/2+sh,-(u-v)*Math.sqrt(3)/2]]}
+ if(Math.abs(disc)<=eps){if(Math.abs(p)<1e-14&&Math.abs(q)<1e-14)return[[sh,0],[sh,0],[sh,0]];const t1=3*q/p,t2=-3*q/(2*p);return[[t1+sh,0],[t2+sh,0],[t2+sh,0]]}
+ const r=2*Math.sqrt(-p/3),ph=Math.acos(Math.max(-1,Math.min(1,(3*q/(2*p))*Math.sqrt(-3/p))));return[0,1,2].map(k=>[r*Math.cos((ph-2*Math.PI*k)/3)+sh,0])}
+function gauss(M){const n=M.length,sc=Math.max(1,...M.flat().map(Math.abs));let det=1;
+ for(let i=0;i<n;i++){let p=i;for(let r=i+1;r<n;r++)if(Math.abs(M[r][i])>Math.abs(M[p][i]))p=r;if(Math.abs(M[p][i])<1e-12*sc)return{det:0};if(p!==i){[M[i],M[p]]=[M[p],M[i]];det=-det}det*=M[i][i];
+  for(let r=i+1;r<n;r++){const f=M[r][i]/M[i][i];for(let c=i;c<=n;c++)M[r][c]-=f*M[i][c]}}
+ const x=Array(n);for(let i=n-1;i>=0;i--){let s=M[i][n];for(let c=i+1;c<n;c++)s-=M[i][c]*x[c];x[i]=s/M[i][i]}return{det,x}}
+const cxl=L=>L.map(([l,re,im])=>`<p class="oc"><span>${l}</span><b>${cxf(re,im)}</b></p>`).join('');
+const EQ={
+ q:{t:'Cuadrática · ax² + bx + c = 0',f:['a','b','c'],run:v=>{const{a,b,c}=v;if(a===0)E_('a debe ser distinto de 0 (si a = 0 la ecuación es lineal).');
+  const D=b*b-4*a*c,R=[['Δ = b² − 4ac',z0(D)]];
+  if(D>=0){let x1,x2;if(D===0)x1=x2=-b/(2*a);else{const s=Math.sqrt(D),q=-(b+(b<0?-s:s))/2;x1=q/a;x2=c/q}if(x1>x2)[x1,x2]=[x2,x1];R.push(['x₁',z0(x1)],['x₂',z0(x2)]);R.push(['Vértice xᵥ = −b/2a',z0(-b/(2*a))],['Vértice yᵥ',z0(c-b*b/(4*a))]);return ores(R)}
+  const re=-b/(2*a),im=Math.abs(Math.sqrt(-D)/(2*a));return ores(R)+cxl([['x₁',re,im],['x₂',re,-im]])+'<p class="oh">Δ &lt; 0: no hay raíces reales (son complejas).</p>'}},
+ c:{t:'Cúbica · ax³ + bx² + cx + d = 0',f:['a','b','c','d'],run:v=>{const{a,b,c,d}=v;if(a===0)E_('a debe ser distinto de 0 (si a = 0 usa la cuadrática).');
+  const rt=cubicRoots(a,b,c,d),re=rt.filter(r=>Math.abs(r[1])<1e-9).map(r=>r[0]).sort((x,y)=>x-y),cp=rt.filter(r=>Math.abs(r[1])>=1e-9);
+  return ores(re.map((x,i)=>['x'+'₁₂₃'[i],z0(x)]))+(cp.length?cxl(cp.map((r,i)=>['x'+'₁₂₃'[re.length+i],r[0],r[1]])):'')}},
+ s2:{t:'Sistema 2 × 2',n:2,run:v=>{const M=[[v['00'],v['01'],v['0k']],[v['10'],v['11'],v['1k']]],r=gauss(M);if(!r.det)E_('Sin solución única: el determinante es 0 (puede no tener solución o tener infinitas).');return ores([['x',z0(r.x[0])],['y',z0(r.x[1])],['Determinante',z0(r.det)]])}},
+ s3:{t:'Sistema 3 × 3',n:3,run:v=>{const M=[0,1,2].map(i=>[v[i+'0'],v[i+'1'],v[i+'2'],v[i+'k']]),r=gauss(M);if(!r.det)E_('Sin solución única: el determinante es 0 (puede no tener solución o tener infinitas).');return ores([['x',z0(r.x[0])],['y',z0(r.x[1])],['z',z0(r.x[2])],['Determinante',z0(r.det)]])}}};
+const einp=k=>`<input data-ev="${k}" autocomplete="off" autocapitalize="off" spellcheck="false">`;
+function eqnUI(k){if(!k)return menu('Ecuaciones',[['Cuadrática · ax² + bx + c = 0','e:q'],['Cúbica · ax³ + bx² + cx + d = 0','e:c'],['Sistema 2 × 2','e:s2'],['Sistema 3 × 3','e:s3']]);
+ const q=EQ[k];let body;
+ if(q.n){const vs=['x','y','z'].slice(0,q.n);body=`<div class="og" style="--n:${q.n+1}">${vs.map(v=>`<span class="oc2">${v}</span>`).join('')}<span class="oc2">=</span>`+vs.map((_,r)=>vs.map((__,c)=>einp(r+''+c)).join('')+einp(r+'k')).join('')+'</div>'}
+ else body=`<div class="og" style="--n:${q.f.length}">${q.f.map(l=>`<span class="oc2">${l}</span>`).join('')}${q.f.map(einp).join('')}</div>`;
+ OV(ovh(q.t)+body+'<p class="oh">Escribe números (también fracciones como 1/2). Para negativos usa el signo − del teclado. Un cuadro vacío vale 0.</p>'+`<button class="ob" data-sk="ego:${k}">Resolver</button><div id="eR"></div>`)}
+function eqnGo(k){const o=$o(),out=o.querySelector('#eR'),v={};o.querySelectorAll('[data-ev]').forEach(x=>v[x.dataset.ev]=nz(x.value));
+ try{if(Object.values(v).some(isNaN))E_('Revisa los números escritos.');out.innerHTML=EQ[k].run(v)}catch(e){out.innerHTML=`<div class="oe">${esc(e.message)}</div>`}}
+function tableUI(){const t=ser(CR);
+ if(!t||!/X/.test(t))return OV(ovh('Tabla de valores f(X)')+'<p class="oh">Primero escribe la función en la pantalla usando X (tecla ALPHA y luego X). Ejemplo: X² + 3X − 5. Después vuelve a abrir esta opción.</p>');
+ OV(ovh('Tabla de valores')+`<p class="oh">f(X) =</p><div class="mx tfx">${snap()}</div><div class="og" style="--n:3"><span class="oc2">Inicio</span><span class="oc2">Fin</span><span class="oc2">Paso</span><input data-tv="a" value="1" autocomplete="off"><input data-tv="b" value="10" autocomplete="off"><input data-tv="s" value="1" autocomplete="off"></div><button class="ob" data-sk="tgo">Generar tabla</button><div id="tR"></div>`)}
+function tableGo(){const S_=SCI,o=$o(),g=k=>nz(o.querySelector(`[data-tv="${k}"]`).value),out=o.querySelector('#tR');
+ try{const t=ser(CR),a=g('a'),b=g('b'),s=g('s');if([a,b,s].some(isNaN))E_('Revisa los números escritos.');if(s===0)E_('El paso no puede ser 0.');if((b-a)*s<0)E_('Con ese paso nunca se llega al valor final: cambia el signo del paso.');
+  const n=Math.floor((b-a)/s+1e-9)+1;if(n>200)E_('Máximo 200 filas: aumenta el paso.');
+  const f=x=>sciEval(t,S_.deg,S_.ans,{...S_.mem,X:x},S_.pre);try{f(a)}catch(e){if(/^Expresión|Símbolo/.test(e.message))E_('Completa los cuadritos vacíos de la función.')}
+  const rows=[];for(let i=0;i<n;i++){const x=+(a+i*s).toPrecision(12);let y;try{y=f(x)}catch(e){y=NaN}rows.push(`<tr><td>${sciFmt(x)}</td><td>${isFinite(y)?sciFmt(y):'—'}</td></tr>`)}
+  out.innerHTML=`<div class="otw"><table class="otb"><thead><tr><th>X</th><th>f(X)</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`}catch(e){out.innerHTML=`<div class="oe">${esc(e.message)}</div>`}}
+/* ===== Matrices y vectores ===== */
+const MX={op:'mul',A:{r:2,c:2,d:{}},B:{r:2,c:2,d:{}},k:'2'},VX={n:3,A:['','',''],B:['','',''],k:'2'};
+const MOPS=[['A + B','add'],['A − B','sub'],['A × B','mul'],['k · A','esc'],['det A','det'],['A⁻¹','inv'],['Aᵀ','tr']];
+const mclamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+function mxFix(){const o=MX;if(o.op=='det'||o.op=='inv')o.A.c=o.A.r;if(o.op=='add'||o.op=='sub'){o.B.r=o.A.r;o.B.c=o.A.c}if(o.op=='mul')o.B.r=o.A.c}
+function mxSave(){const q=$o();q.querySelectorAll('[data-mx]').forEach(x=>{const[m,i,j]=x.dataset.mx.split(':');MX[m].d[i+','+j]=x.value});const k=q.querySelector('[data-mk]');if(k)MX.k=k.value}
+const einpM=(m,i,j)=>`<input data-mx="${m}:${i}:${j}" value="${esc(MX[m].d[i+','+j]??'')}" autocomplete="off" autocapitalize="off" spellcheck="false">`;
+const mxGrid=m=>{const M=MX[m];return`<div class="og" style="--n:${M.c}">`+Array.from({length:M.r},(_,i)=>Array.from({length:M.c},(__,j)=>einpM(m,i,j)).join('')).join('')+'</div>'};
+const mst=(lab,key,val)=>`<span class="ost">${lab}<button data-sk="ms:${key}:-1" aria-label="Menos">−</button><b>${val}</b><button data-sk="ms:${key}:1" aria-label="Más">+</button></span>`;
+function mxUI(){const o=MX;mxFix();const sq=o.op=='det'||o.op=='inv',two=['add','sub','mul'].includes(o.op);
+ let st=sq?mst('Orden','Ar',o.A.r):mst('Filas A','Ar',o.A.r)+mst('Col. A','Ac',o.A.c);if(o.op=='mul')st+=mst('Col. B','Bc',o.B.c);
+ OV(ovh('Matrices')+`<div class="och">${MOPS.map(([l,id])=>`<button class="${o.op==id?'on':''}" data-sk="mo:${id}">${l}</button>`).join('')}</div><div class="ostw">${st}</div><p class="oh">Matriz A</p>${mxGrid('A')}`+(two?`<p class="oh">Matriz B</p>${mxGrid('B')}`:'')+(o.op=='esc'?`<label class="ol">k (escalar)<input data-mk value="${esc(o.k)}" autocomplete="off"></label>`:'')+'<p class="oh">Escribe números (también fracciones como 1/2). Un cuadro vacío vale 0.</p><button class="ob" data-sk="mgo">Calcular</button><div id="mR"></div>')}
+function mxStep(k,d){mxSave();const M=k[0]=='A'?MX.A:MX.B,f=k[1]=='r'?'r':'c';M[f]=mclamp(M[f]+d,1,4);mxUI()}
+const mread=M=>Array.from({length:M.r},(_,i)=>Array.from({length:M.c},(__,j)=>nz(M.d[i+','+j]??'')));
+const mmul=(X,Y)=>X.map(r=>Y[0].map((_,j)=>r.reduce((s,v,k)=>s+v*Y[k][j],0)));
+function mdet(M){const n=M.length,sc=Math.max(1,...M.flat().map(Math.abs)),A=M.map(r=>r.slice());let d=1;
+ for(let i=0;i<n;i++){let p=i;for(let r=i+1;r<n;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;if(Math.abs(A[p][i])<1e-12*sc)return 0;if(p!==i){[A[i],A[p]]=[A[p],A[i]];d=-d}d*=A[i][i];
+  for(let r=i+1;r<n;r++){const f=A[r][i]/A[i][i];for(let c=i;c<n;c++)A[r][c]-=f*A[i][c]}}return d}
+function minv(M){const n=M.length,sc=Math.max(1,...M.flat().map(Math.abs)),A=M.map((r,i)=>[...r,...Array.from({length:n},(_,j)=>+(i===j))]);
+ for(let i=0;i<n;i++){let p=i;for(let r=i+1;r<n;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;if(Math.abs(A[p][i])<1e-12*sc)return null;[A[i],A[p]]=[A[p],A[i]];const d=A[i][i];A[i]=A[i].map(v=>v/d);
+  for(let r=0;r<n;r++)if(r!==i){const f=A[r][i];if(f)A[r]=A[r].map((v,c)=>v-f*A[i][c])}}return A.map(r=>r.slice(n))}
+const mhtml=M=>`<div class="omat" style="--n:${M[0].length}">${M.flat().map(v=>`<span>${sciFmt(z0(v))}</span>`).join('')}</div>`;
+function mxGo(){mxSave();const o=MX,out=$o().querySelector('#mR');
+ try{const A=mread(o.A),B=mread(o.B),two=['add','sub','mul'].includes(o.op);if(A.flat().some(isNaN)||(two&&B.flat().some(isNaN)))E_('Revisa los números escritos.');let h='';
+  if(o.op=='add'||o.op=='sub')h=mhtml(A.map((r,i)=>r.map((v,j)=>o.op=='add'?v+B[i][j]:v-B[i][j])));
+  else if(o.op=='mul')h=mhtml(mmul(A,B));
+  else if(o.op=='esc'){const k=nz(o.k);if(isNaN(k))E_('Revisa el valor de k.');h=mhtml(A.map(r=>r.map(v=>v*k)))}
+  else if(o.op=='tr')h=mhtml(A[0].map((_,j)=>A.map(r=>r[j])));
+  else if(o.op=='det')h=ores([['det A',z0(mdet(A))]]);
+  else{const I=minv(A);if(!I)E_('La matriz no tiene inversa (su determinante es 0).');h=mhtml(I)+ores([['det A',z0(mdet(A))]])}
+  out.innerHTML=h}catch(e){out.innerHTML=`<div class="oe">${esc(e.message)}</div>`}}
+function vxSave(){const q=$o();q.querySelectorAll('[data-vx]').forEach(x=>{const[m,i]=x.dataset.vx.split(':');VX[m][+i]=x.value});const k=q.querySelector('[data-vk]');if(k)VX.k=k.value}
+function vecUI(){const n=VX.n,inp=m=>`<div class="og" style="--n:${n}">${Array.from({length:n},(_,i)=>`<span class="oc2">${'xyz'[i]}</span>`).join('')}${Array.from({length:n},(_,i)=>`<input data-vx="${m}:${i}" value="${esc(VX[m][i]??'')}" autocomplete="off" autocapitalize="off" spellcheck="false">`).join('')}</div>`;
+ OV(ovh('Vectores')+`<div class="och"><button class="${n==2?'on':''}" data-sk="vn:2">2D · (x, y)</button><button class="${n==3?'on':''}" data-sk="vn:3">3D · (x, y, z)</button></div><p class="oh">Vector A</p>${inp('A')}<p class="oh">Vector B</p>${inp('B')}<label class="ol">k (para k · A)<input data-vk value="${esc(VX.k)}" autocomplete="off"></label><p class="oh">Escribe números (también fracciones como 1/2). Un cuadro vacío vale 0.</p><button class="ob" data-sk="vgo">Calcular todo</button><div id="vR"></div>`)}
+function vecGo(){vxSave();const out=$o().querySelector('#vR'),S_=SCI,n=VX.n;
+ try{const A=VX.A.slice(0,n).map(nz),B=VX.B.slice(0,n).map(nz),k=nz(VX.k);if([...A,...B,k].some(isNaN))E_('Revisa los números escritos.');
+  const dot=(u,v)=>u.reduce((s,x,i)=>s+x*v[i],0),nm=u=>Math.sqrt(dot(u,u)),vt=u=>'('+u.map(x=>sciFmt(z0(x))).join(' ; ')+')',a=nm(A),b=nm(B),d=dot(A,B);
+  const R=[['|A| (magnitud)',a],['|B| (magnitud)',b],['A · B (producto punto)',z0(d)]],L=[['A + B',A.map((x,i)=>x+B[i])],['A − B',A.map((x,i)=>x-B[i])],['k · A',A.map(x=>k*x)]];
+  if(n==3){const c=[A[1]*B[2]-A[2]*B[1],A[2]*B[0]-A[0]*B[2],A[0]*B[1]-A[1]*B[0]];L.push(['A × B (producto cruz)',c]);R.push(['Área del paralelogramo |A × B|',nm(c)])}
+  else{const cz=A[0]*B[1]-A[1]*B[0];R.push(['A × B (componente z)',z0(cz)],['Área del paralelogramo',Math.abs(cz)])}
+  if(a>0&&b>0){const th=Math.acos(Math.max(-1,Math.min(1,d/(a*b))));R.push(['Ángulo θ entre A y B ('+(S_.deg?'°':'rad')+')',S_.deg?th*180/Math.PI:th])}
+  if(b>0){R.push(['Proyección escalar de A sobre B',d/b]);L.push(['Proyección vectorial de A sobre B',B.map(x=>x*d/(b*b))])}
+  if(a>0)L.push(['Vector unitario Â',A.map(x=>x/a)]);
+  out.innerHTML=ores(R)+L.map(([l,v])=>`<p class="oc"><span>${l}</span><b>${vt(v)}</b></p>`).join('')+(a>0&&b>0?'':'<p class="oh">Con un vector nulo, el ángulo y la proyección no están definidos.</p>')}
+ catch(e){out.innerHTML=`<div class="oe">${esc(e.message)}</div>`}}
+function modeUI(){const S_=SCI;menu('Ajustes y modos',[['Calculadora (cálculo normal)','ox'],['Estadística · 1 y 2 variables','stat'],['Distribuciones · Normal, Binomial, Poisson','distr'],['Matrices · suma, producto, det, inversa','mat'],['Vectores · punto, cruz, ángulo','vec'],['Ecuaciones · polinomios y sistemas','eqn'],['Tabla de valores f(X)','table'],[`Ángulo: ${S_.deg?'DEG (grados) → cambiar a RAD':'RAD (radianes) → cambiar a DEG'}`,'deg'],[`Separador decimal: «${S_.dec}» → cambiar`,'dec'],['Tema claro / oscuro','theme']])}
 function sciSk(id,el){const S_=SCI;
  if(id=='close')return sciClose();if(id=='ox'){OVX();return}if(id=='gtog'){$('#sciG').classList.toggle('col');fitMath();return}
  if(id=='theme'){S_.dk=!S_.dk;kvSet('dk',S_.dk);return sciDraw()}
  if(id=='deg'){S_.deg=!S_.deg;kvSet('deg',S_.deg);OVX();return sciDraw()}
  if(id=='dec'){S_.dec=S_.dec=='.'?',':'.';kvSet('dec',S_.dec);OVX();if(S_.eq)showRes();return sciDraw()}
  if(id=='hist')return histUI();if(id=='mode')return modeUI();if(id=='stat')return statUI();if(id=='distr')return distrUI();
- if(id=='statgo')return statGo();if(id=='calcgo')return runVars(false);if(id=='solve')return runVars(true);
+ if(id=='mat')return mxUI();if(id.startsWith('mo:')){mxSave();MX.op=id.slice(3);return mxUI()}if(id.startsWith('ms:')){const p=id.split(':');return mxStep(p[1],+p[2])}if(id=='mgo')return mxGo();if(id=='vec')return vecUI();if(id.startsWith('vn:')){vxSave();VX.n=+id.slice(3);return vecUI()}if(id=='vgo')return vecGo();if(id=='eqn')return eqnUI();if(id.startsWith('e:'))return eqnUI(id.slice(2));if(id.startsWith('ego:'))return eqnGo(id.slice(4));if(id=='table')return tableUI();if(id=='tgo')return tableGo();if(id=='statgo')return statGo();if(id=='calcgo')return runVars(false);if(id=='solve')return runVars(true);
  if(id.startsWith('d:'))return distrUI(id.slice(2));if(id.startsWith('dgo:'))return distrGo(id.slice(4));
  if(id=='ins'){OVX();if(S_.eq){S_.eq=false;sciReset()}addText(el.dataset.v);return sciDraw()}
  if(id.startsWith('hi:')){OVX();const h=S_.hist[+id.slice(3)];if(S_.eq){S_.eq=false;sciReset()}addText(h.v);return sciDraw()}
