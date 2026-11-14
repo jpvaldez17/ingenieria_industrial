@@ -653,7 +653,7 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 .th{color:var(--c);border-left:5px solid var(--c);padding-left:8px}
 .mx .fr.nl>.nu{border-bottom:0}
 
-/* ===== Estética v52: pantalla de fórmula, mini pantalla y calculadora ===== */
+/* ===== Estética v53: pantalla de fórmula, mini pantalla y calculadora ===== */
 .fx{background:#e6e8eb;color:#000;padding:14px 8px}
 .fx .fm2 math,.sci-g .gf math{font-family:var(--formula);font-weight:700;color:#000}
 .fx .fm2 math{font-size:1.4em}.sci-g .gf math{font-size:1.02em}
@@ -667,23 +667,23 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 .card .dd li span,.sci-g .gd li span{color:#000}
 .card .dd li{align-items:baseline;gap:9px}
 /* Mini pantalla */
-.sci-g{background:#e6e8eb;color:#000;padding:4px 24px 4px 6px;gap:6px;max-height:104px;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
+.sci-g{background:transparent;color:#000;padding:4px 24px 4px 6px;gap:6px;max-height:104px;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
 .sci-g .gd{border-left:1px dashed rgba(0,0,0,.35);padding-left:6px;font-size:.6rem;line-height:1.2;gap:2px;max-height:98px}
 .sci-g .gd li{align-items:baseline}
 .sci-g .gt{color:#000}
 .sci-g.col{max-height:62px}
 /* Calculadora */
 .sci-p{max-width:520px;padding:8px 8px calc(8px + env(safe-area-inset-bottom));gap:5px}
-.sci-d{min-height:132px;padding:6px 12px}
-#sciE{font-size:1.6rem;min-height:2.8em}
-#sciR{font-size:1.1rem;color:#0b2a8c}#sciR.big{font-size:2rem;color:#0b2a8c}#sciR.bad{color:#c0283a}
+.sci-d{flex:none;height:clamp(100px,19dvh,152px);min-height:0;padding:6px 12px;--lcd:#f1f2f3}.sci-p.dk .sci-d{--lcd:#0c0805}
+#sciE{font-size:1.6rem;min-height:0;overflow-y:auto}
+#sciR{font-size:1.1rem;color:#0b2a8c}#sciR.big{font-size:2rem;color:#0a9e90}#sciR.bad{color:#c0283a}
 #sciR small{color:#0b2a8c}
-.sci-p.dk #sciR,.sci-p.dk #sciR.big,.sci-p.dk #sciR small{color:#7fb0ff}.sci-p.dk #sciR.bad{color:#ff6b7a}
+.sci-p.dk #sciR,.sci-p.dk #sciR small{color:#7fb0ff}.sci-p.dk #sciR.big{color:#3de0cf}.sci-p.dk #sciR.bad{color:#ff6b7a}
 .k{height:clamp(28px,4.7dvh,42px)}
 .sci-k.c5 .k{height:clamp(30px,5.4dvh,46px)}
 .k.kn{font-weight:800;font-size:1.4rem}
 /* Cruceta: borde casi cuadrado como las demás teclas, sin botón central */
-.dpad{border-radius:16px;grid-template:1fr 1fr 1fr/1fr 1fr 1fr;align-items:stretch;justify-items:stretch}
+.dpad{border-radius:10px;border:1.5px solid #000;grid-template:1fr 1fr 1fr/1fr 1fr 1fr;align-items:stretch;justify-items:stretch;align-self:stretch;justify-self:stretch;height:auto;aspect-ratio:auto;min-height:0;margin-top:11px;box-sizing:border-box}
 .dpad button{display:grid;place-items:center;font-size:0;line-height:0;width:100%;height:100%;margin:0;color:var(--kt);justify-content:center}
 .dpad button:before{content:"";display:block;width:.8rem;height:.8rem;background:currentColor}
 .dpad .au:before{clip-path:polygon(50% 12%,92% 88%,8% 88%)}
@@ -693,6 +693,20 @@ a:focus:not(:focus-visible),button:focus:not(:focus-visible),summary:focus:not(:
 .dpad button:active{opacity:.55}
 /* AC, ⌫ y =: negros con símbolo y borde con brillo suave */
 .k.kr{background:#0d0d0d;color:#ff3b4e;border:1.5px solid #b3202f;font-weight:800;box-shadow:0 0 5px rgba(255,59,78,.4),0 2px 0 rgba(0,0,0,.3)}
-.k.kg{background:#0d0d0d;color:#2ee07a;border:1.5px solid #1f9d57;font-weight:800;font-size:1.5rem;box-shadow:0 0 5px rgba(46,224,122,.4),0 2px 0 rgba(0,0,0,.3)}
-.sci-p.dk .k.kr,.sci-p.dk .k.kg{background:#0d0d0d}
-@media(max-height:760px){.sci-g{max-height:78px}.sci-d{min-height:104px}#sciE{min-height:2.2em;font-size:1.4rem}}
+.k.kg{background:#2ea663;color:#fff;border:1.5px solid #000;font-weight:800;font-size:1.5rem;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.sci-p.dk .k.kr{background:#0d0d0d}.sci-p.dk .k.kg{background:#2ea663}
+@media(max-height:760px){.sci-g{max-height:78px}#sciE{font-size:1.4rem}}
+/* v53: bordes de teclas, fracción apilada y mini pantalla integrada al panel */
+.k.kn{border:1.5px solid #222}
+.k.ko{border:1.5px solid #9a6a3c}
+.fq{display:inline-flex;flex-direction:column;align-items:center;line-height:1}
+.fq b{font-weight:800;font-size:1rem;padding:0 .4em}
+.fq b:first-child{border-bottom:2px solid currentColor;padding-bottom:2px}
+.fq b:last-child{padding-top:2px}
+.sci-p.dk .sci-g{color:var(--kt)}
+.sci-p.dk .sci-g .gf math,.sci-p.dk .sci-g .gf mfrac>*{color:#f6e9d9}
+.sci-p.dk .sci-g .gf mfrac,.sci-p.dk .sci-g .gf .mo-r{color:#ff6b7e}
+.sci-p.dk .sci-g .gf .mo-b{color:#6fa8ff}
+.sci-p.dk .sci-g .gd li span,.sci-p.dk .sci-g .gt{color:#f6e9d9}
+.sci-p.dk .sci-g .gd{border-left-color:rgba(246,233,217,.35)}
+.sci-p.dk .sci-g .gd b{color:#4cc3ff}

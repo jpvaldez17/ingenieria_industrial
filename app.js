@@ -648,7 +648,7 @@ const LB={eq:'=',solve:'SOLVE',ddx:'d/dx','!':'x!',cbrt:'∛',cube:'x³',nroot:'
 const KR=[
  [['shift','SHIFT',0,0,'m'],['alpha','ALPHA',0,0,'m'],'DPAD',['mode','MODE',0,0,'m'],['2nd','2nd',0,0,'m'],
   ['calc','CALC','solve','eq'],['int','∫dx','ddx',';'],['inv','x⁻¹','!'],['logb','Logₓy','sum','prod']],
- [['frac','a⁄b'],['sqrt','√x','cbrt','mod'],['sq','x²','cube'],['pow','xʸ','nroot'],['log','Log','10x'],['ln','Ln','ex'],
+ [['frac','<span class="fq"><b>a</b><b>b</b></span>'],['sqrt','√x','cbrt','mod'],['sq','x²','cube'],['pow','xʸ','nroot'],['log','Log','10x'],['ln','Ln','ex'],
   ['neg','(−)',0,'A'],['deg','°′″',0,'B'],['hyp','hyp','abs','C'],['sin','Sin','asin','D'],['cos','Cos','acos','E'],['tan','Tan','atan','F'],
   ['rcl','RCL','sto'],['eng','ENG'],['(','(','%'],[')',')',';','X'],['sd','S⇔D',0,'Y'],['mplus','M+','mminus','M']],
  [['7','7','const',0,'n'],['8','8',0,0,'n'],['9','9',0,0,'n'],['bs','⌫',0,0,'r'],['ac','AC','clrall',0,'r'],
