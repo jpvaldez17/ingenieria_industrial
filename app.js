@@ -186,7 +186,7 @@ function calc(id){
  const f=D.formulas.find(x=>x.id==id);if(!f)return nf();const s=SUBJ()[f.subject];
  const fx=f.mathml?`<div class="fx">${mx({mathml:tintMath(f.mathml)})}</div>`:`<div class="fx"><code>${f.tex}</code></div>`;
  const dd=f.donde?(f.donde.length?`<ul class="dd">${f.donde.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`:''):`<h3>Variables</h3><ul class="vars">${f.vars.map(v=>`<li><b>${v.id}</b>${v.meaning||v.label||''}</li>`).join('')}</ul>`;
- return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}Formulario</a><div class="card" style="--c:${catC(f)}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}
+ return `<a class="back" href="#/formulario/${f.subject}">${ic('chevL')}<span class="bk">Formulario</span></a><div class="card" style="--c:${catC(f)}"><p class="eyebrow">${s.short} · ${f.cat}</p><h1>${f.name}</h1>${f.short?`<p class="muted" style="margin:0 0 4px">${f.short}</p>`:''}
  ${fx}${dd}
  <button class="cbk cbk-w" data-act="sci" data-f="${f.id}" aria-label="Abrir la calculadora con esta fórmula">${ic('calc',26)}<span>Calculadora</span></button>${f.custom?`<div class="rowb"><button class="btn2" data-act="editf" data-f="${f.id}">Editar</button><button class="btn2 del" data-act="delf" data-f="${f.id}">Eliminar</button></div>`:''}</div>`}
 
@@ -691,9 +691,15 @@ function guideHTML(fid){const f=fid&&D.formulas.find(x=>x.id==fid);if(!f)return 
 function frGuide(k){const[st,n]=k.split(':'),[sid,tid]=st.split('/'),h=(((D.sub[sid]||{}).content||{})[tid]||{}).frm?.[+n];if(!h)return'';
  const m=/<div class="fm">([\s\S]*?)<\/div><\/div>(<ul class="dd">[\s\S]*?<\/ul>)?/.exec(h);if(!m)return'';
  return fixM(`<div class="gf fit"><span class="mw">${tintMath(m[1])}</span></div>${(m[2]||'').replace('class="dd"','class="gd"')}<button class="gt" data-sk="gtog" aria-label="Contraer o expandir">▴</button>`)}
+const SV=(p,s=20,w=1.8)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICO_LIST=SV('<circle cx="4.5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor" stroke="none"/><path d="M9.5 6H21M9.5 12H21M9.5 18H21"/>'),
+ ICO_MOON=SV('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'),
+ ICO_SUN=SV('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'),
+ ICO_X=SV('<path d="M6 6l12 12M18 6 6 18"/>',16,2.2);
+function thIcon(){const b=document.querySelector('#sci [data-sk="theme"]');if(!b)return;const t=SCI.dk?'sun':'moon';if(b.dataset.t!==t){b.dataset.t=t;b.innerHTML=SCI.dk?ICO_SUN:ICO_MOON;b.setAttribute('aria-label',SCI.dk?'Cambiar a tema claro':'Cambiar a tema oscuro')}}
 function sciOpen(fid,gh){let p=$('#sci');
  if(!p){p=document.createElement('div');p.id='sci';p.className='sci';
-  p.innerHTML=`<div class="sci-bk" data-sk="close"></div><div class="sci-p" id="sciP"><div class="sci-h"><b>Calculadora científica</b><button data-sk="hist" aria-label="Historial">≡</button><button data-sk="theme" aria-label="Tema claro u oscuro">◐</button><button data-sk="mode" aria-label="Ajustes">⚙</button><button data-sk="close" aria-label="Cerrar">✕</button></div>
+  p.innerHTML=`<div class="sci-bk" data-sk="close"></div><div class="sci-p" id="sciP"><div class="sci-h"><b>Calculadora científica</b><button data-sk="hist" aria-label="Historial">${ICO_LIST}</button><button data-sk="theme" data-t="moon" aria-label="Cambiar a tema oscuro">${ICO_MOON}</button><button data-sk="close" aria-label="Cerrar">${ICO_X}</button></div>
   <div class="sci-g" id="sciG" hidden></div>
   <div class="sci-d"><div class="sci-s" id="sciM"></div><div id="sciE" class="mx"></div><div id="sciR"></div></div>
   <div class="sci-k c6">${KR[0].map(k=>k=='DPAD'?DPAD:kc(k)).join('')}${KR[1].map(kc).join('')}</div><div class="sci-k c5">${KR[2].map(kc).join('')}</div><div class="sci-o" id="sciO" hidden></div></div>`;
@@ -709,7 +715,7 @@ function sciDraw(){const E=$('#sciE');if(!E)return;E.innerHTML=rowH(CR);const t=
  if(S_.err)r=esc(S_.err);else if(S_.eq)r=S_.res;else if(t){try{r='= '+sciFmt(sciEval(t,S_.deg,S_.ans,S_.mem,S_.pre))}catch(e){r=''}}
  const R=$('#sciR');R.innerHTML=r;R.classList.toggle('bad',!!S_.err);R.classList.toggle('big',S_.eq&&!S_.err);
  $('#sciM').innerHTML=ANN(S_.sh,'S')+ANN(S_.al,'A')+ANN(S_.pend,S_.pend=='sto'?'STO':'RCL')+ANN(S_.hyp,'hyp')+ANN(S_.eng,'ENG')+ANN(S_.sd,'S⇔D')+`<span class="rt" data-sk="deg">${S_.deg?'DEG':'RAD'}</span>`;
- const dk=document.querySelector('#sci [data-k=","]');if(dk)dk.textContent=S_.dec;$('#sciSh').classList.toggle('on',S_.sh);$('#sciAl').classList.toggle('on',S_.al);$('#sciP').classList.toggle('dk',S_.dk);
+ const dk=document.querySelector('#sci [data-k=","]');if(dk)dk.textContent=S_.dec;$('#sciSh').classList.toggle('on',S_.sh);$('#sciAl').classList.toggle('on',S_.al);thIcon();$('#sciP').classList.toggle('dk',S_.dk);
  const c=E.querySelector('.sc-cur');if(c)c.scrollIntoView({block:'nearest',inline:'nearest'})}
 function showRes(){const S_=SCI;let h=(S_.sd&&exact(S_.ans))||sciFmt(S_.ans);if(S_.aux)h+=`<small>${S_.aux[0]} = ${sciFmt(S_.aux[1])} ; ${S_.aux[2]} = ${sciFmt(S_.aux[3])}</small>`;S_.res=h}
 function snap(){const sv=CC;CC={r:null,i:-1};const h=rowH(CR);CC=sv;return h}

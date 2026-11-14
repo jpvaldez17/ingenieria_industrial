@@ -804,3 +804,12 @@ body{overflow-x:hidden}
 .sci-p.dk #sciR,.sci-p.dk #sciR small{color:#0b2a8c}
 .sci-p.dk #sciR.big{color:#0e76c0}
 .sci-p.dk #sciR.bad{color:#c0283a}
+
+/* Botones del encabezado de la calculadora */
+.sci-h b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sci-h button{display:grid;place-items:center;flex:none}
+.sci-h button svg{display:block}
+.sci-h button[data-sk=hist],.sci-h button[data-sk=theme]{width:52px;border-radius:999px}
+.sci-h button[data-sk=theme][data-t=moon]{color:#5db6f2;border-color:rgba(93,182,242,.7)}
+.sci-h button[data-sk=theme][data-t=sun]{color:#e0620d;border-color:rgba(224,98,13,.75)}
+.sci-h button[data-sk=close]{background:#000;color:#c42a40;border:1px solid #e0384c}
