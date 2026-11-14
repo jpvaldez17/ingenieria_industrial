@@ -52,7 +52,7 @@ const kvGet=k=>tx('kv','readonly',s=>s.get(k)),kvSet=(k,v)=>tx('kv','readwrite',
 /* ===== Estado y datos (los contenidos viven en /data/*.json) ===== */
 const UOPEN=()=>{try{return JSON.parse(sessionStorage.getItem('uopen')||'[]')}catch(e){return[]}};
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.unit[data-k]'))return;const k=d.dataset.k,a=UOPEN().filter(x=>x!==k);if(d.open)a.push(k);try{sessionStorage.setItem('uopen',JSON.stringify(a))}catch(e){}},true);
-let D={},S={last:{},favs:[],done:[],misf:[],cur:null,notas:{},est:{},sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
+let D={},S={nord:[],last:{},favs:[],done:[],misf:[],cur:null,notas:{},est:{},sc:{ok:0,bad:0}},tab='c',cat='pdf',fsub='estadistica';
 const save=()=>{kvSet('favs',S.favs);kvSet('done',S.done);kvSet('sc',S.sc)};
 /* Carga bajo demanda: el contenido de cada materia se descarga solo cuando se necesita (al abrirla o al buscar) */
 const subFetch={};
@@ -124,7 +124,7 @@ const refreshAvg=()=>{D.career.semesters.forEach(sm=>{const el=document.querySel
  const all=Object.keys(SUBJ()),g=$('.gpn');if(g)g.textContent=fp(prom(all))};
 /* Gráfico de notas (solo las que esta persona escribió en este dispositivo). Meta: promedio 90 */
 function chartNotas(){
- const G=[];D.career.semesters.forEach(sm=>{const p=sm.items.map(k=>({k,v:notaOf(k)})).filter(x=>x.v!=null&&!isNaN(x.v));if(p.length)G.push({n:sm.n,p})});
+ const G=[];D.career.semesters.forEach(sm=>{const oi=k=>(S.nord||[]).indexOf(k),p=sm.items.map(k=>({k,v:notaOf(k)})).filter(x=>x.v!=null&&!isNaN(x.v)).sort((x,y)=>oi(x.k)-oi(y.k));if(p.length)G.push({n:sm.n,p})});
  const n=G.reduce((t,g)=>t+g.p.length,0);
  const head=`<div class="nth"><div class="ntt"><b>Evolución de notas</b><small>INGENIERÍA INDUSTRIAL</small></div><div class="ntp"><i>Prom. General</i><span class="ntc" aria-label="Promedio general">${fp(prom(Object.keys(SUBJ())))}</span></div></div>`;
  const foot=`<div class="ntf"><span class="ntl"><span><i style="background:#336B75"></i>Sobre 90</span><span><i style="background:#9b1c28"></i>Bajo 90</span></span><span class="ntm"><i></i>Meta 90</span></div>`;
@@ -334,13 +334,20 @@ async function render(){
  await Promise.all([...new Set(need)].map(ensureSub));
  app.innerHTML=fixM(await (V[route]||home)());
  const act={materia:'carrera',tema:'carrera',calc:'formulario',buscar:'inicio'}[route]||route;
+ if(route!='buscar'){const m=SS.get('lt',{});m[act]=location.hash||'#/inicio';SS.set('lt',m)}
  document.querySelectorAll('nav a').forEach(n=>n.classList.toggle('on',n.dataset.r==act));
  if(route=='buscar'){const q=$('#q');q.focus();q.oninput=async()=>{const v=q.value;if(norm(v.trim()).length>=2)await ensureAll();if(q.value===v)$('#res').innerHTML=results(v)}}
  fitMath();document.querySelectorAll('.sbtn.on,.pl.on').forEach(e=>e.scrollIntoView({block:'nearest',inline:'center'}));if(document.fonts)document.fonts.ready.then(fitMath)}
 /* Fórmulas más anchas que su tarjeta: se reducen para que quepan completas */
 function fitMath(){document.querySelectorAll('.fit').forEach(c=>{const w=c.querySelector('.mw'),m=c.querySelector('math,.mx');if(!w||!m)return;m.style.fontSize='';const cw=c.clientWidth-6,mw=w.getBoundingClientRect().width;if(cw>0&&mw>cw){const fs=parseFloat(getComputedStyle(m).fontSize);m.style.fontSize=Math.max(c.classList.contains('fx')?fs*.78:10,fs*cw/mw)+'px'}})}
 addEventListener('resize',fitMath);
-window.addEventListener('hashchange',()=>{tab='c';scrollTo(0,0);render()});
+const SS={get:(k,d)=>{try{return JSON.parse(sessionStorage.getItem(k))||d}catch(e){return d}},set:(k,v)=>{try{sessionStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let RESTORE=false;
+window.addEventListener('hashchange',async e=>{const oh='#'+((e.oldURL||'').split('#')[1]||'/inicio'),sc=SS.get('scr',{});sc[oh]=scrollY;SS.set('scr',sc);const rs=RESTORE;RESTORE=false;tab='c';scrollTo(0,0);await render();if(rs){const y=SS.get('scr',{})[location.hash||'#/inicio'];if(y)scrollTo(0,y)}});
+/* Al tocar otra pestaña del menú, vuelve al lugar donde la dejaste (materia, tema, fórmula…) y a su posición; tocar la pestaña activa va a su inicio */
+document.addEventListener('click',e=>{const n=e.target.closest&&e.target.closest('nav a[data-r]');if(!n||n.classList.contains('on'))return;const h=SS.get('lt',{})[n.dataset.r];if(!h||h===(location.hash||'#/inicio'))return;e.preventDefault();RESTORE=true;location.hash=h},true);
+/* Color de la barra del navegador acorde al nuevo turquesa */
+{let m=document.querySelector('meta[name="theme-color"]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m)}m.content='#2ec4d2'}
 
 document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,d=b.dataset;
@@ -376,7 +383,7 @@ const toast=m=>{let t=$('#toast');if(!t){t=document.createElement('div');t.id='t
 const notaIn=k=>document.querySelector(`input.nota[data-k="${k}"]`),notaAc=k=>document.querySelector(`.nac[data-k="${k}"]`);
 function notaSave(k){const i=notaIn(k);let n=i.value.trim()===''?null:parseFloat(i.value.replace(',','.'));if(n!=null&&isNaN(n))n=null;
  if(n!=null){n=Math.min(100,Math.max(0,n));i.value=n}
- S.notas[k]=n;kvSet('notas',S.notas);i.dataset.orig=n??'';notaAc(k).hidden=true;i.closest('.srow').dataset.e=estOf(k);refreshAvg();toast(n==null?'Nota borrada':'Nota guardada ✓')}
+ S.notas[k]=n;kvSet('notas',S.notas);{const j=S.nord.indexOf(k);if(n==null){if(j>=0)S.nord.splice(j,1)}else if(j<0)S.nord.push(k);kvSet('nord',S.nord)}i.dataset.orig=n??'';notaAc(k).hidden=true;i.closest('.srow').dataset.e=estOf(k);refreshAvg();toast(n==null?'Nota borrada':'Nota guardada ✓')}
 function notaCancel(k){const i=notaIn(k);i.value=i.dataset.orig;notaAc(k).hidden=true}
 document.addEventListener('input',e=>{const i=e.target;if(i.classList&&i.classList.contains('nota'))notaAc(i.dataset.k).hidden=(i.value.trim()===i.dataset.orig)});
 document.addEventListener('keydown',e=>{const i=e.target;if(e.key==='Enter'&&i.classList&&i.classList.contains('nota')){e.preventDefault();notaSave(i.dataset.k);i.blur()}});
@@ -809,7 +816,7 @@ document.querySelectorAll('[data-i]').forEach(n=>n.innerHTML=ic(n.dataset.i,+n.d
 (async()=>{
  const j=async u=>(await fetch(u)).json();
  try{D.career=await j('career.json');D.formulas=await j('formulas.json');D.fbase=D.formulas;D.sub={};
-  S.last=(await kvGet('last'))||{};S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];
+  S.nord=(await kvGet('nord'))||[];S.last=(await kvGet('last'))||{};S.favs=(await kvGet('favs'))||[];S.done=(await kvGet('done'))||[];S.sc=(await kvGet('sc'))||S.sc;S.cur=(await kvGet('cur'))||null;S.notas=(await kvGet('notas'))||{};S.est=(await kvGet('est'))||{};S.misf=(await kvGet('misf'))||[];
   if(/[?&]migrar\b/.test(location.search)){let c=0;for(const[k,s]of Object.entries(D.career.subjects))if(s.nota!=null&&S.notas[k]===undefined){S.notas[k]=s.nota;c++}await kvSet('notas',S.notas);history.replaceState(null,'',location.pathname+location.hash);setTimeout(()=>toast(c?`Notas copiadas a este celular: ${c}`:'No había notas por copiar'),700)}
  tx('kv','readwrite',s=>s.delete('gdrive')).catch(()=>{});mergeF();render()}
  catch(e){app.innerHTML='<div class="empty">No se pudieron cargar los datos. Abre la app desde un servidor (no con doble clic) o conéctate una vez a internet.</div>'}})();
