@@ -152,16 +152,17 @@ function materia(sid){
 function tema(sid,tid){
  const s=SUBJ()[sid],T=topics(sid),k=T.findIndex(x=>x.id==tid);if(k<0)return nf();
  const t=T[k],c=D.sub[sid].content?.[tid]||{},key=`${sid}/${tid}`,fav=S.favs.includes(key),dn=S.done.includes(key);
- const tabs=[['c','Contenido','book'],['f','Fórmulas','sigma'],['g','Glosario','list']],TC={c:'#9b1c2e',f:'#2b7f8c',g:'#8b5e3c'};
+ if(tab=='g')tab='c';const tabs=[['c','Contenido','book'],['f','Fórmulas','sigma']],TC={c:'#9b1c2e',f:'#2b7f8c'};
  const lst=a=>`<ul class="chk">${a.map(i=>`<li>${i}</li>`).join('')}</ul>`,emp=m=>`<div class="empty">${m}</div>`;
  let p;
- if(tab=='c'){p=c.sections?c.sections.map(x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.p?`<p>${x.p}</p>`:''}${x.html||''}${x.l?lst(x.l):''}</section>`).join('')
+ if(tab=='c'){const secs=c.sections||[];
+  p=secs.length?secs.map(x=>`<section class="sec">${x.h?`<h3>${x.h}</h3>`:''}${x.p?`<p>${x.p}</p>`:''}${x.html||''}${x.l?lst(x.l):''}</section>`).join('')
   :emp(`Plantilla lista. Agrega el contenido en <code>${sid}.json</code> → <code>content.${tid}</code>.`);
   p+=`<button class="btn ghost" data-act="done" data-k="${key}">${dn?'Estudiado ✓ (quitar)':'Marcar como estudiado'}</button>`}
- if(tab=='f')p=c.frm?`<p class="tabnote">Para leer y repasar. Para calcular usa la pestaña <b>Formulario</b>.</p><div class="fhd"><span>Nombre</span><span>Fórmula</span></div>${c.frm.join('')}`:emp('Este tema es conceptual: no tiene fórmulas esenciales.');
- if(tab=='g')p=c.glos?`<p class="tabnote">📚 Vocabulario del tema · ${c.glos.length} términos</p>`+c.glos.map(g=>`<div class="dgl"><b>${g.t}</b><p>${g.p}</p>${g.e?`<small>${g.e}</small>`:''}</div>`).join(''):emp('Este apartado no tiene glosario.');
- return `<div class="thead" style="--tc:${TC[tab]}"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} <span class="bk">Volver</span></a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
- <p class="eyebrow" style="margin-top:10px">Unidad ${t.u.n} · ${t.u.title}</p><h1>${t.u.n}.${t.i} ${t.t}</h1></div>
+ if(tab=='f'){const bar=`<div class="fbar"><p class="tabnote">Para leer y repasar. Toca <b>la calculadora</b> de cada fórmula para usarla.</p><a class="flink" href="#/formulario/${sid}">Formulario</a><button class="cbk cbk-s" data-act="sci" aria-label="Calculadora científica">${ic('calc',20)}</button></div>`;
+  p=c.frm?bar+'<div class="fhd"><span>Nombre</span><span>Fórmula</span></div>'+c.frm.map((h,n)=>h.replace(/(<div class="fn">)([\s\S]*?)(<\/div>)/,`$1$2<button class="cbk cbk-s fcb" data-act="sci" data-fr="${sid}/${tid}:${n}" aria-label="Abrir esta fórmula en la calculadora">${ic('calc',18)}</button>$3`)).join(''):bar+emp('Este tema es conceptual: no tiene fórmulas esenciales.')}
+  return `<div class="thead" style="--tc:${TC[tab]}"><div class="r"><a class="icb vb" href="#/materia/${sid}" aria-label="Volver al índice">${ic('chevL',18)} <span class="bk">Volver</span></a><span class="eyebrow">${s.name}</span><button class="icb" data-act="fav" data-k="${key}" aria-label="Favorito">${ic('bookmark',20,fav?'currentColor':'none')}</button></div>
+ <p class="eyebrow un" style="margin-top:10px">Unidad ${t.u.n} · ${t.u.title}</p><h1>${t.u.n}.${t.i} ${t.t}</h1></div>
  <div class="tabs">${tabs.map(([k,n,i])=>`<button class="tab ${tab==k?'on':''}" data-act="tab" data-t="${k}" style="--tc:${TC[k]}">${ic(i,14)}${n}</button>`).join('')}</div>${p}
  <div class="nav2">${k>0?`<a href="#/tema/${sid}/${T[k-1].id}">${ic('chevL',16)}Anterior</a>`:'<span>Anterior</span>'}<a href="#/materia/${sid}">${ic('list',16)}Índice</a>${k<T.length-1?`<a class="pri" href="#/tema/${sid}/${T[k+1].id}">Siguiente${ic('chevR',16)}</a>`:'<span>Siguiente</span>'}</div>`}
 
@@ -340,7 +341,7 @@ document.addEventListener('click',async e=>{
  else if(a=='setcur'){S.cur=d.k;SEL=d.k;kvSet('cur',S.cur);render()}
  else if(a=='tab'){tab=d.t;render()}
  else if(a=='cat'){cat=d.c;render()}
- else if(a=='sci')sciOpen(d.f);
+ else if(a=='sci'){d.fr?sciOpen(null,frGuide(d.fr)):sciOpen(d.f)}
  else if(a=='addf')afOpen();
  else if(a=='editf')afOpen(d.f);
  else if(a=='delf'){const f=S.misf.find(x=>x.id==d.f);if(f&&confirm('¿Eliminar esta fórmula?')){S.misf=S.misf.filter(x=>x.id!=d.f);kvSet('misf',S.misf);mergeF();location.hash='#/formulario/'+f.subject}}
@@ -663,7 +664,10 @@ function guideHTML(fid){const f=fid&&D.formulas.find(x=>x.id==fid);if(!f)return 
  const fx=f.mathml?tintMath(f.mathml):`<code>${esc(f.tex||f.plain||'')}</code>`,
   dd=(f.donde&&f.donde.length?f.donde:(f.vars||[]).map(v=>[v.id,v.meaning||v.label||''])).map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('');
  return fixM(`<div class="gf fit"><span class="mw">${fx}</span></div><ul class="gd">${dd}</ul><button class="gt" data-sk="gtog" aria-label="Contraer o expandir">▴</button>`)}
-function sciOpen(fid){let p=$('#sci');
+function frGuide(k){const[st,n]=k.split(':'),[sid,tid]=st.split('/'),h=(((D.sub[sid]||{}).content||{})[tid]||{}).frm?.[+n];if(!h)return'';
+ const m=/<div class="fm">([\s\S]*?)<\/div><\/div>(<ul class="dd">[\s\S]*?<\/ul>)?/.exec(h);if(!m)return'';
+ return fixM(`<div class="gf fit"><span class="mw">${tintMath(m[1])}</span></div>${(m[2]||'').replace('class="dd"','class="gd"')}<button class="gt" data-sk="gtog" aria-label="Contraer o expandir">▴</button>`)}
+function sciOpen(fid,gh){let p=$('#sci');
  if(!p){p=document.createElement('div');p.id='sci';p.className='sci';
   p.innerHTML=`<div class="sci-bk" data-sk="close"></div><div class="sci-p" id="sciP"><div class="sci-h"><b>Calculadora científica</b><button data-sk="hist" aria-label="Historial">≡</button><button data-sk="theme" aria-label="Tema claro u oscuro">◐</button><button data-sk="mode" aria-label="Ajustes">⚙</button><button data-sk="close" aria-label="Cerrar">✕</button></div>
   <div class="sci-g" id="sciG" hidden></div>
@@ -672,8 +676,8 @@ function sciOpen(fid){let p=$('#sci');
   p.addEventListener('click',e=>{const b=e.target.closest('[data-k],[data-sk]');if(!b)return;b.dataset.sk?sciSk(b.dataset.sk,b):sciKey(b.dataset.k,b)});
   document.body.appendChild(p);
   Promise.all(['deg','dec','dk'].map(k=>kvGet(k).catch(()=>undefined))).then(([d,c,k])=>{if(typeof d=='boolean')SCI.deg=d;if(c)SCI.dec=c;if(typeof k=='boolean')SCI.dk=k;sciDraw()})}
- SCI.fid=fid||null;const g=$('#sciG');g.hidden=!fid;g.classList.remove('col');g.innerHTML=fid?guideHTML(fid):'';OVX();
- p.hidden=false;document.body.style.overflow='hidden';document.documentElement.classList.add('sci-lock');sciDraw();if(fid)fitMath()}
+ SCI.fid=fid||null;const g=$('#sciG'),hg=gh||(fid?guideHTML(fid):'');g.hidden=!hg;g.classList.remove('col');g.innerHTML=hg;OVX();
+ p.hidden=false;document.body.style.overflow='hidden';document.documentElement.classList.add('sci-lock');sciDraw();if(hg)fitMath()}
 function sciClose(){const p=$('#sci');if(p)p.hidden=true;document.body.style.overflow='';document.documentElement.classList.remove('sci-lock')}
 addEventListener('hashchange',sciClose);
 const ANN=(on,t)=>`<span class="${on?'on':''}">${t}</span>`;
